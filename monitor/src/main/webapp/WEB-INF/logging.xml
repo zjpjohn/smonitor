@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration>
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[smonitor][%p_%r_%t][class:%c]- %m%n" />
+        </layout>
+    </appender>
+    <appender name="FILE_APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${SMONITOR_LOG_DIR}/monitor.log" />
+        <param name="Append" value="true" />
+        <param name="Encoding" value="UTF-8"/>
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd-HH:mm:ss}|%m%n" />
+        </layout>
+    </appender>
+    <appender name="RECORD_APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${SMONITOR_DATA_DIR}/record/record.csv" />
+        <param name="Append" value="true" />
+        <param name="Encoding" value="UTF-8"/>
+        <param name="DatePattern" value="'.'yyyy-MM-dd-HH-mm"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd-HH:mm},%m%n" />
+        </layout>
+    </appender>
+
+    <logger name="com.harlan.smonitor.record" additivity="false" >
+        <level value="debug" />
+        <appender-ref ref="RECORD_APPENDER"/>
+    </logger>
+    <logger name="com.harlan">
+        <level value="debug" />
+    </logger>
+    <logger name="org">
+        <level value="info" />
+    </logger>
+
+    <!-- 根logger的设置-->
+    <root>
+        <priority value ="info"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE_APPENDER"/>
+    </root>
+</log4j:configuration>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 管理员配置列表 -->
+<admin-list>
+	<admin id="zhaohailong" type="scsms" account="13568946841" />
+	<admin id="huangxiufeng" type="scsms" account="13568946841" />
+	<admin id="zhaohailongmail" type="email" account="zhaohl@si-tech.com.cn" />
+</admin-list>
