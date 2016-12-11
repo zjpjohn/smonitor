@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>smonitor</artifactId>
+        <groupId>com.harlan.smonitor</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <!--通知模块-->
+    <!--由于这个子模块又包括子模块，packaging只能是pom，而且其他模块不能直接引用本模块，只能引用本模块的子模块-->
+    <packaging>pom</packaging>
+    <artifactId>notice</artifactId>
+    <!--该模块的子模块，是不同的通知实现逻辑
+    开发子模块：
+    1、该模块的所有子模块包名 为com.harlan.smonitor.notice
+    2、实现接口 com.harlan.smonitor.api.notice.INoticeService
+    3、实现类需要在monitor模块的 ImplRegister 中注册一下
+    使用子模块：
+    1、需要在monitor模块的pom中配置需要使用的子模块
+    2、在 monitor-admin配置文件中，host节点 passwd-type字段配置密码加密模块实现类的类型
+        目前可用的type有：
+        scsms - 四川短信通知模块
+        email - 发送邮件模块，待开发
+    -->
+    <modules>
+        <module>notice-scsms</module>
+        <module>notice-email</module>
+    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>com.harlan.smonitor</groupId>
+            <artifactId>api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.harlan.smonitor</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+    </dependencies>
+</project>
