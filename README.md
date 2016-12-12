@@ -11,3 +11,6 @@
 规范：
 所有文件编码都是  UTF-8无BOM
 注释都写中文
+
+console:
+建议使用 firefox chrome
