@@ -1,17 +1,21 @@
 package com.harlan.smonitor.api.notice;
 
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Admin {
-	public Admin() {
-	}
-
-	public Admin(Element element) {
-		this.id = Integer.valueOf(element.attributeValue("id"));
-		this.type = element.attributeValue("type");
-		this.account = element.attributeValue("account");
-		this.mark = element.attributeValue("mark");
+public abstract class Admin {
+	/***
+	 * 根据从map中取出属性，转化成对象
+	 * @param adminMap adminMap
+	 */
+	public Admin(Map<String,Object> adminMap) {
+		if(adminMap.get("id")!=null){
+			this.id = Integer.valueOf(adminMap.get("id").toString());
+		}
+		if(adminMap.get("mark")!=null){
+			this.mark = adminMap.get("mark").toString();
+		}
+		this.type = adminMap.get("type").toString();
 	}
 
 	/**
@@ -22,10 +26,6 @@ public class Admin {
 	 * 该管理员对于的通知模块
 	 */
 	private String type;
-	/***
-	 * 帐号：可以是手机号、邮箱、微信号等
-	 */
-	private String account;
 
 	private String mark;
 
@@ -53,31 +53,24 @@ public class Admin {
 		this.type = type;
 	}
 
-	public String getAccount() {
-		return account;
+	/**
+	 * bean转化成xml元素时，需要将属性保存
+	 * @return
+	 */
+	public Map<String,Object> createMap(){
+		Map<String,Object> admin_map=new HashMap<String,Object>();
+		admin_map.put("id",id.toString());
+		admin_map.put("type",type);
+		admin_map.put("mark",mark);
+		admin_map=setAttrs(admin_map);
+		return admin_map;
 	}
 
-	public void setAccount(String account) {
-		this.account = account;
-	}
+	/**
+	 * 不同的admin实现类需要将各自属性set到这个map中
+	 * @param adminMap 此map存放各个实现类的个性字段
+	 * @return
+	 */
+	protected abstract Map<String,Object> setAttrs(Map<String,Object> adminMap);
 
-	public Element createElement(){
-		Element g= DocumentHelper.createElement("admin");
-		g.addAttribute("id",id.toString());
-		g.addAttribute("account",account);
-		g.addAttribute("type",type);
-		g.addAttribute("mark",mark);
-		return g;
-	}
-
-
-	@Override
-	public String toString() {
-		return "Admin{" +
-				"id=" + id +
-				", type='" + type + '\'' +
-				", account='" + account + '\'' +
-				", mark='" + mark + '\'' +
-				'}';
-	}
 }

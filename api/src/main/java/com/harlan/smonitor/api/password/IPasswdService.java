@@ -1,6 +1,6 @@
 package com.harlan.smonitor.api.password;
 
-import com.harlan.smonitor.api.Implementor;
+import com.harlan.smonitor.api.impl.Implementor;
 
 /**
  * 密码获取方法
