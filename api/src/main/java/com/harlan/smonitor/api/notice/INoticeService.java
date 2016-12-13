@@ -3,8 +3,6 @@ package com.harlan.smonitor.api.notice;
 import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.impl.Implementor;
 import com.harlan.smonitor.api.Result;
-import org.dom4j.Element;
-
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +27,6 @@ public interface INoticeService extends Implementor {
 	 * ps:要定义展示的字段名称和注释
 	 * @return
 	 */
-	public List<FieldDeclare> getAdminFields();
+	List<FieldDeclare> getAdminFields();
 
 }
