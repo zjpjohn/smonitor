@@ -6,6 +6,8 @@ import javax.servlet.ServletContextEvent;
 import java.util.ResourceBundle;
 
 /**
+ * Log4jInitListener
+ * 初始化几个变量,配置在log4j中
  * Created by harlan on 2016/12/7.
  */
 public class Log4jInitListener extends Log4jConfigListener {

@@ -2,6 +2,8 @@ package com.harlan.smonitor.monitor.data;
 
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
+import com.harlan.smonitor.monitor.data.dao.JobDao;
+import com.harlan.smonitor.monitor.data.dao.MonitorDao;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
@@ -27,7 +29,7 @@ public class SchedulerOperator {
         logger.info("TaskService 开始初始化 任务...");
         SchedulerFactory schedulerFactory = new StdSchedulerFactory();
         Scheduler scheduler = schedulerFactory.getScheduler();
-        for (MonitorItem monitorItem : CachedData.MONITOR_LIST) {
+        for (MonitorItem monitorItem : MonitorDao.getMonitorItemList(null,null)) {
             for (CheckItem checkItem:monitorItem.getCheckList()) {
 
                 JobDetail job = newJob(checkItem.getJobServiceImpl())
@@ -42,15 +44,13 @@ public class SchedulerOperator {
                         .withSchedule(cronSchedule(checkItem.getCronExpression()))
                         .build();
                 checkItem.setJobKey(job.getKey());
-                checkItem.setId(DataOperator.nextMonitorIndex());
                 checkItem.setTriggerKey(trigger.getKey());
                 scheduler.scheduleJob(job,trigger);
                 logger.debug("检查项id:{},key：{}",checkItem.getId(),checkItem.getTriggerKey());
             }
         }
         logger.info("共添加任务个数:{}",0);
-        CachedData.SCHEDULER=scheduler;
-        CachedData.SCHEDULER.start();
+        JobDao.start(scheduler);
 
     }
 }

@@ -1,10 +1,8 @@
 package com.harlan.smonitor.monitor.bean;
 
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
-
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+import java.util.Map;
 import org.quartz.Job;
 import org.quartz.JobKey;
 import org.quartz.TriggerKey;
@@ -16,21 +14,30 @@ import org.quartz.TriggerKey;
  * 不同的检查项需要实现此父类
  */
 public abstract class CheckItem {
-
-    public CheckItem(Element checkElement) {
-        cronExpression=checkElement.attributeValue("cronExpression");
-        name=checkElement.attributeValue("name");
-        type=checkElement.attributeValue("type");
-        alarmTimes=Integer.valueOf(checkElement.attributeValue("alarmTimes"));
-
-        Element adminElementList = checkElement.element("admin");
-        adminList = new LinkedList<String>();
-        for (Object adminIdObject : adminElementList.elements()) {
-            Element adminidElement = (Element) adminIdObject;
-            adminList.add(adminidElement.getTextTrim());
+    @SuppressWarnings("unchecked")
+    public CheckItem(Map<String,Object> checkMap) {
+        cronExpression=checkMap.get("cronExpression").toString();
+        name=checkMap.get("name").toString();
+        type=checkMap.get("type").toString();
+        if(checkMap.get("alarmTimes")!=null){
+            alarmTimes=Integer.valueOf(checkMap.get("alarmTimes").toString());
         }
-        Element attrsElement = checkElement.element("attrs");
-        getAttrs(attrsElement);
+        adminList = (List<Integer>) checkMap.get("adminList");
+    }
+    /**
+     * bean转化成 map 对象
+     * 需要将check转化成 map
+     * @return
+     */
+    public Map<String,Object> createMap() {
+        Map<String,Object> check_map=new HashMap<String,Object>();
+        check_map.put("name",name);
+        check_map.put("type",type);
+        check_map.put("alarmTimes",alarmTimes.toString());
+        check_map.put("cronExpression",cronExpression);
+        check_map.put("adminList",adminList);
+        check_map= setAttrs(check_map);
+        return check_map;
     }
     protected Integer id;
     protected TriggerKey triggerKey;
@@ -58,7 +65,7 @@ public abstract class CheckItem {
     /**
      * 通知的管理员
      */
-    protected List<String> adminList;
+    protected List<Integer> adminList;
     
     public abstract Class<? extends Job> getJobServiceImpl();
 
@@ -82,9 +89,6 @@ public abstract class CheckItem {
     public String getCronExpression() {
         return cronExpression;
     }
-    public void setCronExpression(String cronExpression) {
-		this.cronExpression = cronExpression;
-	}
 	public String getName() {
 		return name;
 	}
@@ -96,51 +100,18 @@ public abstract class CheckItem {
 	public String getType() {
 		return type;
 	}
-	public List<String> getAdminList() {
+	public List<Integer> getAdminList() {
 		return adminList;
 	}
-
-    public JobKey getJobKey() {
-        return jobKey;
-    }
 
     public void setJobKey(JobKey jobKey) {
         this.jobKey = jobKey;
     }
 
-    /**
-     * bean转化成xml对象时
-     * 需要将check转化成 xml元素
-     * @return
-     */
-    public Element createElement() {
-        Element check= DocumentHelper.createElement("check");
-        check.addAttribute("name",name);
-        check.addAttribute("type",type);
-        check.addAttribute("alarmTimes",alarmTimes.toString());
-        check.addAttribute("cronExpression",cronExpression);
-        Element admin_element= DocumentHelper.createElement("admin");
-        for (String adminId: adminList) {
-            Element id=  DocumentHelper.createElement("id");
-            id.setText(adminId);
-            admin_element.add(id);
-        }
-        check.add(admin_element);
-        Element attrElement= DocumentHelper.createElement("attrs");
-        attrElement= setAttrs(attrElement);
-        check.add(attrElement);
-        return check;
-    }
-
-    /**
-     * bean转化成xml元素时，各个check实现类
-     * @return
-     */
-    public abstract void getAttrs(Element element);
 
     /**
      * bean转化成xml元素时
      * 需要各个实现类，需要将个性字段创建成xml元素
      */
-    public abstract Element setAttrs(Element element);
+    public abstract Map<String,Object> setAttrs(Map<String,Object> element);
 }

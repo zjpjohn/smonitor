@@ -1,12 +1,12 @@
 package com.harlan.smonitor.monitor.core.init;
 
-import com.harlan.smonitor.api.Implementor;
+import com.harlan.smonitor.api.impl.Implementor;
 import com.harlan.smonitor.api.notice.INoticeService;
 import com.harlan.smonitor.api.password.IPasswdService;
+import com.harlan.smonitor.monitor.web.cache.PageCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,11 +69,13 @@ public class ImplRegister {
 //        Field field=  implClass.getDeclaredField("TYPE");
 //        String impl_type= (String) field.get(null);
         Implementor obj= (Implementor) implClass.newInstance();
-        logger.info("通知模块：实现类 {} ,类型为 {}",implClass,obj.getId());
+        logger.info("通知模块：实现类 {} ,类型为 {}",implClass,obj.getTypeDeclare().getTypeValue());
         if(obj instanceof INoticeService){
-            noticeImplMap.put(obj.getId(),(INoticeService)obj);
+            noticeImplMap.put(obj.getTypeDeclare().getTypeValue(),(INoticeService)obj);
+            PageCache.NOTICE_TYPES.add(obj.getTypeDeclare());
         }else if(obj instanceof IPasswdService){
-            passwdImplMap.put(obj.getId(),(IPasswdService) obj);
+            passwdImplMap.put(obj.getTypeDeclare().getTypeValue(),(IPasswdService) obj);
+            PageCache.PASSWD_TYPES.add(obj.getTypeDeclare());
         }
     }
 

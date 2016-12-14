@@ -37,8 +37,8 @@ public class SpringExceptionHandler implements HandlerExceptionResolver{
 				out.close();
 			    return null; 
 			}else{
-				ModelAndView mv =new ModelAndView("error"); 
-				mv.addObject("error_title", "很抱歉..出现错误了");
+				ModelAndView mv =new ModelAndView("err");
+				mv.addObject("msg", "很抱歉..出现错误了");
 			    return mv;
 			}
 		} catch (IOException e) {

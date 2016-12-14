@@ -2,13 +2,14 @@ package com.harlan.smonitor.monitor.bean.inspection.check;
 
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.core.job.inspection.CheckSelfServiceImpl;
-import org.dom4j.Element;
 import org.quartz.Job;
+
+import java.util.Map;
 
 
 public class CheckSelf extends CheckItem {
-	public CheckSelf(Element checkElement) {
-		super(checkElement);
+	public CheckSelf(Map<String,Object> itemMap) {
+		super(itemMap);
 		
 	}
 
@@ -18,13 +19,8 @@ public class CheckSelf extends CheckItem {
 	}
 
 	@Override
-	public void getAttrs(Element element) {
-
-	}
-
-	@Override
-	public Element setAttrs(Element element) {
-		return element;
+	public Map<String,Object> setAttrs(Map<String,Object> itemMap) {
+		return itemMap;
 	}
 
 }

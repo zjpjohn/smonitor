@@ -7,8 +7,9 @@ import com.harlan.smonitor.api.notice.INoticeService;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.core.init.ImplRegister;
-import com.harlan.smonitor.monitor.data.AdminDao;
-import com.harlan.smonitor.monitor.data.DataOperator;
+import com.harlan.smonitor.monitor.data.dao.AdminDao;
+import com.harlan.smonitor.monitor.data.DataFileOperator;
+import com.harlan.smonitor.monitor.data.dao.JobDao;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -52,7 +53,7 @@ public abstract class AbstractService implements Job {
 	 */
 	protected void restAlarmCount(Integer checkItemId){
 		logger.info("重置ID为 {} 的检查项，报警计数器",checkItemId);
-		DataOperator.jobAlarmReset(checkItemId);
+		JobDao.jobAlarmReset(checkItemId);
 
 	}
     
@@ -63,15 +64,15 @@ public abstract class AbstractService implements Job {
 	 * @param content 内容
 	 */
 	protected void checkYesOrNotSendMsg(CheckItem checkItem,String title,String content) {
-		int count=DataOperator.jobAlamIncrease(checkItem.getId());
+		int count= JobDao.jobAlamIncrease(checkItem.getId());
 		if(count>=checkItem.getAlarmTimes()){
 			logger.info("ID为 {} 的检查项，满足条件，发送通知，通知题目为 ：{},通知内容：{}",checkItem.getId(),title,content);
 			sendNotice(checkItem.getAdminList(),title,content);
 		}
 	}
 
-	private void sendNotice(List<String> adminList,String title,String content){
-		for (String admin:adminList) {
+	private void sendNotice(List<Integer> adminList,String title,String content){
+		for (Integer admin:adminList) {
 			Admin admin_bean= AdminDao.getAdmin(admin);
 			INoticeService service=ImplRegister.getNoticeServiceImpl(admin_bean.getType());
 			service.sendMessage(admin_bean,title,content);

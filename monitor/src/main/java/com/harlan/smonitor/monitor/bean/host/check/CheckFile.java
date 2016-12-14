@@ -2,17 +2,39 @@ package com.harlan.smonitor.monitor.bean.host.check;
 
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.core.job.host.CheckFileServiceImpl;
-import org.dom4j.Element;
 import org.quartz.Job;
+
+import java.util.Map;
+
 /**
  * Created by harlan on 2016/9/21.
  */
 public class CheckFile extends CheckItem {
 
-    public CheckFile(Element checkElement) {
-        super(checkElement);
+    public CheckFile(Map<String,Object> checkMap) {
+        super(checkMap);
+        // 补充检查文件 这个检查项的解析逻辑
+        if(checkMap.get("path")!=null){
+            this.path=checkMap.get("path").toString();
+        }
+        if(checkMap.get("modifyIn")!=null){
+            this.modifyIn=Integer.valueOf(checkMap.get("modifyIn").toString());
+        }
+        if(checkMap.get("rowsIncrease")!=null){
+            this.rowsIncrease=Integer.valueOf(checkMap.get("rowsIncrease").toString());
+        }
+        if(checkMap.get("notModifyIn")!=null){
+            this.notModifyIn=Integer.valueOf(checkMap.get("notModifyIn").toString());
+        }
     }
-
+    @Override
+    public Map<String,Object> setAttrs(Map<String,Object> checkMap) {
+        checkMap.put("path",path);
+        checkMap.put("modifyIn",modifyIn);
+        checkMap.put("notModifyIn",notModifyIn);
+        checkMap.put("rowsIncrease",rowsIncrease);
+        return checkMap;
+    }
     /**
      * 需要监控的文件绝对路径
      */
@@ -50,20 +72,5 @@ public class CheckFile extends CheckItem {
         return CheckFileServiceImpl.class;
     }
 
-    @Override
-    public void getAttrs(Element checkElement) {
-        // 补充检查文件 这个检查项的解析逻辑
-        this.path = checkElement.elementText("path");
-        String mi = checkElement.elementText( "modify-in");
-        this.modifyIn = (mi == null ? null : Integer.valueOf(mi));
-        String nmi = checkElement.elementText( "not-modify-in");
-        this.notModifyIn = (nmi == null ? null : Integer.valueOf(nmi));
-        String ri = checkElement.elementText( "rows-increase");
-        this.rowsIncrease = (ri == null ? null : Integer.valueOf(ri));
-    }
 
-    @Override
-    public Element setAttrs(Element element) {
-        return null;
-    }
 }

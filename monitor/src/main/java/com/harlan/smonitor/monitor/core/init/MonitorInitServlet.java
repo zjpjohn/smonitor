@@ -1,6 +1,6 @@
 package com.harlan.smonitor.monitor.core.init;
 
-import com.harlan.smonitor.monitor.data.DataOperator;
+import com.harlan.smonitor.monitor.data.DataFileOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -23,11 +23,11 @@ public class MonitorInitServlet implements InitializingBean {
 
             logger.info("monitor 数据加载 ...");
 
-            DataOperator.readAdmin();
+            DataFileOperator.readAdmin();
 
-            DataOperator.readMonitorItem();
+            DataFileOperator.readMonitorItem();
 
-            DataOperator.readGorup();
+            DataFileOperator.readGorup();
 
             logger.info("monitor 数据加载完毕");
 

@@ -3,14 +3,10 @@ package com.harlan.smonitor.monitor.bean;
 import com.harlan.smonitor.monitor.bean.host.HostMonitorItem;
 import com.harlan.smonitor.monitor.bean.http.HttpMonitorItem;
 import com.harlan.smonitor.monitor.bean.inspection.InspectionMonitorItem;
-import org.dom4j.DocumentHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.dom4j.Element;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * 监控项
@@ -21,7 +17,13 @@ import java.util.List;
  */
 public abstract class MonitorItem{
     private final static Logger logger = LoggerFactory.getLogger(MonitorItem.class);
-
+    private static Map<String,Class<?>> IMPL_MAP;
+    static {
+        IMPL_MAP=new HashMap<String, Class<?>>();
+        IMPL_MAP.put("host",HostMonitorItem.class);
+        IMPL_MAP.put("http",HttpMonitorItem.class);
+        IMPL_MAP.put("inspection",InspectionMonitorItem.class);
+    }
     /**
      * 监控项描述
      */
@@ -40,55 +42,76 @@ public abstract class MonitorItem{
      * 通知对象
      */
     protected List<CheckItem> checkList;
-
     /**
-     * xml对象转化成bean，需要调用构造方法
-     * @param itemElement xml节点
+     * java bean → map
+     * @return
      */
-    public MonitorItem(Element itemElement) {
-        logger.debug("初始化公共参数...");
-        name =itemElement.attributeValue("name");
-        type =itemElement.attributeValue("type");
-        groupId=Integer.valueOf(itemElement.attributeValue("groupId"));
-
-        Element check_list_element=itemElement.element("check_list");
-
-        Element props_element=itemElement.element("props");
-
-        getProps(props_element);//实现类要把属性设置到字段中
-
-        Iterator check_elements= check_list_element.elementIterator("check");
-        checkList=new ArrayList<CheckItem>();
-        while(check_elements.hasNext()){
-            Element check_element= (Element) check_elements.next();
-            CheckItem checkItem=createCheck(check_element);
-            checkList.add(checkItem);
+    public Map<String,Object> createMap(){
+        Map<String,Object> item_map=new HashMap<String,Object>();
+        item_map.put("name",name);
+        item_map.put("type",type);
+        item_map.put("groupId",groupId.toString());
+        List<Map<String,Object>> checkListMap=new ArrayList<Map<String,Object>>();
+        for (CheckItem checkItem: checkList) {
+            checkListMap.add(checkItem.createMap());
         }
-        logger.info("name={}的监控项，共配置了{}个检查项",name,checkList.size());
+        item_map.put("checkList",checkListMap);
+        item_map=setProps(item_map);
+        return item_map;
     }
 
     /**
+     * 工厂类
+     * @param itemMap json转化成的map，或者页面请求map
+     * @return MonitorItem
+     */
+    public static MonitorItem createMonitor(Map<String,Object> itemMap) throws Exception {
+        String type=itemMap.get("type").toString();
+        logger.debug("需要实例化的监控项 type:{}",type);
+        Class<?> implClass= IMPL_MAP.get(type);
+        if(implClass==null){
+            throw new RuntimeException("MonitorItem.createMonitor()方法中，没有配置该类型监控项:"+type);
+        }
+        MonitorItem item= (MonitorItem) implClass.newInstance();
+        item.init(itemMap);
+        return item;
+    }
+
+    /**
+     * map → java bean
+     * @param itemMap
+     */
+    @SuppressWarnings("unchecked")
+    private void init(Map<String, Object> itemMap) {
+        logger.debug("初始化公共参数...");
+        name =itemMap.get("name").toString();
+        type =itemMap.get("type").toString();
+        groupId=Integer.valueOf(itemMap.get("groupId").toString());
+        List<Map<String,Object>> checkListMap = (List<Map<String, Object>>) itemMap.get("checkList");
+        checkList=new ArrayList<CheckItem>();
+        for (Map<String,Object> map:checkListMap) {
+            CheckItem checkItem=createCheck(map);
+            checkList.add(checkItem);
+        }
+        logger.info("name={}的监控项，共配置了{}个检查项",name,checkList.size());
+        getProps(itemMap);
+    }
+
+
+    /**
      * 各个监控项实现类需要实现checkItem的工厂方法
-     * @param checkElement check节点
+     * @param checkMap check map 节点
      * @return CheckItem对象
      */
-    protected abstract CheckItem createCheck(Element checkElement);
+    protected abstract CheckItem createCheck(Map<String,Object> checkMap);
 
     /**
-     * xml对象转化为bean时
-     * 各个监控项实现类从element对象中取出个性属性
-     * @param propElement 个性字段xml节点
-     * @return
+     * bean转化成json对象时
+     * 个监控项实现类从需要将个性字段放入itemMap
+     * @return itemMap
      */
-    protected abstract void getProps(Element propElement);
-
-    /**
-     * bean转化成xml对象时
-     * 个监控项实现类从需要将个性字段放入propElement
-     * @return
-     */
-    protected abstract Element setProps(Element propElement);
-
+    protected abstract Map<String,Object> setProps(Map<String,Object> itemMap);
+    protected abstract void getProps(Map<String,Object> itemMap);
     public String getName() {
         return name;
     }
@@ -97,39 +120,7 @@ public abstract class MonitorItem{
         return checkList;
     }
 
-    /**
-     * bean转化成xml对象
-     * @return
-     */
-    public Element createElement(){
-        Element monitor= DocumentHelper.createElement("monitor");
-        monitor.addAttribute("name",name);
-        monitor.addAttribute("type",type);
-        monitor.addAttribute("groupId",groupId.toString());
-        Element propsElement= DocumentHelper.createElement("props");
-        setProps(propsElement);
-        monitor.add(propsElement);
-        Element check_list_element= DocumentHelper.createElement("check_list");
-        for (CheckItem checkItem: checkList) {
-            check_list_element.add(checkItem.createElement());
-        }
-        monitor.add(check_list_element);
-        return monitor;
-    }
 
-    public static MonitorItem createMonitor(Element itemElement){
-        String type=itemElement.attributeValue("type");
-        logger.debug("需要实例化的监控项 type:{}",type);
-        if("host".equalsIgnoreCase(type)){
-            return new HostMonitorItem(itemElement);
-        }else if("http".equalsIgnoreCase(type)){
-            return new HttpMonitorItem(itemElement);
-        }else if("inspection".equals(type)){
-            return new InspectionMonitorItem(itemElement);
-        }{
-            throw new RuntimeException("Monitor.createMonitor()方法中，没有配置该类型监控项:"+type);
-        }
-    }
 
     public static  boolean checkTime(String default_run_time){
         String[] checkTimeArray = default_run_time.split("\\s+");
