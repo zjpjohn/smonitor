@@ -9,27 +9,54 @@
         <a type="button" class="btn btn-success" href="list">列表</a>
         <button type="button" class="btn btn-primary" disabled="disabled">新增</button>
     </div>
-    <hr class="margin-bottom-xs">
+    <hr>
 
     <#--添加form-->
     <form id="add_form" action="toadd" method="post">
+        <div class="row">
+            <h3>监控项:</h3>
+        </div>
         <div class="row form-inline margin-top-sm">
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>通知方式：</label>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>类型：</label>
                 <select class="form-control" name="type">
                     <option value="">-请选择-</option>
-                    <#list notice_types as noticeType>
-                        <option value="${noticeType.typeValue}">${noticeType.name}</option>
+                    <#list types as type>
+                        <option value="${type}">${type}</option>
                     </#list>
                 </select>
             </div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>备注：</label><input name="mark"  type="text" class="form-control"/></div>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>分组：</label>
+                <select class="form-control" name="groupId">
+                    <option value="">-请选择-</option>
+                <#list groups as group>
+                    <option value="${group.id}">${group.name}</option>
+                </#list>
+                </select>
+            </div>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="name"  type="text" class="form-control"/></div>
             <div class="append-div"></div>
         </div>
+        <hr>
+        <div class="row">
+            <div class="col-xs-6 col-md-6 margin-bottom-sm">
+                <h4>检查项:</h4>
+            </div>
+        </div>
+        <div class="row">
+            <select class="form-control" name="check.type">
+                <option value="">-请选择-</option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6 margin-bottom-sm text-center">
+                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+            </div>
+        </div>
+        <hr>
         <div class="row text-center margin-top-md">
             <button type="submit" class="btn btn-danger">增加</button>
             <button type="reset" class="btn btn-default">重置</button>
         </div>
-        <hr>
     </form>
 </div>
 <script>

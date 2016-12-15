@@ -17,7 +17,10 @@
         <a type="button" class="btn btn-success" href="admin/list">管理员管理</a>
     </div>
     <div class="row margin-top-md">
-        <a type="button" class="btn btn-primary">监控分类管理</a>
+        <a type="button" class="btn btn-success" href="group/list">监控分类管理</a>
+    </div>
+    <div class="row margin-top-md">
+        <a type="button" class="btn btn-success" href="monitor/list">监控管理</a>
     </div>
 </div>
 </body>

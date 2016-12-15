@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--用于注册所有模块（不是要用到的模块）-->
+<list>
+    <module>com.harlan.smonitor.notice.scsms.ScsmsNoticeService</module>
+    <module>com.harlan.smonitor.notice.email.EmailNoticeService</module>
+    <module>com.harlan.smonitor.password.scmobile.ScmobilePasswdService</module>
+</list>

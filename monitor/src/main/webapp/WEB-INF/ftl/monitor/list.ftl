@@ -14,16 +14,15 @@
 <#--查询form-->
     <form id="paging_query_form" action="list" method="post">
         <div class="row form-inline">
-            <div class="col-xs-6 col-md-4 margin-top-sm"><label>通知方式：</label>
+            <div class="col-xs-4 margin-top-sm"><label>名称：</label><input name="mark" value="${admin.mark}" type="text" class="form-control"></div>
+            <div class="col-xs-6 col-md-4 margin-top-sm"><label>类型：</label>
                 <select class="form-control" name="type">
                     <option value="">-请选择-</option>
-                <#list notice_types as noticeType>
-                    <option value="${noticeType.typeValue}">${noticeType.name}</option>
+                <#list types as type>
+                    <option value="${types}">${types}</option>
                 </#list>
                 </select>
             </div>
-            <div class="col-xs-4 margin-top-sm"><label>备注：</label><input name="mark" value="${admin.mark}" type="text" class="form-control"></div>
-
         </div>
         <div class="row text-center margin-top-md">
             <button id="qry_submit_btn"  class="btn btn-success">查询</button>
@@ -37,17 +36,17 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>ID</th>
+                <th>名称</th>
+                <th>分组</th>
                 <th>类型</th>
-                <th>备注</th>
             </tr>
             </thead>
             <tbody id="list_tbody">
-            <#list list as admin>
+            <#list list as monitor>
             <tr>
-                <th scope="row">${admin.id}</th>
-                <td>${admin.type}</td>
-                <td>${admin.mark}</td>
+                <th scope="row">${monitor.name}</th>
+                <td>${monitor.groupId}</td>
+                <td>${monitor.type}</td>
             </tr>
             </#list>
             </tbody>
