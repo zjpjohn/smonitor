@@ -31,7 +31,6 @@ public class MonitorDao {
         }
         List<MonitorItem> qryMonitorItemList=new LinkedList<MonitorItem>();
         List<MonitorItem> allMonitorItemList=CachedData.getAllMonitorItem();
-        logger.info("查询个数从{} 到{}",start,start+limit);
         for (int i = 0; i <allMonitorItemList.size(); i++) {
             if(i>=start && i< (start+limit)){
                 qryMonitorItemList.add(allMonitorItemList.get(i));
@@ -39,6 +38,19 @@ public class MonitorDao {
         }
         return  qryMonitorItemList;
     }
+
+    public static MonitorItem getMonitor(Integer id){
+        MonitorItem qry_monitor=null;
+        for (MonitorItem monitor:CachedData.getAllMonitorItem()) {
+            if(monitor.getId().equals(id)){
+                qry_monitor=monitor;
+                break;
+            }
+        }
+        return qry_monitor;
+    }
+
+
     public static Result addMonitor(MonitorItem monitorItem) throws Exception {
         CachedData.putMonitorItem(monitorItem);
         return  new Result();

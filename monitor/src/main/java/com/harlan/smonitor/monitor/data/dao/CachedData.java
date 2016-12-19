@@ -19,11 +19,14 @@ class CachedData {
         MONITOR_LIST=new LinkedList<MonitorItem>();
         JOB_ALARM_COUNT=new HashMap<Integer, Integer>();
         MONITOR_INDEX=0;
+        CHECK_INDEX=0;
         ADMIN_INDEX=0;
         GROUP_INDEX=0;
     }
     //监控项的序列
     private static int MONITOR_INDEX;
+    //检查项的序列
+    private static int CHECK_INDEX;
     //管理员的序列
     private static int ADMIN_INDEX;
     //分组的序列
@@ -110,12 +113,18 @@ class CachedData {
     }
 
     public static void putMonitorItem(MonitorItem monitorItem) {
+        if(monitorItem.getId()==null){
+            monitorItem.setId(++MONITOR_INDEX);
+        }
+        if(CachedData.MONITOR_INDEX < monitorItem.getId()){
+            CachedData.MONITOR_INDEX=monitorItem.getId();
+        }
         for (CheckItem item:monitorItem.getCheckList()) {
             if(item.getId()==null){
-                item.setId(++MONITOR_INDEX);
+                item.setId(++CHECK_INDEX);
             }
-            if(CachedData.MONITOR_INDEX < item.getId()){
-                CachedData.MONITOR_INDEX=item.getId();
+            if(CachedData.CHECK_INDEX < item.getId()){
+                CachedData.CHECK_INDEX=item.getId();
             }
         }
         MONITOR_LIST.add(monitorItem);

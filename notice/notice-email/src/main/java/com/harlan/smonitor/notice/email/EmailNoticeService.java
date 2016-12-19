@@ -32,11 +32,7 @@ public class EmailNoticeService implements INoticeService {
     @Override
     public List<FieldDeclare> getAdminFields() {
         List<FieldDeclare> filedList =new ArrayList<FieldDeclare>();
-        FieldDeclare emailAddressField =new FieldDeclare();
-        emailAddressField.setFieldNmae("emailAddress");
-        emailAddressField.setName("邮箱号");
-        emailAddressField.setDesc("请填写邮箱号");
-        filedList.add(emailAddressField);
+        filedList.add(new FieldDeclare("emailAddress","邮箱号","请填写邮箱号"));
         return filedList;
     }
 

@@ -36,6 +36,7 @@
         <table class="table table-hover">
             <thead>
             <tr>
+                <th>ID</th>
                 <th>名称</th>
                 <th>分组</th>
                 <th>类型</th>
@@ -44,7 +45,8 @@
             <tbody id="list_tbody">
             <#list list as monitor>
             <tr>
-                <th scope="row">${monitor.name}</th>
+                <th scope="row">${monitor.id}</th>
+                <td>${monitor.name}</td>
                 <td>${monitor.groupId}</td>
                 <td>${monitor.type}</td>
             </tr>
@@ -55,6 +57,14 @@
         </div>
     </div>
 </div>
+    <script type="text/javascript">
+        $(function(){
+            $("#list_tbody tr").click(function(){
+                var id=$(this).children("th").html();
+                window.location="detail?id="+id;
+            });
+        });
+    </script>
     <script src="../plugin/paging/bootstrap.paging.js"></script>
 </body>
 </html>

@@ -1,10 +1,13 @@
 package com.harlan.smonitor.monitor.bean.http;
 
 
-import com.harlan.smonitor.monitor.bean.CheckItem;
+import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.bean.http.check.CheckBody;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,17 +21,22 @@ public class HttpMonitorItem extends MonitorItem {
 	private String url;
 	
 	private String data;
-	
-    @Override
-    protected CheckItem createCheck(Map<String,Object> checkMap) {
-    	String type=checkMap.get("type").toString();
-    	if("code".equals(type)){
-    		throw new RuntimeException("not create this type");
-    	}else if("body".equals(type)){
-    		return new CheckBody(checkMap);
-    	}
-        return null;
-    }
+
+	@Override
+	public List<FieldDeclare> getFields() {
+		List<FieldDeclare> fieldList=new ArrayList<FieldDeclare>();
+		fieldList.add(new FieldDeclare("method","方法","get还是post"));
+		fieldList.add(new FieldDeclare("url","服务的url","http服务的url，带http"));
+		fieldList.add(new FieldDeclare("data","请求参数","请求参数"));
+		return fieldList;
+	}
+
+	@Override
+	protected Map<String, Class<?>> getCheckClassMap() {
+		Map<String, Class<?>> CHECK_MAP=new HashMap<String, Class<?>>();
+		CHECK_MAP.put("body",CheckBody.class);
+		return CHECK_MAP;
+	}
 
 	@Override
 	protected Map<String,Object> setProps(Map<String,Object> itemMap) {

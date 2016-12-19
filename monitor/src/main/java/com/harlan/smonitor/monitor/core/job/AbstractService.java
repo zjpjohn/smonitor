@@ -6,9 +6,8 @@ import com.harlan.smonitor.api.notice.Admin;
 import com.harlan.smonitor.api.notice.INoticeService;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
-import com.harlan.smonitor.monitor.core.init.ImplRegister;
+import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 import com.harlan.smonitor.monitor.data.dao.AdminDao;
-import com.harlan.smonitor.monitor.data.DataFileOperator;
 import com.harlan.smonitor.monitor.data.dao.JobDao;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -74,7 +73,7 @@ public abstract class AbstractService implements Job {
 	private void sendNotice(List<Integer> adminList,String title,String content){
 		for (Integer admin:adminList) {
 			Admin admin_bean= AdminDao.getAdmin(admin);
-			INoticeService service=ImplRegister.getNoticeServiceImpl(admin_bean.getType());
+			INoticeService service= ModuleRegister.getNoticeServiceImpl(admin_bean.getType());
 			service.sendMessage(admin_bean,title,content);
 		}
 	}

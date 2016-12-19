@@ -3,6 +3,8 @@ package com.harlan.smonitor.monitor.bean;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.harlan.smonitor.api.impl.FieldDeclare;
 import org.quartz.Job;
 import org.quartz.JobKey;
 import org.quartz.TriggerKey;
@@ -15,7 +17,7 @@ import org.quartz.TriggerKey;
  */
 public abstract class CheckItem {
     @SuppressWarnings("unchecked")
-    public CheckItem(Map<String,Object> checkMap) {
+    public void init(Map<String,Object> checkMap) {
         cronExpression=checkMap.get("cronExpression").toString();
         name=checkMap.get("name").toString();
         type=checkMap.get("type").toString();
@@ -23,7 +25,9 @@ public abstract class CheckItem {
             alarmTimes=Integer.valueOf(checkMap.get("alarmTimes").toString());
         }
         adminList = (List<Integer>) checkMap.get("adminList");
+        getAttrs(checkMap);
     }
+
     /**
      * bean转化成 map 对象
      * 需要将check转化成 map
@@ -113,5 +117,9 @@ public abstract class CheckItem {
      * bean转化成xml元素时
      * 需要各个实现类，需要将个性字段创建成xml元素
      */
-    public abstract Map<String,Object> setAttrs(Map<String,Object> element);
+    public abstract Map<String,Object> setAttrs(Map<String,Object> attrMap);
+
+    public abstract void getAttrs(Map<String,Object> attrMap);
+
+    public abstract List<FieldDeclare> getFields();
 }

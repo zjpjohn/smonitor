@@ -19,7 +19,7 @@ public class MonitorInitServlet implements InitializingBean {
         logger.info("monitor 启动 ...");
         try {
             logger.info("monitor 模块加载 ...");
-            ImplRegister.initRegister();
+            ModuleRegister.initRegister();
 
             logger.info("monitor 数据加载 ...");
 

@@ -5,7 +5,7 @@ import com.harlan.smonitor.api.Result;
 import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.notice.Admin;
 import com.harlan.smonitor.monitor.common.Constants;
-import com.harlan.smonitor.monitor.core.init.ImplRegister;
+import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 import com.harlan.smonitor.monitor.data.dao.AdminDao;
 import com.harlan.smonitor.monitor.web.cache.PageCache;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public class AdminController {
     @RequestMapping(value="/toadd")
     public ModelAndView toadd(@RequestParam Map<String,Object> param) throws Exception {
         logger.info("参数：{}",param.toString());
-        Admin admin=ImplRegister.getNoticeServiceImpl(param.get("type").toString()).getAdminFrom(param);
+        Admin admin= ModuleRegister.getNoticeServiceImpl(param.get("type").toString()).getAdminFrom(param);
         AdminDao.addAdmin(admin);
         AdminDao.saveAdmin();
         return new ModelAndView("/ok");
@@ -60,7 +60,7 @@ public class AdminController {
     @RequestMapping(value="/fields" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody String noticeFields(@RequestParam String type) throws Exception {
         logger.info("type：{}",type);
-        List<FieldDeclare> fields= ImplRegister.getNoticeServiceImpl(type).getAdminFields();
+        List<FieldDeclare> fields= ModuleRegister.getNoticeServiceImpl(type).getAdminFields();
         Result res=new Result();
         res.setObj(fields);
         return JSON.toJSONString(res);

@@ -51,25 +51,20 @@ public class Util {
 	
 	public static boolean isNull(String str) {
 		return str == null || str.length() <= 0;
+}
+
+	/**
+	 * 注意：此方法只是用于字符串类型的Obejct的判断空否
+	 * @param strObj 字符串类型的object
+	 * @return
+	 */
+	public static boolean notNull(Object strObj) {
+		if(strObj==null){
+			return false;
+		}
+		if(strObj.toString().trim().length()<=0){
+			return false;
+		}
+		return true;
 	}
-
-//	public static <V> Map<String,V> initServiceMapFromClassList(List<Class> class_list) {
-//		Map<String,V> implMap=  new HashMap<String,V>();
-//		for(Class implClass:class_list){
-//			try {
-//				String impl_type;
-//
-//				Field field=  implClass.getDeclaredField("TYPE");
-//				impl_type= (String) field.get(null);
-//				logger.debug("实现类 {} 的类型为 {}",implClass,impl_type);
-//
-//				implMap.put(impl_type,(V)implClass.newInstance());
-//			} catch (Exception e) {
-//				logger.error("通过实例化服务类异常：",e);
-//				throw new RuntimeException("实现类"+implClass+"需要有静态的TYPE属性,并可实例化");
-//			}
-//		}
-//		return implMap;
-//	}
-
 }

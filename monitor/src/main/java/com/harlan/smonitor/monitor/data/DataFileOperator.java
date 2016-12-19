@@ -7,7 +7,7 @@ import com.harlan.smonitor.monitor.bean.Group;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.common.FileUtil;
 import com.harlan.smonitor.monitor.common.Util;
-import com.harlan.smonitor.monitor.core.init.ImplRegister;
+import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 import com.harlan.smonitor.monitor.data.dao.AdminDao;
 import com.harlan.smonitor.monitor.data.dao.GroupDao;
 import com.harlan.smonitor.monitor.data.dao.MonitorDao;
@@ -71,7 +71,8 @@ public class DataFileOperator {
 
         List<Map> jsonArrayData=JSON.parseArray(data_json,Map.class);
         for (Map map:jsonArrayData) {
-            MonitorItem monitor=MonitorItem.createMonitor(map);
+            MonitorItem monitor=MonitorItem.monitorInstance(map.get("type").toString());
+            monitor.init(map);
             MonitorDao.addMonitor(monitor);
         }
         logger.info("monitor 监控项加载完毕，加载{}个监控项",MonitorDao.count());
@@ -99,7 +100,7 @@ public class DataFileOperator {
         List<Map> jsonArrayData=JSON.parseArray(data_json,Map.class);
         for (Map map:jsonArrayData) {
             String  type=map.get("type").toString();
-            AdminDao.addAdmin(ImplRegister.getNoticeServiceImpl(type).getAdminFrom(map));
+            AdminDao.addAdmin(ModuleRegister.getNoticeServiceImpl(type).getAdminFrom(map));
         }
         logger.info("monitor 管理员加载完毕，加载{}个管理员",AdminDao.count());
     }

@@ -1,6 +1,7 @@
 package com.harlan.smonitor.monitor.bean.host;
 
 
+import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.password.IPasswdService;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
@@ -8,8 +9,11 @@ import com.harlan.smonitor.monitor.bean.host.check.CheckCPU;
 import com.harlan.smonitor.monitor.bean.host.check.CheckDisk;
 import com.harlan.smonitor.monitor.bean.host.check.CheckFile;
 import com.harlan.smonitor.monitor.bean.host.check.CheckMem;
-import com.harlan.smonitor.monitor.core.init.ImplRegister;
+import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +21,6 @@ import java.util.Map;
  * Created by harlan on 2016/8/3.
  */
 public class HostMonitorItem extends MonitorItem {
-
     private String ip;
     private String user;
     private String passwd;
@@ -42,7 +45,7 @@ public class HostMonitorItem extends MonitorItem {
             this.passwd = itemMap.get("passwd").toString();
         }else{
             this.passwdType=itemMap.get("passwd-type").toString();
-            IPasswdService passwdService= ImplRegister.getPasswdServiceImpl(this.passwdType);
+            IPasswdService passwdService= ModuleRegister.getPasswdServiceImpl(this.passwdType);
             this.passwd =passwdService.getPassword(user);
 
         }
@@ -50,20 +53,25 @@ public class HostMonitorItem extends MonitorItem {
     }
 
     @Override
-    protected CheckItem createCheck(Map<String,Object> checkMap) {
-        String type=checkMap.get("type").toString();
-        if("file".equalsIgnoreCase(type)){
-            return new CheckFile(checkMap);
-        }else if("cpu".equalsIgnoreCase(type)){
-            return new CheckCPU(checkMap);
-        }else if("mem".equalsIgnoreCase(type)){
-            return new CheckMem(checkMap);
-        }else if("disk".equalsIgnoreCase(type)){
-            return new CheckDisk(checkMap);
-        }
-        return null;
+    public List<FieldDeclare> getFields() {
+        List<FieldDeclare> fieldList=new ArrayList<FieldDeclare>();
+        fieldList.add(new FieldDeclare("ip","IP地址","IP地址"));
+        fieldList.add(new FieldDeclare("user","用户名","用户名"));
+        fieldList.add(new FieldDeclare("passwd","密码","保存后会加密"));
+        fieldList.add(new FieldDeclare("passwdType","密码类型","制定使用哪个密码加密模块"));
+        fieldList.add(new FieldDeclare("port","ssh端口","ssh的端口"));
+        return fieldList;
     }
 
+    @Override
+    protected Map<String, Class<?>> getCheckClassMap() {
+        Map<String, Class<?>> CHECK_MAP=new HashMap<String, Class<?>>();
+        CHECK_MAP.put("file",CheckFile.class);
+        CHECK_MAP.put("cpu",CheckCPU.class);
+        CHECK_MAP.put("mem",CheckMem.class);
+        CHECK_MAP.put("disk",CheckDisk.class);
+        return CHECK_MAP;
+    }
 
 
     public String getIp() {

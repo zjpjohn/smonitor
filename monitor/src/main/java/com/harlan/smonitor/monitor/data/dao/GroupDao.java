@@ -44,7 +44,6 @@ public class GroupDao {
     }
     public static Result addGroup(Group group) throws Exception {
         CachedData.putGroup(group);
-        DataFileOperator.saveGroup(CachedData.getAllGroup());
         return  new Result();
     }
     public static Result saveGroup() throws Exception {

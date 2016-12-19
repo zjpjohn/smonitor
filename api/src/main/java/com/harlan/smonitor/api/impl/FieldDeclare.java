@@ -1,13 +1,20 @@
 package com.harlan.smonitor.api.impl;
 
 /**
+ * FieldDeclare
  * Created by harlan on 2016/12/9.
  */
 public class FieldDeclare {
+    public FieldDeclare(String fieldName, String name, String desc) {
+        this.fieldName = fieldName;
+        this.name = name;
+        this.desc = desc;
+    }
+
     /**
      * 字段名
      */
-    private String fieldNmae;
+    private String fieldName;
     /**
      * 字段展示名称
      */
@@ -17,10 +24,6 @@ public class FieldDeclare {
      */
     private String desc;
 
-    public String getFieldNmae() {
-        return fieldNmae;
-    }
-
     public String getName() {
         return name;
     }
@@ -29,15 +32,19 @@ public class FieldDeclare {
         return desc;
     }
 
-    public void setFieldNmae(String fieldNmae) {
-        this.fieldNmae = fieldNmae;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 }

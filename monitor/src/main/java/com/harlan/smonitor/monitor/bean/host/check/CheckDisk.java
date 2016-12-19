@@ -1,11 +1,14 @@
 package com.harlan.smonitor.monitor.bean.host.check;
 
+import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.core.job.host.CheckDiskServiceImpl;
 import org.quartz.Job;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-
+import static com.harlan.smonitor.monitor.common.Util.notNull;
 
 public class CheckDisk extends CheckItem {
 
@@ -13,17 +16,23 @@ public class CheckDisk extends CheckItem {
 	private String path;
 	private Integer inodeExceed;
 
-	public CheckDisk(Map<String,Object> checkMap) {
-		super(checkMap);
-		if(checkMap.get("path")!=null){
-			this.path=checkMap.get("path").toString();
-		}
-		if(checkMap.get("exceed")!=null){
+	public void getAttrs(Map<String,Object> checkMap) {
+		this.path=checkMap.get("path").toString();
+		if(notNull(checkMap.get("exceed"))){
 			this.exceed=Integer.valueOf(checkMap.get("exceed").toString());
 		}
-		if(checkMap.get("inodeExceed")!=null){
+		if(notNull(checkMap.get("inodeExceed"))){
 			this.inodeExceed=Integer.valueOf(checkMap.get("inodeExceed").toString());
 		}
+	}
+
+	@Override
+	public List<FieldDeclare> getFields() {
+		List<FieldDeclare> fieldList=new ArrayList<FieldDeclare>();
+		fieldList.add(new FieldDeclare("exceed","磁盘阀值","规则：磁盘超过这个值"));
+		fieldList.add(new FieldDeclare("inodeExceed","inode阀值","规则：inode超过这个值"));
+		fieldList.add(new FieldDeclare("path","文件系统","规则：绝对路径"));
+		return fieldList;
 	}
 
 	@Override

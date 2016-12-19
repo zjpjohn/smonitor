@@ -49,7 +49,7 @@
                             console.log(data.obj);
                             var append_html="";
                             $.each(data.obj,function(i,item){
-                                append_html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input name='"+item.fieldNmae+"'  type='text' class='form-control'/></div>";
+                                append_html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input name='"+item.fieldName+"'  type='text' class='form-control'/></div>";
                             });
                             //console.log(append_html);
                             $(".append-div").append(append_html);

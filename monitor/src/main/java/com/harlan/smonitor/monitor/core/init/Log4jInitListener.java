@@ -16,6 +16,9 @@ public class Log4jInitListener extends Log4jConfigListener {
         String data_dir;
         String log_dir;
         try {
+            String web_inf_path=event.getServletContext().getRealPath("/WEB-INF");
+            System.out.println("Log4jInitListener:WEB-INF="+web_inf_path);
+            System.setProperty("SMONITOR_WEB_INF",web_inf_path);
             data_dir = ResourceBundle.getBundle("config").getString("data-dir");
             System.setProperty("SMONITOR_DATA_DIR",data_dir);
             System.out.println("Log4jInitListener:data-dir="+data_dir);
