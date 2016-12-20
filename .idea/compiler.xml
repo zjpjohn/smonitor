@@ -30,7 +30,7 @@
         <module name="passwd-scmobile" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.6">
+    <bytecodeTargetLevel>
       <module name="api" target="1.6" />
       <module name="common" target="1.6" />
       <module name="monitor" target="1.6" />

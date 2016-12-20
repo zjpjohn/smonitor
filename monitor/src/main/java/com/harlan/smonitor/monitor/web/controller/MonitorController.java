@@ -45,9 +45,9 @@ public class MonitorController {
         logger.debug("监控详情 id：{}",id);
         ModelAndView mv=new ModelAndView("/monitor/detail");
         MonitorItem monitor=MonitorDao.getMonitor(id);
-        mv.addObject("monitor",monitor.createMap());
+        mv.addObject("monitor",JSON.toJSONString(monitor));
 
-//        mv.addObject("groups", GroupDao.getGroupList(null,null));
+        mv.addObject("groups", GroupDao.getGroupList(null,null));
         return mv;
     }
     @RequestMapping(value="/add")
