@@ -1,6 +1,6 @@
 package com.harlan.smonitor.monitor.web.cache;
 
-import com.harlan.smonitor.api.impl.TypeValueDeclare;
+import com.harlan.smonitor.api.impl.TypeDeclare;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ import java.util.List;
 public class PageCache {
 
     static{
-        NOTICE_TYPES=new ArrayList<TypeValueDeclare>();
-        PASSWD_TYPES=new ArrayList<TypeValueDeclare>();
+        NOTICE_TYPES=new ArrayList<TypeDeclare>();
+        PASSWD_TYPES=new ArrayList<TypeDeclare>();
     }
 
-    public static List<TypeValueDeclare> NOTICE_TYPES;
-    public static List<TypeValueDeclare> PASSWD_TYPES;
+    public static List<TypeDeclare> NOTICE_TYPES;
+    public static List<TypeDeclare> PASSWD_TYPES;
 
 }

@@ -2,7 +2,7 @@ package com.harlan.smonitor.notice.email;
 
 import com.harlan.smonitor.api.Result;
 import com.harlan.smonitor.api.impl.FieldDeclare;
-import com.harlan.smonitor.api.impl.TypeValueDeclare;
+import com.harlan.smonitor.api.impl.TypeDeclare;
 import com.harlan.smonitor.api.notice.Admin;
 import com.harlan.smonitor.api.notice.INoticeService;
 import org.slf4j.Logger;
@@ -19,10 +19,6 @@ import java.util.Map;
 public class EmailNoticeService implements INoticeService {
     private final static Logger logger = LoggerFactory.getLogger(EmailNoticeService.class);
 
-    public Admin getAdminFrom(Map<String,Object> adminMap) {
-        return new EmailAdmin(adminMap);
-    }
-
     public Result sendMessage(Admin admin, String title, String content) {
         EmailAdmin emailAdmin= (EmailAdmin) admin;
         logger.info("发送邮件，邮箱为：{},标题为：{},内容为：{}",emailAdmin.getEmailAddress(),title,content);
@@ -36,11 +32,12 @@ public class EmailNoticeService implements INoticeService {
         return filedList;
     }
 
-    public TypeValueDeclare getTypeDeclare() {
-        TypeValueDeclare type=new TypeValueDeclare();
+    public TypeDeclare getTypeDeclare() {
+        TypeDeclare type=new TypeDeclare();
         type.setTypeValue("email");
         type.setName("发送邮件");
         type.setDesc("可以发送邮件");
+        type.setBeanClass(EmailAdmin.class);
         return type;
     }
 }

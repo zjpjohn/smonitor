@@ -2,7 +2,7 @@ package com.harlan.smonitor.notice.scsms;
 
 import com.harlan.smonitor.api.Result;
 import com.harlan.smonitor.api.impl.FieldDeclare;
-import com.harlan.smonitor.api.impl.TypeValueDeclare;
+import com.harlan.smonitor.api.impl.TypeDeclare;
 import com.harlan.smonitor.api.notice.Admin;
 import com.harlan.smonitor.api.notice.INoticeService;
 import com.harlan.smonitor.notice.scsms.webserviceclient.SendInfoUtil;
@@ -16,11 +16,6 @@ import java.util.Map;
 public class ScsmsNoticeService implements INoticeService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(ScsmsNoticeService.class);
-
-	@Override
-	public Admin getAdminFrom(Map<String, Object> adminMap) {
-		return new ScsmsAdmin(adminMap);
-	}
 
 	public Result sendMessage(Admin admin, String title, String content) {
 		ScsmsAdmin scAdmin=(ScsmsAdmin)admin;
@@ -48,11 +43,12 @@ public class ScsmsNoticeService implements INoticeService {
 		return filedList;
 	}
 
-	public TypeValueDeclare getTypeDeclare() {
-		TypeValueDeclare type=new TypeValueDeclare();
+	public TypeDeclare getTypeDeclare() {
+		TypeDeclare type=new TypeDeclare();
 		type.setTypeValue("scsms");
 		type.setName("四川移动发送短信");
 		type.setDesc("只能发送四川移动手机用户的手机号");
+		type.setBeanClass(ScsmsAdmin.class);
 		return type;
 	}
 }

@@ -63,8 +63,7 @@ public class DataFileOperator {
 
     @SuppressWarnings("unchecked")
     public static void readMonitorItem() throws Exception{
-        File itemfile=new File(ITEM_FILE);
-        if(!itemfile.exists()){
+        if(!new File(ITEM_FILE).exists()){
             saveMonitor(new LinkedList<MonitorItem>());
         }
         String data_json=FileUtil.read(ITEM_FILE);
@@ -90,9 +89,8 @@ public class DataFileOperator {
     }
     @SuppressWarnings("unchecked")
     public static void readAdmin() throws Exception {
-        File adminfile=new File(ADMIN_FILE);
         List<Admin> admin_list;
-        if(!adminfile.exists()){
+        if(!new File(ADMIN_FILE).exists()){
             admin_list=new LinkedList<Admin>();
             saveAdmin(admin_list);
         }
@@ -100,7 +98,9 @@ public class DataFileOperator {
         List<Map> jsonArrayData=JSON.parseArray(data_json,Map.class);
         for (Map map:jsonArrayData) {
             String  type=map.get("type").toString();
-            AdminDao.addAdmin(ModuleRegister.getNoticeServiceImpl(type).getAdminFrom(map));
+            Admin admin= (Admin) ModuleRegister.getNoticeServiceImpl(type).getTypeDeclare().getBeanClass().newInstance();
+            admin.init(map);
+            AdminDao.addAdmin(admin);
         }
         logger.info("monitor 管理员加载完毕，加载{}个管理员",AdminDao.count());
     }
@@ -117,9 +117,7 @@ public class DataFileOperator {
     }
 
     public static void readGorup() throws Exception {
-
-        File groupfile=new File(GROUP_FILE);
-        if(!groupfile.exists()){
+        if(!new File(GROUP_FILE).exists()){
             List<Group> default_group=new ArrayList<Group>(1);
             Group group=new Group();
             group.setId(0);

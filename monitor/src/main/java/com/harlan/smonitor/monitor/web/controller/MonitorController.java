@@ -108,7 +108,7 @@ public class MonitorController {
     @RequestMapping(value="/addcheck" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody
     String addCheck(@RequestParam Map<String,Object> param,HttpSession session) throws Exception {
-        logger.info("添加checkItem：{}",param);
+        logger.info("添加checkItem param：{}",param);
         String mtype=param.get("monitor.type").toString();
         param.remove("monitor.type");
         setCronExpression(param);
@@ -138,19 +138,19 @@ public class MonitorController {
     }
 
     private void setCronExpression(Map<String, Object> param) {
-        String ss=param.get("cronExpression.ss").toString();
+        String ss=param.get("cronExpression.ss").toString().trim();
         param.remove("cronExpression.ss");
-        String mm=param.get("cronExpression.mm").toString();
+        String mm=param.get("cronExpression.mm").toString().trim();
         param.remove("cronExpression.mm");
-        String hh=param.get("cronExpression.hh").toString();
+        String hh=param.get("cronExpression.hh").toString().trim();
         param.remove("cronExpression.hh");
-        String day=param.get("cronExpression.day").toString();
+        String day=param.get("cronExpression.day").toString().trim();
         param.remove("cronExpression.day");
-        String month=param.get("cronExpression.month").toString();
+        String month=param.get("cronExpression.month").toString().trim();
         param.remove("cronExpression.month");
-        String week=param.get("cronExpression.week").toString();
+        String week=param.get("cronExpression.week").toString().trim();
         param.remove("cronExpression.week");
-        String year=param.get("cronExpression.year")==null?null:param.get("cronExpression.year").toString();
+        String year=param.get("cronExpression.year")==null?null:param.get("cronExpression.year").toString().trim();
         param.remove("cronExpression.year");
         StringBuilder cron=new StringBuilder(ss);
         cron.append(" ").append(mm);
@@ -158,7 +158,9 @@ public class MonitorController {
         cron.append(" ").append(day);
         cron.append(" ").append(month);
         cron.append(" ").append(week);
-        cron.append(" ").append(year);
+        if(notNull(year)){
+            cron.append(" ").append(year);
+        }
         logger.debug("执行时间为：{}",cron.toString());
         param.put("cronExpression",cron.toString());
     }

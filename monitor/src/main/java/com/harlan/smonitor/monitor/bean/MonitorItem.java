@@ -49,6 +49,7 @@ public abstract class MonitorItem{
     protected List<CheckItem> checkList;
     /**
      * java bean → map
+     * 直接使用一个map方便之后字段拼装map
      * @return
      */
     public Map<String,Object> createMap(){

@@ -16,10 +16,15 @@ import org.quartz.TriggerKey;
  * 不同的检查项需要实现此父类
  */
 public abstract class CheckItem {
+    public CheckItem() {
+        state=0;
+    }
+
     @SuppressWarnings("unchecked")
     public void init(Map<String,Object> checkMap) {
         cronExpression=checkMap.get("cronExpression").toString();
         name=checkMap.get("name").toString();
+        state=Integer.valueOf(checkMap.get("state").toString());
         type=checkMap.get("type").toString();
         if(checkMap.get("alarmTimes")!=null){
             alarmTimes=Integer.valueOf(checkMap.get("alarmTimes").toString());
@@ -37,6 +42,7 @@ public abstract class CheckItem {
         Map<String,Object> check_map=new HashMap<String,Object>();
         check_map.put("name",name);
         check_map.put("type",type);
+        check_map.put("state",state);
         check_map.put("alarmTimes",alarmTimes.toString());
         check_map.put("cronExpression",cronExpression);
         check_map.put("adminList",adminList);
@@ -60,7 +66,11 @@ public abstract class CheckItem {
      * 检查项的类型 
      */
     protected String type;
-    
+
+    /**
+     * checkItem的状态：执行/暂停
+     */
+    protected Integer state;
     /**
      * 不符合预期状态达到多少次之后报警
      */

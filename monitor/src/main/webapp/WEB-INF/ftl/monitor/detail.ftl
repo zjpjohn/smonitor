@@ -46,18 +46,13 @@
 <script>
     var monitor=${monitor};
     function checkItemInputs(obj) {
-        var html='<div class="row"><div class="col-xs-6 col-md-6 margin-bottom-sm"><h4>检查项:</h4></div></div>';
+        var html='<div class="row"><div class="col-xs-6 col-md-6 margin-bottom-sm"><h4>检查项'+obj.id+':</h4></div></div>';
         html+='<div class="row form-inline">';
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>执行时间：</label><input type='text' class='form-control' value='"+obj.cronExpression+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>类型：</label><input type='text' class='form-control' value='"+obj.type+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>名称：</label><input type='text' class='form-control' value='"+obj.name+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>报警阀值：</label><input type='text' class='form-control' value='"+obj.alarmTimes+"' disabled/></div>";
-        $.each(obj.fields,function(i,item){
-            var val=obj[item.fieldName];
-            if (typeof(val) != "undefined") {
-                html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input value='"+val+"' type='text' class='form-control' disabled/></div>";
-            }
-        });
+        html+=getFieldsHtml(obj.fields,obj);
         html+='</div><hr>';
         return html;
     }

@@ -8,13 +8,6 @@ import java.util.Map;
 
 public interface INoticeService extends Implementor {
 	/**
-	 * 将admin配置文件中的每个admin配置转化成 admin对象
-	 * 如果需要增加字段，新建bean extends Admin对象即可
-	 * @param adminMap xml对象元素
-	 * @return Admin 返回admin对象
-	 */
-	Admin getAdminFrom(Map<String,Object> adminMap);
-	/**
 	 * 通知管理员
 	 * @param admin 待通知的管理员信息
 	 * @param title 标题，例如：邮件标题

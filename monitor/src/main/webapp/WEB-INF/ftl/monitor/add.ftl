@@ -46,12 +46,23 @@
     <form id="check_add_form">
         <input type="hidden" name="monitor.type" id="monitor_type_hidden">
         <input type="hidden" name="check.srtial" class="check_srtial_hidden">
+        <input type="hidden" name="admins" value="1">
+        <input type="hidden" name="admins" value="2">
         <div class="row">
             <div class="col-xs-6 col-md-6 margin-bottom-sm">
                 <h4>检查项:</h4>
             </div>
         </div>
         <div class="row form-inline">
+            <div class="col-xs-6 col-md-4 margin-bottom-sm">
+                <label>check类型：</label>
+                <select class="form-control" id="check_type" name="type">
+                    <option value="">-请选择-</option>
+                </select>
+            </div>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="param.name"  type="text" class="form-control"/></div>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>报警阀值：</label><input name="param.alarmTimes"  type="text" class="form-control middle-input"/></div>
+
             <div class="col-xs-12 col-md-6 margin-bottom-sm">
                 <label>执行时间：</label>
                 <input name="cronExpression.ss"  type="text" class="form-control small-input" placeholder="秒"/>
@@ -62,14 +73,6 @@
                 <input name="cronExpression.week"  type="text" class="form-control small-input" placeholder="周"/>
                 <input name="cronExpression.year"  type="text" class="form-control middle-input" placeholder="年(可选)"/>
             </div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm">
-                <label>check类型：</label>
-                <select class="form-control" id="check_type" name="type">
-                    <option value="">-请选择-</option>
-                </select>
-            </div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="name"  type="text" class="form-control"/></div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>报警阀值：</label><input name="alarmTimes"  type="text" class="form-control middle-input"/></div>
             <div id="check_append_div"></div>
         </div>
         <div class="row">

@@ -14,25 +14,22 @@ import java.util.*;
  */
 class CachedData {
     static{
-        ADMIN_MAP=new LinkedHashMap<Integer, Admin>();
+        ADMIN_MAP=new LinkedHashMap<String, Admin>();
         GROUP_MAP=new LinkedHashMap<Integer, Group>();
         MONITOR_LIST=new LinkedList<MonitorItem>();
         JOB_ALARM_COUNT=new HashMap<Integer, Integer>();
         MONITOR_INDEX=0;
         CHECK_INDEX=0;
-        ADMIN_INDEX=0;
         GROUP_INDEX=0;
     }
     //监控项的序列
     private static int MONITOR_INDEX;
     //检查项的序列
     private static int CHECK_INDEX;
-    //管理员的序列
-    private static int ADMIN_INDEX;
     //分组的序列
     private static int GROUP_INDEX;
     //通讯录，储存所有管理员
-    private  static Map<Integer, Admin> ADMIN_MAP;
+    private  static Map<String, Admin> ADMIN_MAP;
     //所有监控任务列表
     private static List<MonitorItem> MONITOR_LIST;
     //分类
@@ -47,14 +44,7 @@ class CachedData {
      * @param admin
      */
     public static void putAdmin(Admin admin) {
-        if(admin.getId()==null){
-            admin.setId(++ADMIN_INDEX);
-        }
         ADMIN_MAP.put(admin.getId(),admin);
-        //如果admin中存的id大于现在的index，需要调整index
-        if(admin.getId()>ADMIN_INDEX){
-            ADMIN_INDEX=admin.getId();
-        }
     }
     public static Integer adminSize() {
         return ADMIN_MAP.size();

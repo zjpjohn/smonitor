@@ -10,6 +10,8 @@
           <element id="archive" name="api-1.0-SNAPSHOT.jar">
             <element id="module-output" name="api" />
           </element>
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.21" />
+          <element id="library" level="project" name="Maven: com.alibaba:fastjson:1.2.6" />
           <element id="archive" name="common-1.0-SNAPSHOT.jar">
             <element id="module-output" name="common" />
           </element>
@@ -23,10 +25,10 @@
           <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.9" />
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:3.2.14.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-beans:3.2.14.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-core:3.2.14.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-context:3.2.14.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-aop:3.2.14.RELEASE" />
           <element id="library" level="project" name="Maven: aopalliance:aopalliance:1.0" />
-          <element id="library" level="project" name="Maven: org.springframework:spring-core:3.2.14.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:3.2.14.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:3.2.14.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-context-support:3.2.14.RELEASE" />
@@ -44,8 +46,6 @@
           <element id="archive" name="passwd-scmobile-1.0-SNAPSHOT.jar">
             <element id="module-output" name="passwd-scmobile" />
           </element>
-          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.21" />
-          <element id="library" level="project" name="Maven: com.alibaba:fastjson:1.2.6" />
         </element>
       </element>
       <element id="directory" name="META-INF">

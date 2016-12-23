@@ -51,7 +51,8 @@ public class AdminController {
     @RequestMapping(value="/toadd")
     public ModelAndView toadd(@RequestParam Map<String,Object> param) throws Exception {
         logger.info("参数：{}",param.toString());
-        Admin admin= ModuleRegister.getNoticeServiceImpl(param.get("type").toString()).getAdminFrom(param);
+        Admin admin= (Admin) ModuleRegister.getNoticeServiceImpl(param.get("type").toString()).getTypeDeclare().getBeanClass().newInstance();
+        admin.init(param);
         AdminDao.addAdmin(admin);
         AdminDao.saveAdmin();
         return new ModelAndView("/ok");

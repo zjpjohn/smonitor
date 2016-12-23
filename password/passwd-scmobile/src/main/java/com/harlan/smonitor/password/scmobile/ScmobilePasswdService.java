@@ -1,6 +1,6 @@
 package com.harlan.smonitor.password.scmobile;
 
-import com.harlan.smonitor.api.impl.TypeValueDeclare;
+import com.harlan.smonitor.api.impl.TypeDeclare;
 import com.harlan.smonitor.api.password.IPasswdService;
 
 /**
@@ -13,8 +13,8 @@ public class ScmobilePasswdService implements IPasswdService{
     }
 
     @Override
-    public TypeValueDeclare getTypeDeclare() {
-        TypeValueDeclare type =new TypeValueDeclare();
+    public TypeDeclare getTypeDeclare() {
+        TypeDeclare type =new TypeDeclare();
         type.setTypeValue("scmonile");
         type.setName("四川移动加密模块");
         type.setDesc("四川移动加密模块");
