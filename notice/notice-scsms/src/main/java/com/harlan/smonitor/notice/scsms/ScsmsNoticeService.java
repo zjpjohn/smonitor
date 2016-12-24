@@ -1,7 +1,6 @@
 package com.harlan.smonitor.notice.scsms;
 
 import com.harlan.smonitor.api.Result;
-import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.impl.TypeDeclare;
 import com.harlan.smonitor.api.notice.Admin;
 import com.harlan.smonitor.api.notice.INoticeService;
@@ -9,9 +8,6 @@ import com.harlan.smonitor.notice.scsms.webserviceclient.SendInfoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class ScsmsNoticeService implements INoticeService {
 	
@@ -34,13 +30,6 @@ public class ScsmsNoticeService implements INoticeService {
 			logger.error("(插入数据库发送短信失败)",e);
 			return new Result("发生异常");
 		}
-	}
-
-	@Override
-	public List<FieldDeclare> getAdminFields() {
-		List<FieldDeclare> filedList =new ArrayList<FieldDeclare>();
-		filedList.add(new FieldDeclare("phoneNo","手机号","仅限于四川移动手机号"));
-		return filedList;
 	}
 
 	public TypeDeclare getTypeDeclare() {

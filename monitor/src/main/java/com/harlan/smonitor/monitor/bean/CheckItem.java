@@ -29,7 +29,6 @@ public abstract class CheckItem {
         if(checkMap.get("alarmTimes")!=null){
             alarmTimes=Integer.valueOf(checkMap.get("alarmTimes").toString());
         }
-        adminList = (List<Integer>) checkMap.get("adminList");
         getAttrs(checkMap);
     }
 
@@ -45,7 +44,6 @@ public abstract class CheckItem {
         check_map.put("state",state);
         check_map.put("alarmTimes",alarmTimes.toString());
         check_map.put("cronExpression",cronExpression);
-        check_map.put("adminList",adminList);
         check_map= setAttrs(check_map);
         return check_map;
     }
@@ -75,11 +73,6 @@ public abstract class CheckItem {
      * 不符合预期状态达到多少次之后报警
      */
     protected Integer alarmTimes;
-    
-    /**
-     * 通知的管理员
-     */
-    protected List<Integer> adminList;
     
     public abstract Class<? extends Job> getJobServiceImpl();
 
@@ -114,14 +107,10 @@ public abstract class CheckItem {
 	public String getType() {
 		return type;
 	}
-	public List<Integer> getAdminList() {
-		return adminList;
-	}
 
     public void setJobKey(JobKey jobKey) {
         this.jobKey = jobKey;
     }
-
 
     /**
      * bean转化成xml元素时
@@ -131,5 +120,10 @@ public abstract class CheckItem {
 
     public abstract void getAttrs(Map<String,Object> attrMap);
 
+    /**
+     * 每个实现类，允许有自己特殊的字段，但该字段要在后台界面展示出来，并要填写值
+     * 所以要用这个方法，把自定义字段的字段名称，意义展示出来
+     * @return
+     */
     public abstract List<FieldDeclare> getFields();
 }

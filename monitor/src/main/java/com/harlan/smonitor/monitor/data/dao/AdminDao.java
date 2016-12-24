@@ -17,21 +17,16 @@ public class AdminDao {
     private final static Logger logger = LoggerFactory.getLogger(AdminDao.class);
 
 
-    public static Admin getAdmin(Integer adminId){
+    public static Admin getAdmin(String adminId){
         return  CachedData.getAdmin(adminId);
     }
 
-    public static List<Admin> getAdminList(Object start_str,Object limit_str){
-        int start,limit;
-        if(start_str==null){
+    public static List<Admin> getAdminList(Integer start,Integer limit){
+        if(start==null){
             start=0;
-        }else {
-            start=Integer.valueOf(start_str.toString());
         }
-        if(limit_str==null){
+        if(limit==null){
             limit=CachedData.adminSize();
-        }else{
-            limit=Integer.valueOf(limit_str.toString());
         }
         List<Admin> qryAdminList=new LinkedList<Admin>();
         List<Admin> allAdminList=CachedData.getAllAdmin();
@@ -43,6 +38,9 @@ public class AdminDao {
         return  qryAdminList;
     }
     public static Result addAdmin(Admin admin) throws Exception {
+        if(getAdmin(admin.getId())!=null){
+            throw new RuntimeException("repeat admin id ...");
+        }
         CachedData.putAdmin(admin);
         return  new Result();
     }

@@ -1,7 +1,10 @@
 package com.harlan.smonitor.notice.email;
 
+import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.notice.Admin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,5 +32,12 @@ public class EmailAdmin extends Admin {
         if(adminMap.get("emailAddress")!=null){
             this.emailAddress=adminMap.get("emailAddress").toString();
         }
+    }
+
+    @Override
+    public List<FieldDeclare> getFields() {
+        List<FieldDeclare> filedList =new ArrayList<FieldDeclare>();
+        filedList.add(new FieldDeclare("emailAddress","邮箱号","请填写邮箱号"));
+        return filedList;
     }
 }

@@ -6,6 +6,7 @@ import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.common.Constants;
+import com.harlan.smonitor.monitor.data.dao.AdminDao;
 import com.harlan.smonitor.monitor.data.dao.GroupDao;
 import com.harlan.smonitor.monitor.data.dao.MonitorDao;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class MonitorController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value="/toadd")
     public ModelAndView toadd(@RequestParam Map<String,Object> param,HttpSession session) throws Exception {
-        logger.info("参数：{}",param.toString());
+        logger.info("toadd 参数：{}",param.toString());
         String serialId=param.get("check.srtial").toString();
         List<CheckItem> checkItems= (List<CheckItem>) session.getAttribute(serialId);
         MonitorItem item=MonitorItem.monitorInstance(param.get("type").toString());
@@ -70,6 +71,23 @@ public class MonitorController {
         MonitorDao.saveMonitorItem();
         return new ModelAndView("/ok");
     }
+    @RequestMapping(value="/qryadmin" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody String qryAdmin(@RequestParam("start") String startStr){
+        Integer limit=6;
+        Integer start=0;
+        if(notNull(startStr)){
+            start=Integer.valueOf(startStr);
+        }
+        logger.info("qryadmin start：{}，limit:{}",start,limit);
+        Map<String,Object> resultMap=new HashMap<String,Object>();
+        resultMap.put("list", AdminDao.getAdminList(start,limit));
+        resultMap.put("count", AdminDao.getAdminList(null,null).size());
+        resultMap.put("limit",limit);
+        Result res=new Result();
+        res.setObj(resultMap);
+        return JSON.toJSONString(res);
+    }
+
     @RequestMapping(value="/fields" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody
     String noticeFields(@RequestParam String type) throws Exception {

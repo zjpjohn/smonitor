@@ -47,6 +47,36 @@ public abstract class MonitorItem{
      * 通知对象
      */
     protected List<CheckItem> checkList;
+
+    /**
+     * 联系方式
+     */
+    protected List<String> adminList;
+
+    /**
+     * map → java bean
+     * @param itemMap
+     */
+    @SuppressWarnings("unchecked")
+    public void init(Map<String, Object> itemMap) {
+        logger.debug("初始化公共参数...");
+        type =itemMap.get("type").toString();
+        name =itemMap.get("name").toString();
+        groupId=Integer.valueOf(itemMap.get("groupId").toString());
+        adminList = (List<String>) itemMap.get("adminList");
+        if(itemMap.get("checkList")!=null){
+            List<Map<String,Object>> checkListMap = (List<Map<String, Object>>) itemMap.get("checkList");
+            checkList=new ArrayList<CheckItem>();
+            for (Map<String,Object> map:checkListMap) {
+                String cType=map.get("type").toString();
+                CheckItem checkItem=checkInstance(cType);
+                checkItem.init(map);
+                checkList.add(checkItem);
+            }
+            logger.info("name={}的监控项，共配置了{}个检查项",name,checkList.size());
+        }
+        getProps(itemMap);
+    }
     /**
      * java bean → map
      * 直接使用一个map方便之后字段拼装map
@@ -57,6 +87,7 @@ public abstract class MonitorItem{
         item_map.put("name",name);
         item_map.put("type",type);
         item_map.put("groupId",groupId.toString());
+        item_map.put("adminList",adminList);
         List<Map<String,Object>> checkListMap=new ArrayList<Map<String,Object>>();
         for (CheckItem checkItem: checkList) {
             checkListMap.add(checkItem.createMap());
@@ -108,30 +139,6 @@ public abstract class MonitorItem{
         }
         return null;
     }
-    /**
-     * map → java bean
-     * @param itemMap
-     */
-    @SuppressWarnings("unchecked")
-    public void init(Map<String, Object> itemMap) {
-        logger.debug("初始化公共参数...");
-        type =itemMap.get("type").toString();
-        name =itemMap.get("name").toString();
-        groupId=Integer.valueOf(itemMap.get("groupId").toString());
-        if(itemMap.get("checkList")!=null){
-            List<Map<String,Object>> checkListMap = (List<Map<String, Object>>) itemMap.get("checkList");
-            checkList=new ArrayList<CheckItem>();
-            for (Map<String,Object> map:checkListMap) {
-                String cType=map.get("type").toString();
-                CheckItem checkItem=checkInstance(cType);
-                checkItem.init(map);
-                checkList.add(checkItem);
-            }
-            logger.info("name={}的监控项，共配置了{}个检查项",name,checkList.size());
-        }
-        getProps(itemMap);
-    }
-
 
     /**
      * 各个监控项实现类需要实现checkItem的工厂方法
@@ -172,5 +179,9 @@ public abstract class MonitorItem{
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public List<String> getAdminList() {
+        return adminList;
     }
 }

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
+ * CheckFileServiceImpl
  * Created by harlan on 2016/9/21.
  */
 public class CheckFileServiceImpl extends AbstractService {
@@ -82,7 +83,7 @@ public class CheckFileServiceImpl extends AbstractService {
 		if(minute <= checkFile.getModifyIn()){
 			logger.info("当前符合单次报警条件");
 			String msg = hostItem.getName()+checkFile.getName();
-			checkYesOrNotSendMsg(checkFile,TITLE, msg);
+			checkAndSendMsg(checkFile, hostItem.getAdminList(),TITLE, msg);
 		//不满足报警条件,重置次数
 		}else{
 			logger.info("不符合单次报警条件");
@@ -107,7 +108,7 @@ public class CheckFileServiceImpl extends AbstractService {
 		if(minute >= checkFile.getNotModifyIn()){
 			logger.info("当前符合单次报警条件");
 			String msg = hostItem.getName()+checkFile.getName();
-			checkYesOrNotSendMsg(checkFile,TITLE, msg);
+			checkAndSendMsg(checkFile, hostItem.getAdminList(),TITLE, msg);
 		}else{
 			logger.info("当前不符合单次报警条件");
 			restAlarmCount(checkFile.getId());
@@ -139,7 +140,7 @@ public class CheckFileServiceImpl extends AbstractService {
 		if(diff >= rowsIncrease){
 			logger.info("满足单次报警条件");
 			String msg = hostItem.getName()+checkFile.getName();
-			checkYesOrNotSendMsg(checkFile,TITLE, msg);
+			checkAndSendMsg(checkFile, hostItem.getAdminList(),TITLE, msg);
 		}else{
 			logger.info("重置报警次数");
 			restAlarmCount(checkFile.getId());

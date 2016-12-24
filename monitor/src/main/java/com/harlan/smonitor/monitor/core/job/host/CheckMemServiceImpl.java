@@ -49,7 +49,7 @@ public class CheckMemServiceImpl extends AbstractService {
 		if (memVal > exceed) {
 			logger.info("当前内存使用率{}超过设置的阀值{},满足单次报警条件", memVal, exceed);
 			String msg = hostItem.getName() + checkItem.getName()+"达到"+memVal+"超过设置的阀值"+exceed;
-			checkYesOrNotSendMsg(checkItem,TITLE,msg);
+			checkAndSendMsg(checkItem,item.getAdminList(),TITLE,msg);
 		} else {
 			logger.info("当前内存使用率{}没有超过设置的阀值{},重置报警次数", memVal, exceed);
 			restAlarmCount(checkItem.getId());

@@ -44,7 +44,7 @@ public class CheckDiskServiceImpl extends AbstractService {
 		if (diskVal > exceed) {
 			logger.info("当前磁盘使用率{}超过设置的阀值{},满足单次报警条件", diskVal, exceed);
 			String msg = hostItem.getName() + checkItem.getName()+"达到"+diskVal+"超过设置的阀值"+exceed;
-			checkYesOrNotSendMsg(checkItem,TITLE, msg);
+			checkAndSendMsg(checkItem,item.getAdminList(),TITLE, msg);
 		} else {
 			logger.info("当前磁盘使用率{}没有超过设置的阀值{},重置报警次数", diskVal, exceed);
 			restAlarmCount(checkItem.getId());

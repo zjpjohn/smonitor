@@ -14,6 +14,7 @@
     <#--添加form-->
     <form id="add_form" action="toadd" method="post">
         <div class="row form-inline margin-top-sm">
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>id：</label><input name="id"  type="text" class="form-control"/></div>
             <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>通知方式：</label>
                 <select class="form-control" name="type">
                     <option value="">-请选择-</option>
@@ -22,7 +23,6 @@
                     </#list>
                 </select>
             </div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>备注：</label><input name="mark"  type="text" class="form-control"/></div>
             <div class="append-div"></div>
         </div>
         <div class="row text-center margin-top-md">

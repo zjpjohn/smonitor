@@ -24,7 +24,7 @@ public class CheckSelfServiceImpl extends AbstractService {
     	
     	String msg = inspectionItem.getName()+checkSelf.getName();
 
-		checkYesOrNotSendMsg(checkItem,TITLE,msg);
+		checkAndSendMsg(checkItem,item.getAdminList(),TITLE,msg);
 		logger.info("消息发送完成");
     	
     	logger.info("---------------------------check end---------------------------");

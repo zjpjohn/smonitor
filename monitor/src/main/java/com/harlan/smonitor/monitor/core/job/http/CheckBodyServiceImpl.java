@@ -53,7 +53,7 @@ public class CheckBodyServiceImpl extends AbstractService {
 			if (response_string.contains(keyword)) {
 				flag = true;
 				logger.info("调用当前服务得到的返回结果中包含{}关键字,满足单次报警条件", keyword);
-				checkYesOrNotSendMsg(checkItem,TITLE,"调用"+httpItem.getUrl()+"服务得到的返回结果中包含"+keyword+"关键字");
+				checkAndSendMsg(checkItem,item.getAdminList(),TITLE,"调用"+httpItem.getUrl()+"服务得到的返回结果中包含"+keyword+"关键字");
 				//一次有一个关键字满足就达到单次报警条件，不继续执行了
 				break;
 			}
@@ -70,7 +70,7 @@ public class CheckBodyServiceImpl extends AbstractService {
 			if (!response_string.contains(keyword)) {
 				flag = true;
 				logger.info("调用当前服务得到的返回结果中不包含{}关键字,满足单次报警条件", keyword);
-				checkYesOrNotSendMsg(checkItem,TITLE,"调用"+httpItem.getUrl()+"服务得到的返回结果中不包含{}关键字");
+				checkAndSendMsg(checkItem,item.getAdminList(),TITLE,"调用"+httpItem.getUrl()+"服务得到的返回结果中不包含{}关键字");
 				//一次有一个关键字满足就达到单次报警条件，不继续执行了
 				break;
 			}

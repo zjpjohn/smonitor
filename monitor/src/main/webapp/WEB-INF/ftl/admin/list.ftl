@@ -14,6 +14,7 @@
 <#--查询form-->
     <form id="paging_query_form" action="list" method="post">
         <div class="row form-inline">
+            <div class="col-xs-4 margin-top-sm"><label>id：</label><input name="id" value="${id}" type="text" class="form-control"></div>
             <div class="col-xs-6 col-md-4 margin-top-sm"><label>通知方式：</label>
                 <select class="form-control" name="type">
                     <option value="">-请选择-</option>
@@ -22,8 +23,6 @@
                 </#list>
                 </select>
             </div>
-            <div class="col-xs-4 margin-top-sm"><label>备注：</label><input name="mark" value="${admin.mark}" type="text" class="form-control"></div>
-
         </div>
         <div class="row text-center margin-top-md">
             <button id="qry_submit_btn"  class="btn btn-success">查询</button>
@@ -38,8 +37,7 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>类型</th>
-                <th>备注</th>
+                <th>通知方式</th>
             </tr>
             </thead>
             <tbody id="list_tbody">
@@ -47,7 +45,6 @@
             <tr>
                 <th scope="row">${admin.id}</th>
                 <td>${admin.type}</td>
-                <td>${admin.mark}</td>
             </tr>
             </#list>
             </tbody>

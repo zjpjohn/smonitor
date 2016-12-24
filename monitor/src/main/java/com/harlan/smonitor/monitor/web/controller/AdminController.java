@@ -31,10 +31,14 @@ public class AdminController {
 
     @RequestMapping(value="/list")
     public ModelAndView list(@RequestParam Map<String,Object> param) throws Exception {
-        String limit="4";
+        Integer limit=4;
+        Integer start=0;
+        if(param.get("paging_start")!=null){
+            start=Integer.valueOf(param.get("paging_start").toString());
+        }
         logger.debug("param：{}",param);
         ModelAndView mv = new ModelAndView("/admin/list");
-        mv.addObject("list", AdminDao.getAdminList(param.get("paging_start"),limit));
+        mv.addObject("list", AdminDao.getAdminList(start,limit));
         mv.addObject("paging_count", AdminDao.getAdminList(null,null).size());
         mv.addObject("paging_limit",limit);
         mv.addObject("notice_types", PageCache.NOTICE_TYPES);
@@ -61,7 +65,8 @@ public class AdminController {
     @RequestMapping(value="/fields" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody String noticeFields(@RequestParam String type) throws Exception {
         logger.info("type：{}",type);
-        List<FieldDeclare> fields= ModuleRegister.getNoticeServiceImpl(type).getAdminFields();
+        Admin admin= (Admin) ModuleRegister.getNoticeServiceImpl(type).getTypeDeclare().getBeanClass().newInstance();
+        List<FieldDeclare> fields=admin.getFields();
         Result res=new Result();
         res.setObj(fields);
         return JSON.toJSONString(res);

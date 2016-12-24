@@ -1,6 +1,10 @@
 package com.harlan.smonitor.notice.scsms;
 
+import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.notice.Admin;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +25,13 @@ public class ScsmsAdmin extends Admin {
         if(adminMap.get("phoneNo")!=null){
             this.phoneNo=adminMap.get("phoneNo").toString();
         }
+    }
+
+    @Override
+    public List<FieldDeclare> getFields() {
+        List<FieldDeclare> filedList =new ArrayList<FieldDeclare>();
+        filedList.add(new FieldDeclare("phoneNo","手机号","仅限于四川移动手机号"));
+        return filedList;
     }
 
     public String getPhoneNo() {

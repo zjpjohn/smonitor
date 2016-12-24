@@ -1,10 +1,7 @@
 package com.harlan.smonitor.api.notice;
 
-import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.impl.Implementor;
 import com.harlan.smonitor.api.Result;
-import java.util.List;
-import java.util.Map;
 
 public interface INoticeService extends Implementor {
 	/**
@@ -14,12 +11,5 @@ public interface INoticeService extends Implementor {
 	 * @param content 通知内容
 	 */
 	Result sendMessage(Admin admin, String title, String content);
-
-	/**
-	 * 将所有个性化字段拼成list，用于页面展示及填写
-	 * ps:要定义展示的字段名称和注释
-	 * @return
-	 */
-	List<FieldDeclare> getAdminFields();
 
 }

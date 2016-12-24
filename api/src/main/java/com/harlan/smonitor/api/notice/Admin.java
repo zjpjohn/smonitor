@@ -1,6 +1,9 @@
 package com.harlan.smonitor.api.notice;
 
+import com.harlan.smonitor.api.impl.FieldDeclare;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class Admin {
@@ -10,7 +13,11 @@ public abstract class Admin {
 	 */
 	public void init(Map<String,Object> adminMap) {
 		this.id = adminMap.get("id").toString();
+		if(id.contains("|")){
+			throw new RuntimeException("联系人id不能含有‘|’");
+		}
 		this.type = adminMap.get("type").toString();
+		getAttrs(adminMap);
 	}
 
 	/**
@@ -63,4 +70,11 @@ public abstract class Admin {
 	 */
 	protected abstract void getAttrs(Map<String,Object> adminMap);
 
+
+	/**
+	 * 每个实现类，允许有自己特殊的字段，但该字段要在后台界面展示出来，并要填写值
+	 * 所以要用这个方法，把自定义字段的字段名称，意义展示出来
+	 * @return
+	 */
+	public abstract List<FieldDeclare> getFields();
 }

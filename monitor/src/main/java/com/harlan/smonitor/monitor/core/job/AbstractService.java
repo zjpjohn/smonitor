@@ -35,7 +35,7 @@ public abstract class AbstractService implements Job {
 			//出现异常时需要通知所有管理员
 			String title=checkItem.getName()+"在执行时抛出异常";
 			String content=title+",异常是："+e.toString();
-			sendNotice(checkItem.getAdminList(),title,content);
+			sendNotice(item.getAdminList(),title,content);
         }
     }
 
@@ -59,19 +59,20 @@ public abstract class AbstractService implements Job {
 	/**
 	 * 报警计数器+1，如果超过报警阀值，发送通知
 	 * @param checkItem 检查项
+	 * @param adminList 联系人列表
 	 * @param title 标题
 	 * @param content 内容
 	 */
-	protected void checkYesOrNotSendMsg(CheckItem checkItem,String title,String content) {
+	protected void checkAndSendMsg(CheckItem checkItem,List<String> adminList,String title,String content) {
 		int count= JobDao.jobAlamIncrease(checkItem.getId());
 		if(count>=checkItem.getAlarmTimes()){
 			logger.info("ID为 {} 的检查项，满足条件，发送通知，通知题目为 ：{},通知内容：{}",checkItem.getId(),title,content);
-			sendNotice(checkItem.getAdminList(),title,content);
+			sendNotice(adminList,title,content);
 		}
 	}
 
-	private void sendNotice(List<Integer> adminList,String title,String content){
-		for (Integer admin:adminList) {
+	private void sendNotice(List<String> adminList,String title,String content){
+		for (String admin:adminList) {
 			Admin admin_bean= AdminDao.getAdmin(admin);
 			INoticeService service= ModuleRegister.getNoticeServiceImpl(admin_bean.getType());
 			service.sendMessage(admin_bean,title,content);

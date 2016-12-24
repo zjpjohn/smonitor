@@ -2,7 +2,11 @@
 <html>
 <head>
     <title>添加监控</title>
+
 <#include "/include/head.ftl">
+    <link href="../plugin/bootstrap/iCheck/1.0.1/skins/square/green.css" rel="stylesheet">
+    <style>
+    </style>
 </head>
 <body>
 <div class="container">
@@ -12,7 +16,7 @@
     </div>
     <hr>
 
-    <#--添加form-->
+    <#--添加 monitor form-->
     <form id="add_form" action="toadd" method="post">
         <input type="hidden" name="check.srtial" class="check_srtial_hidden">
         <div class="row">
@@ -36,13 +40,27 @@
                 </#list>
                 </select>
             </div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="name"  type="text" class="form-control"/></div>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm">
+                <label>名称：</label>
+                <input name="name"  type="text" class="form-control"/>
+            </div>
             <div id="monitor_append_div"></div>
         </div>
+        <div class="row form-inline">
+            <div id="admin-btns-div" class="col-xs-9 margin-bottom-sm">
+                <label>联系人：</label>
+                <input type="hidden" name="AAAAAAAAAAAAA">
+            </div>
+            <div class="col-xs-3 margin-bottom-sm">
+                <button id="add_admin_btn" type="button" class="btn btn-default">编辑联系人</button>
+            </div>
+        </div>
     </form>
+
     <hr>
     <div id="check_list_div">
     </div>
+    <!-- 添加 检查项 form -->
     <form id="check_add_form">
         <input type="hidden" name="monitor.type" id="monitor_type_hidden">
         <input type="hidden" name="check.srtial" class="check_srtial_hidden">
@@ -62,8 +80,7 @@
             </div>
             <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="param.name"  type="text" class="form-control"/></div>
             <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>报警阀值：</label><input name="param.alarmTimes"  type="text" class="form-control middle-input"/></div>
-
-            <div class="col-xs-12 col-md-6 margin-bottom-sm">
+            <#--<div class="col-xs-12 col-md-6 margin-bottom-sm">
                 <label>执行时间：</label>
                 <input name="cronExpression.ss"  type="text" class="form-control small-input" placeholder="秒"/>
                 <input name="cronExpression.mm"  type="text" class="form-control small-input" placeholder="分"/>
@@ -72,9 +89,13 @@
                 <input name="cronExpression.month"  type="text" class="form-control small-input" placeholder="月"/>
                 <input name="cronExpression.week"  type="text" class="form-control small-input" placeholder="周"/>
                 <input name="cronExpression.year"  type="text" class="form-control middle-input" placeholder="年(可选)"/>
-            </div>
+            </div>-->
             <div id="check_append_div"></div>
         </div>
+        <div class="row form-inline">
+            <button id="add_time_btn" type="button" class="btn btn-default">添加时间</button>
+        </div>
+
         <div class="row">
             <div class="col-xs-12 col-md-12 margin-bottom-sm text-center">
                 <button id="add_check_btn" type="button" class="btn btn-default">添加项</button>
@@ -87,6 +108,9 @@
         <button type="button" class="btn btn-default">重置</button>
     </div>
 </div>
+<#--选择管理员，使用这个模块-->
+<#include "/include/modal/admin.ftl">
+<script src="../plugin/bootstrap/iCheck/1.0.1/icheck.min.js"></script>
 <script>
     var checkFields;
     function checkItemInputs(obj) {
@@ -225,6 +249,9 @@
                 "error":function(xhr,err1,err2){
                 }
             });
+        });
+        $("#add_admin_btn").click(function () {
+            adminModalInit("#admin-btns-div");
         });
     });
 

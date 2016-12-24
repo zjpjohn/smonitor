@@ -49,14 +49,14 @@ class CachedData {
     public static Integer adminSize() {
         return ADMIN_MAP.size();
     }
-    public static Admin getAdmin(Integer id) {
+    public static Admin getAdmin(String id) {
         return ADMIN_MAP.get(id);
     }
     public static List<Admin> getAllAdmin() {
         List<Admin> admin_list=new ArrayList<Admin>(ADMIN_MAP.size());
         Iterator it=ADMIN_MAP.keySet().iterator();
         while(it.hasNext()){
-            Integer id= (Integer) it.next();
+            String id= (String) it.next();
             Admin admin=ADMIN_MAP.get(id);
             admin_list.add(admin);
         }
