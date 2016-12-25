@@ -7,6 +7,11 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -31,6 +36,7 @@ public class JobDao {
      * @return
      */
     public static int jobAlamIncrease(Integer checkItemId){
+        //TODO 完成后需要测试多个 trigger导致的并发问题
         Integer count=CachedData.JOB_ALARM_COUNT.get(checkItemId);
         if(count==null){
             count=1;
@@ -51,18 +57,23 @@ public class JobDao {
                 JobDetail job = newJob(checkItem.getJobServiceImpl())
 //						.withIdentity("job_"+name)
                         .build();
-
                 job.getJobDataMap().put("item",monitorItem);
                 job.getJobDataMap().put("check",checkItem);
-                Trigger trigger = newTrigger()
+                Set<Trigger> triggerSet=new HashSet<Trigger>(checkItem.getCronList().size());
+                List<TriggerKey> triggerKeyList=new ArrayList<TriggerKey>(checkItem.getCronList().size());
+                for (String cronStr:checkItem.getCronList()) {
+                    Trigger trigger = newTrigger()
 //						.withIdentity("trigger_"+name)
-                        .startNow()
-                        .withSchedule(cronSchedule(checkItem.getCronExpression()))
-                        .build();
+                            .startNow()
+                            .withSchedule(cronSchedule(cronStr))
+                            .build();
+                    triggerSet.add(trigger);
+                }
+
                 checkItem.setJobKey(job.getKey());
-                checkItem.setTriggerKey(trigger.getKey());
-                scheduler.scheduleJob(job,trigger);
-                logger.debug("检查项id:{},key：{}",checkItem.getId(),checkItem.getTriggerKey());
+                checkItem.setTriggerKeys(triggerKeyList);
+                scheduler.scheduleJob(job,triggerSet,true);
+//                logger.debug("检查项id:{},key：{}",checkItem.getId(),checkItem.getTriggerKey());
             }
         }
         logger.info("共添加任务个数:{}",0);

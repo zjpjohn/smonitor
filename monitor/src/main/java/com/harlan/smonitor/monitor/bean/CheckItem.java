@@ -22,7 +22,7 @@ public abstract class CheckItem {
 
     @SuppressWarnings("unchecked")
     public void init(Map<String,Object> checkMap) {
-        cronExpression=checkMap.get("cronExpression").toString();
+        cronList= (List<String>) checkMap.get("cronList");
         name=checkMap.get("name").toString();
         state=Integer.valueOf(checkMap.get("state").toString());
         type=checkMap.get("type").toString();
@@ -43,17 +43,17 @@ public abstract class CheckItem {
         check_map.put("type",type);
         check_map.put("state",state);
         check_map.put("alarmTimes",alarmTimes.toString());
-        check_map.put("cronExpression",cronExpression);
+        check_map.put("cronList",cronList);
         check_map= setAttrs(check_map);
         return check_map;
     }
     protected Integer id;
-    protected TriggerKey triggerKey;
+    protected List<TriggerKey> triggerKeys;
     protected JobKey jobKey;
     /**
      * 检查间隔，单位：分
      */
-    protected String cronExpression;
+    protected List<String> cronList;
     
     /**
      * 检查项的描述 
@@ -81,21 +81,26 @@ public abstract class CheckItem {
         return id;
     }
 
-    public TriggerKey getTriggerKey() {
-        return triggerKey;
+    public List<String> getCronList() {
+        return cronList;
+    }
+
+    public void setCronList(List<String> cronList) {
+        this.cronList = cronList;
+    }
+
+    public List<TriggerKey> getTriggerKeys() {
+        return triggerKeys;
+    }
+
+    public void setTriggerKeys(List<TriggerKey> triggerKeys) {
+        this.triggerKeys = triggerKeys;
     }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public void setTriggerKey(TriggerKey triggerKey) {
-        this.triggerKey = triggerKey;
-    }
-
-    public String getCronExpression() {
-        return cronExpression;
-    }
 	public String getName() {
 		return name;
 	}
