@@ -73,7 +73,7 @@ public class JobDao {
                 checkItem.setJobKey(job.getKey());
                 checkItem.setTriggerKeys(triggerKeyList);
                 scheduler.scheduleJob(job,triggerSet,true);
-//                logger.debug("检查项id:{},key：{}",checkItem.getId(),checkItem.getTriggerKey());
+//              logger.debug("检查项id:{},key：{}",checkItem.getId(),checkItem.getTriggerKey());
             }
         }
         logger.info("共添加任务个数:{}",0);

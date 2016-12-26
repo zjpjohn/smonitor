@@ -6,6 +6,13 @@
 <#include "/include/head.ftl">
     <link href="../plugin/bootstrap/iCheck/1.0.1/skins/square/green.css" rel="stylesheet">
     <style>
+        .runtime-row-div span{
+            margin-left: 2px;
+            margin-right: 8px;
+        }
+        .del-runtime-row-btn span{
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -64,8 +71,7 @@
     <form id="check_add_form">
         <input type="hidden" name="monitor.type" id="monitor_type_hidden">
         <input type="hidden" name="check.srtial" class="check_srtial_hidden">
-        <input type="hidden" name="admins" value="1">
-        <input type="hidden" name="admins" value="2">
+        <input type="hidden" name="runtimes" id="check_runtime">
         <div class="row">
             <div class="col-xs-6 col-md-6 margin-bottom-sm">
                 <h4>检查项:</h4>
@@ -78,27 +84,20 @@
                     <option value="">-请选择-</option>
                 </select>
             </div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="param.name"  type="text" class="form-control"/></div>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="param.name" type="text" class="form-control"/></div>
             <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>报警阀值：</label><input name="param.alarmTimes"  type="text" class="form-control middle-input"/></div>
-            <#--<div class="col-xs-12 col-md-6 margin-bottom-sm">
-                <label>执行时间：</label>
-                <input name="cronExpression.ss"  type="text" class="form-control small-input" placeholder="秒"/>
-                <input name="cronExpression.mm"  type="text" class="form-control small-input" placeholder="分"/>
-                <input name="cronExpression.hh"  type="text" class="form-control small-input" placeholder="时"/>
-                <input name="cronExpression.day"  type="text" class="form-control small-input" placeholder="日"/>
-                <input name="cronExpression.month"  type="text" class="form-control small-input" placeholder="月"/>
-                <input name="cronExpression.week"  type="text" class="form-control small-input" placeholder="周"/>
-                <input name="cronExpression.year"  type="text" class="form-control middle-input" placeholder="年(可选)"/>
-            </div>-->
             <div id="check_append_div"></div>
         </div>
-        <div class="row form-inline">
-            <button id="add_time_btn" type="button" class="btn btn-default">添加时间</button>
+        <div id="runtime_div">
         </div>
-
+        <div class="row form-inline">
+            <div class="col-xs-3 margin-bottom-sm">
+                <button id="add_runtime_div_btn" type="button" class="btn btn-default">添加执行时间</button>
+            </div>
+        </div>
         <div class="row">
             <div class="col-xs-12 col-md-12 margin-bottom-sm text-center">
-                <button id="add_check_btn" type="button" class="btn btn-default">添加项</button>
+                <button id="add_check_btn" type="button" class="btn btn-warning">添加项</button>
             </div>
         </div>
     </form>
@@ -113,7 +112,7 @@
 <script src="../plugin/bootstrap/iCheck/1.0.1/icheck.min.js"></script>
 <script>
     var checkFields;
-    function checkItemInputs(obj) {
+    function showAddedCheck(obj) {
         var html='<div class="row"><div class="col-xs-6 col-md-6 margin-bottom-sm"><h4>检查项:</h4></div></div>';
         html+='<div class="row form-inline">';
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>执行时间：</label><input type='text' class='form-control' value='"+obj.cronExpression+"' disabled/></div>";
@@ -135,8 +134,80 @@
         $("#check_append_div").html("");
         $(".check_srtial_hidden").val("");
         $("#monitor_type_hidden").val("");
+        $(".del-runtime-row-btn").trigger("click");//触发删除按钮click事件，删除新增的执行时间行
+    }
+    function addRuntimeRow(couldDelete) {
+        var html='<div class="row form-inline runtime-row-div">';
+        html+='<div class="col-xs-2 margin-bottom-sm"><label>执行时间：</label></div>';
+        html+='<div class="col-xs-3 margin-bottom-sm">';
+            html+='<input type="text" class="form-control small-input" placeholder="秒"/><span>秒</span>';
+            html+='<input type="text" class="form-control small-input" placeholder="分"/><span>分</span>';
+            html+='<input type="text" class="form-control small-input" placeholder="时"/><span>时</span>';
+        html+='</div>';
+        html+='<div class="col-xs-3 margin-bottom-sm">';
+        html+='<input type="text" class="form-control small-input" placeholder="日"/><span>日</span>';
+        html+='<input type="text" class="form-control small-input" placeholder="月"/><span>月</span>';
+        html+='<input type="text" class="form-control small-input" placeholder="周"/><span>周</span>';
+        html+='</div>';
+        html+='<div class="col-xs-4 margin-bottom-sm">';
+            html+='<input type="text" class="form-control middle-input" placeholder="年(可选)"/><span>年</span>';
+            if(couldDelete){
+                html+='<button type="button" class="btn btn-default del-runtime-row-btn"><span class="glyphicon glyphicon-remove"></span></button>';
+            }
+        html+='</div>';
+        html+='</div>';
+        $("#runtime_div").append(html);
+        if(couldDelete){
+            $(".del-runtime-row-btn").click(function () {
+                $(this).parents(".runtime-row-div").remove();
+            });
+        }
+    }
+    function getValNotNull(obj){
+        if(obj.val()==""){
+            obj.parent("div").addClass("has-error");
+            alert("此处内容为必填");
+            return "";
+        }else{
+            obj.parent("div").removeClass("has-error");
+            return obj.val();
+        }
+    }
+    function saveCheckRuntime() {
+        var check=true;
+        var runtimeInputVal="";
+        $.each($(".runtime-row-div"),function(i,item){
+            for(var i=0;i<6;i++){
+                var value=getValNotNull($(item).find("input").eq(i));
+                console.log(i);
+                if(check==true && value!=""){
+                    runtimeInputVal+=value;
+                    runtimeInputVal+=" ";
+                }else{
+                    check=false;
+                    return ;
+                }
+            }
+            var yy=$(item).find("input").eq(6).val();
+            if(yy!=""){
+                runtimeInputVal+=yy;
+                runtimeInputVal+=" ";
+            }
+            runtimeInputVal=runtimeInputVal.substr(0,runtimeInputVal.length-1);
+            console.log("runtimeInputVal:"+runtimeInputVal);
+            runtimeInputVal+="@";
+        });
+        runtimeInputVal=runtimeInputVal.substr(0,runtimeInputVal.length-1);
+        if(runtimeInputVal.length>0){
+            $("#check_runtime").val(runtimeInputVal);
+        }else{
+            check=false;
+        }
+        return check;
+
     }
     $(function(){
+        addRuntimeRow(false);
         $("#monitor_type").change(function () {
             var type_val=$(this).val();
             resetAll();
@@ -231,6 +302,12 @@
         });
         //添加监控项
         $("#add_check_btn").click(function () {
+            //先保存执行时间
+           var checked=saveCheckRuntime();
+            if(checked==false){
+                return;
+            }
+            //提交session预保存
             $.ajax({
                 "url":"addcheck",
                 "type":"post",
@@ -240,7 +317,7 @@
                     if(data.success==true){
                         console.log(data.obj);
                         $(".check_srtial_hidden").val(data.obj.serial);
-                        var  append_html=checkItemInputs(data.obj);
+                        var  append_html=showAddedCheck(data.obj);
                         $("#check_list_div").append(append_html);
                     }else{
                         console.log("exception..."+data.msg);
@@ -249,6 +326,10 @@
                 "error":function(xhr,err1,err2){
                 }
             });
+        });
+        //添加执行时间
+        $("#add_runtime_div_btn").click(function () {
+            addRuntimeRow(true);
         });
         $("#add_admin_btn").click(function () {
             adminModalInit("#admin-btns-div");
