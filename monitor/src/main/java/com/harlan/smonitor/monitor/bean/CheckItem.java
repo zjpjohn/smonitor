@@ -24,7 +24,9 @@ public abstract class CheckItem {
     public void init(Map<String,Object> checkMap) {
         cronList= (List<String>) checkMap.get("cronList");
         name=checkMap.get("name").toString();
-        state=Integer.valueOf(checkMap.get("state").toString());
+        if(checkMap.get("state")!=null){
+            state=Integer.valueOf(checkMap.get("state").toString());
+        }
         type=checkMap.get("type").toString();
         if(checkMap.get("alarmTimes")!=null){
             alarmTimes=Integer.valueOf(checkMap.get("alarmTimes").toString());

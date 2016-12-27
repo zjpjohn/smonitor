@@ -63,7 +63,18 @@ public class MonitorController {
     public ModelAndView toadd(@RequestParam Map<String,Object> param,HttpSession session) throws Exception {
         logger.info("toadd 参数：{}",param.toString());
         String serialId=param.get("check.srtial").toString();
+        param.remove("check.srtial");
         List<CheckItem> checkItems= (List<CheckItem>) session.getAttribute(serialId);
+        if(checkItems==null){
+            throw new RuntimeException("没有监控项");
+        }
+        String adminString=param.get("admin_list").toString();
+        String[] adminArray=adminString.split("|");
+        List<String> adminList=new ArrayList<String>(adminArray.length);
+        for (String admin:adminArray) {
+            adminList.add(admin);
+        }
+        param.put("adminList",adminList);
         MonitorItem item=MonitorItem.monitorInstance(param.get("type").toString());
         item.init(param);
         item.setCheckList(checkItems);
@@ -129,7 +140,13 @@ public class MonitorController {
         logger.info("添加checkItem param：{}",param);
         String mtype=param.get("monitor.type").toString();
         param.remove("monitor.type");
-        setCronExpression(param);
+        String runtimeStr=param.get("runtimes").toString();
+        String[] cronArray=runtimeStr.split("@");
+        List<String> cronList=new ArrayList<String>(cronArray.length);
+        for (String corn:cronArray) {
+            cronList.add(corn);
+        }
+        param.put("cronList",cronList);
         MonitorItem item=MonitorItem.monitorInstance(mtype);
         CheckItem check=item.checkInstance(param.get("type").toString());
         check.init(param);
@@ -153,33 +170,5 @@ public class MonitorController {
         checkMap.put("serial",serialId);
         res.setObj(checkMap);
         return JSON.toJSONString(res);
-    }
-
-    private void setCronExpression(Map<String, Object> param) {
-        String ss=param.get("cronExpression.ss").toString().trim();
-        param.remove("cronExpression.ss");
-        String mm=param.get("cronExpression.mm").toString().trim();
-        param.remove("cronExpression.mm");
-        String hh=param.get("cronExpression.hh").toString().trim();
-        param.remove("cronExpression.hh");
-        String day=param.get("cronExpression.day").toString().trim();
-        param.remove("cronExpression.day");
-        String month=param.get("cronExpression.month").toString().trim();
-        param.remove("cronExpression.month");
-        String week=param.get("cronExpression.week").toString().trim();
-        param.remove("cronExpression.week");
-        String year=param.get("cronExpression.year")==null?null:param.get("cronExpression.year").toString().trim();
-        param.remove("cronExpression.year");
-        StringBuilder cron=new StringBuilder(ss);
-        cron.append(" ").append(mm);
-        cron.append(" ").append(hh);
-        cron.append(" ").append(day);
-        cron.append(" ").append(month);
-        cron.append(" ").append(week);
-        if(notNull(year)){
-            cron.append(" ").append(year);
-        }
-        logger.debug("执行时间为：{}",cron.toString());
-        param.put("cronExpression",cron.toString());
     }
 }

@@ -56,7 +56,7 @@
         <div class="row form-inline">
             <div id="admin-btns-div" class="col-xs-9 margin-bottom-sm">
                 <label>联系人：</label>
-                <input type="hidden" name="AAAAAAAAAAAAA">
+                <input type="hidden" name="admin_list">
             </div>
             <div class="col-xs-3 margin-bottom-sm">
                 <button id="add_admin_btn" type="button" class="btn btn-default">编辑联系人</button>
@@ -84,8 +84,8 @@
                     <option value="">-请选择-</option>
                 </select>
             </div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="param.name" type="text" class="form-control"/></div>
-            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>报警阀值：</label><input name="param.alarmTimes"  type="text" class="form-control middle-input"/></div>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="name" type="text" class="form-control"/></div>
+            <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>报警阀值：</label><input name="alarmTimes"  type="text" class="form-control middle-input"/></div>
             <div id="check_append_div"></div>
         </div>
         <div id="runtime_div">
@@ -115,7 +115,6 @@
     function showAddedCheck(obj) {
         var html='<div class="row"><div class="col-xs-6 col-md-6 margin-bottom-sm"><h4>检查项:</h4></div></div>';
         html+='<div class="row form-inline">';
-        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>执行时间：</label><input type='text' class='form-control' value='"+obj.cronExpression+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>类型：</label><input type='text' class='form-control' value='"+obj.type+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>名称：</label><input type='text' class='form-control' value='"+obj.name+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>报警阀值：</label><input type='text' class='form-control' value='"+obj.alarmTimes+"' disabled/></div>";
@@ -125,7 +124,29 @@
                 html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input value='"+val+"' type='text' class='form-control' disabled/></div>";
             }
         });
-        html+='</div><hr>';
+        html+='</div>';
+        $.each(obj.cronList,function(i,item){
+            html+='<div class="row form-inline">';
+            html+='<div class="col-xs-2 margin-bottom-sm"><label>执行时间：</label></div>';
+            html+='<div class="col-xs-3 margin-bottom-sm">';
+            var runtimeArray=item.split(" ");
+            html+='<input disabled value="'+runtimeArray[0]+'" type="text" class="form-control small-input" placeholder="秒"/><span>秒&nbsp;</span>';
+            html+='<input disabled value="'+runtimeArray[1]+'" type="text" class="form-control small-input" placeholder="分"/><span>分&nbsp;</span>';
+            html+='<input disabled value="'+runtimeArray[2]+'" type="text" class="form-control small-input" placeholder="时"/><span>时&nbsp;</span>';
+            html+='</div>';
+            html+='<div class="col-xs-3 margin-bottom-sm">';
+            html+='<input disabled value="'+runtimeArray[3]+'" type="text" class="form-control small-input" placeholder="秒"/><span>日&nbsp;</span>';
+            html+='<input disabled value="'+runtimeArray[4]+'" type="text" class="form-control small-input" placeholder="分"/><span>月&nbsp;</span>';
+            html+='<input disabled value="'+runtimeArray[5]+'" type="text" class="form-control small-input" placeholder="时"/><span>周&nbsp;</span>';
+            html+='</div>';
+            if(runtimeArray.length>6){
+                html+='<div class="col-xs-4 margin-bottom-sm">';
+                html+='<input disabled value="'+runtimeArray[6]+'" type="text" class="form-control middle-input" placeholder="年(可选)"/><span>年</span>';
+                html+='</div>';
+            }
+            html+='</div>';
+        });
+        html+='<hr>';
         return html;
     }
     function resetAll() {
@@ -207,7 +228,9 @@
 
     }
     $(function(){
+        //初始化添加一行（没有删除按钮）
         addRuntimeRow(false);
+        //选择monitor类型时
         $("#monitor_type").change(function () {
             var type_val=$(this).val();
             resetAll();
@@ -287,9 +310,12 @@
                 });
             }
         });
+        //添加monitor按钮
         $(".btn-div .btn-danger").click(function () {
             if($(".check_srtial_hidden").val()==""){
                 alert("该监控项没有检查项，请添加检查项");
+            }else if($("input[name='admin_list']").val()==""){
+                alert("该监控项没有联系人，请添加联系人");
             }else{
                 $("#add_form").submit();
             }
