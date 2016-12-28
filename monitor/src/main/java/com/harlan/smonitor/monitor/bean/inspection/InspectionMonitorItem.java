@@ -1,6 +1,7 @@
 package com.harlan.smonitor.monitor.bean.inspection;
 
 import com.harlan.smonitor.api.impl.FieldDeclare;
+import com.harlan.smonitor.api.impl.TypeDeclare;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.bean.http.check.CheckBody;
@@ -20,9 +21,14 @@ public class InspectionMonitorItem extends MonitorItem {
 	}
 
 	@Override
-	protected Map<String, Class<?>> getCheckClassMap() {
-		Map<String, Class<?>> CHECK_MAP=new HashMap<String, Class<?>>();
-		CHECK_MAP.put("self",CheckSelf.class);
+	protected Map<String, TypeDeclare> getCheckTypeMap() {
+		Map<String,TypeDeclare> CHECK_MAP=new HashMap<String,TypeDeclare>();
+		TypeDeclare self=new TypeDeclare();
+		self.setTypeValue("self");
+		self.setName("定时通知信息");
+		self.setDesc("可定时发送信息，确认通知模块正常");
+		self.setBeanClass(CheckSelf.class);
+		CHECK_MAP.put(self.getTypeValue(),self);
 		return CHECK_MAP;
 	}
 

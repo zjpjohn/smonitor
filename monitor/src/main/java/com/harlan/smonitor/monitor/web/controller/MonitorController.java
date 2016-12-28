@@ -3,9 +3,11 @@ package com.harlan.smonitor.monitor.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.harlan.smonitor.api.Result;
 import com.harlan.smonitor.api.impl.FieldDeclare;
+import com.harlan.smonitor.api.notice.Admin;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.common.Constants;
+import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 import com.harlan.smonitor.monitor.data.dao.AdminDao;
 import com.harlan.smonitor.monitor.data.dao.GroupDao;
 import com.harlan.smonitor.monitor.data.dao.MonitorDao;
@@ -47,7 +49,7 @@ public class MonitorController {
         ModelAndView mv=new ModelAndView("/monitor/detail");
         MonitorItem monitor=MonitorDao.getMonitor(id);
         mv.addObject("monitor",JSON.toJSONString(monitor));
-
+        mv.addObject("monitorType",MonitorItem.getType(monitor.getType()));
         mv.addObject("groups", GroupDao.getGroupList(null,null));
         return mv;
     }
@@ -69,7 +71,7 @@ public class MonitorController {
             throw new RuntimeException("没有监控项");
         }
         String adminString=param.get("admin_list").toString();
-        String[] adminArray=adminString.split("|");
+        String[] adminArray=adminString.split("\\|");
         List<String> adminList=new ArrayList<String>(adminArray.length);
         for (String admin:adminArray) {
             adminList.add(admin);
@@ -89,10 +91,16 @@ public class MonitorController {
         if(notNull(startStr)){
             start=Integer.valueOf(startStr);
         }
-        logger.info("qryadmin start：{}，limit:{}",start,limit);
+        logger.debug("qryadmin start：{}，limit:{}",start,limit);
         Map<String,Object> resultMap=new HashMap<String,Object>();
-        resultMap.put("list", AdminDao.getAdminList(start,limit));
-        resultMap.put("count", AdminDao.getAdminList(null,null).size());
+        List<Admin> adminList=AdminDao.getAdminList(start,limit);
+        //修改admin中type字段类型，展示名称
+        for (Admin admin:adminList) {
+            logger.debug("admin:{}",admin);
+            admin.setType(ModuleRegister.getNoticeServiceImpl(admin.getType()).getTypeDeclare().getName());
+        }
+        resultMap.put("list", adminList);
+        resultMap.put("count", AdminDao.count());
         resultMap.put("limit",limit);
         Result res=new Result();
         res.setObj(resultMap);

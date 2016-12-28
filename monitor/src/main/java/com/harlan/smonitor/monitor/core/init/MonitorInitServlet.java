@@ -35,7 +35,7 @@ public class MonitorInitServlet implements InitializingBean {
 
             JobDao.start();
         } catch (Exception e) {
-            logger.error("初始化过程中出现异常，启动失败", e);
+            logger.error("初始化过程中出现异常", e);
         }
     }
 

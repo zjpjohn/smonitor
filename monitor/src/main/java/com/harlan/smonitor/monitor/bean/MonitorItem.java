@@ -1,6 +1,7 @@
 package com.harlan.smonitor.monitor.bean;
 
 import com.harlan.smonitor.api.impl.FieldDeclare;
+import com.harlan.smonitor.api.impl.TypeDeclare;
 import com.harlan.smonitor.monitor.bean.host.HostMonitorItem;
 import com.harlan.smonitor.monitor.bean.http.HttpMonitorItem;
 import com.harlan.smonitor.monitor.bean.inspection.InspectionMonitorItem;
@@ -18,12 +19,27 @@ import java.util.*;
  */
 public abstract class MonitorItem{
     private final static Logger logger = LoggerFactory.getLogger(MonitorItem.class);
-    private static Map<String,Class<?>> IMPL_MAP;
+    private static Map<String,TypeDeclare> TYPE_MAP;
     static {
-        IMPL_MAP=new HashMap<String, Class<?>>();
-        IMPL_MAP.put("host",HostMonitorItem.class);
-        IMPL_MAP.put("http",HttpMonitorItem.class);
-        IMPL_MAP.put("inspection",InspectionMonitorItem.class);
+        TYPE_MAP=new HashMap<String, TypeDeclare>();
+        TypeDeclare host=new TypeDeclare();
+        host.setTypeValue("host");
+        host.setName("主机");
+        host.setDesc("可监控主机cpu、磁盘、文件修改时间等");
+        host.setBeanClass(HostMonitorItem.class);
+        TYPE_MAP.put(host.getTypeValue(),host);
+        TypeDeclare http=new TypeDeclare();
+        http.setTypeValue("http");
+        http.setName("http服务");
+        http.setDesc("可监控http服务");
+        http.setBeanClass(HttpMonitorItem.class);
+        TYPE_MAP.put(http.getTypeValue(),http);
+        TypeDeclare inspection=new TypeDeclare();
+        inspection.setTypeValue("inspection");
+        inspection.setName("自检");
+        inspection.setDesc("可检查系统本身情况");
+        inspection.setBeanClass(InspectionMonitorItem.class);
+        TYPE_MAP.put(inspection.getTypeValue(),inspection);
     }
     /**
      * 监控项id
@@ -60,6 +76,9 @@ public abstract class MonitorItem{
     @SuppressWarnings("unchecked")
     public void init(Map<String, Object> itemMap) {
         logger.debug("初始化公共参数...");
+        if(itemMap.get("id")!=null){
+            id=Integer.valueOf(itemMap.get("id").toString());
+        }
         type =itemMap.get("type").toString();
         name =itemMap.get("name").toString();
         groupId=Integer.valueOf(itemMap.get("groupId").toString());
@@ -84,6 +103,7 @@ public abstract class MonitorItem{
      */
     public Map<String,Object> createMap(){
         Map<String,Object> item_map=new HashMap<String,Object>();
+        item_map.put("id",id);
         item_map.put("name",name);
         item_map.put("type",type);
         item_map.put("groupId",groupId.toString());
@@ -97,13 +117,15 @@ public abstract class MonitorItem{
         return item_map;
     }
 
-    public static Set<String> getTypes(){
-        return IMPL_MAP.keySet();
+    public static Collection<TypeDeclare> getTypes(){
+        return TYPE_MAP.values();
+    }
+    public static TypeDeclare getType(String type){
+        return TYPE_MAP.get(type);
     }
 
-
-    public Set<String> getCheckTypes(){
-        return getCheckClassMap().keySet();
+    public Collection<TypeDeclare> getCheckTypes(){
+        return getCheckTypeMap().values();
     }
 
     /**
@@ -113,7 +135,7 @@ public abstract class MonitorItem{
     public abstract List<FieldDeclare> getFields();
 
     public  static MonitorItem monitorInstance(String type){
-        Class<?> implClass= IMPL_MAP.get(type);
+        Class<?> implClass= TYPE_MAP.get(type).getBeanClass();
         if(implClass==null){
             throw new RuntimeException("MonitorItem.createMonitor()方法中，没有配置该类型监控项:"+type);
         }
@@ -128,7 +150,7 @@ public abstract class MonitorItem{
     public CheckItem checkInstance(String checkType)  {
         try {
             logger.debug("需要实例化的检查项 type:{}",checkType);
-            Class<?> implClass= getCheckClassMap().get(checkType);
+            Class<?> implClass= getCheckTypeMap().get(checkType).getBeanClass();
             if(implClass==null){
                 throw new RuntimeException("MonitorItem.getCheckClassMap()方法中，没有配置该类型监控项:"+type);
             }
@@ -141,10 +163,11 @@ public abstract class MonitorItem{
     }
 
     /**
-     * 各个监控项实现类需要实现checkItem的工厂方法
+     * 各个监控项实现类需要实现此方法
+     * 每个类型的监控项都需要返回一个TypeDeclare的map
      * @return CheckItem对象
      */
-    protected abstract Map<String,Class<?>> getCheckClassMap();
+    protected abstract Map<String,TypeDeclare> getCheckTypeMap();
 
     /**
      * bean转化成json对象时

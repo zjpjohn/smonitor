@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <hr style="margin-left: 30px;margin-right: 30px">
-                <div id="admin_list_div"></div>
+                <div id="admin_modal_list_div"></div>
                 <div class="row form-inline">
                     <nav class="text-right admin-pagination">
                         <ul class="pagination">
@@ -89,6 +89,10 @@
             $("#admin_modal").modal("hide");
         });
     }
+    /**
+     * 分页列表中添加一个联系人
+     * @param item 联系人对象
+     */
     function addRow(item) {
         var html='<div class="admin-modal-row row form-inline margin-bottom-sm"><div class="col-xs-2"></div><div class="col-xs-2">';
         html+='<input type="checkbox" class="icheck-input">';
@@ -97,10 +101,11 @@
         html+='</div><div class="col-xs-4">';
         html+=item.type;
         html+='</div></div>';
-        $("#admin_list_div").append(html);
+        $("#admin_modal_list_div").append(html);
     }
+    //刷新翻页按钮
     function pageingFresh(start, limit, count) {
-        console.log("start:"+start+" limit:"+limit+" count:"+count);
+        //console.log("start:"+start+" limit:"+limit+" count:"+count);
         count=parseInt(count);
         start=parseInt(start);
         limit=parseInt(limit);
@@ -130,6 +135,7 @@
         $(".pagination").children("li").eq(3).find("span").text(count+"条");
 
     }
+    //分页查询方法
     function qryAdmin(startNum) {
         $.ajax({
             "url":"qryadmin",
@@ -144,6 +150,7 @@
                     $.each(data.obj.list,function(i,item){
                         addRow(item);
                     });
+                    //在页面添加了元素后绑定事件
                     $('.icheck-input').iCheck({
                         checkboxClass: 'icheckbox_square-green',
                         radioClass: 'iradio_square-green',
@@ -158,7 +165,7 @@
                         var num=$("#admin_modal_selected_div").find("button:contains('"+text+"')").length;
                         //console.log("已选区域中这个id的admin个数："+num);
                         if(num==0){
-                            $("#admin_modal_selected_div").append('<button class="btn btn-default">'+text+'</button>');
+                            $("#admin_modal_selected_div").append('<button onclick="delAdmin(this);" class="btn btn-default">'+text+'</button>');
                         }
                     });
                     $('.icheck-input').on('ifUnchecked', function(){
@@ -177,5 +184,8 @@
             "error":function(xhr,err1,err2){
             }
         });
+    }
+    function delAdmin(obj) {
+        $(obj).remove();
     }
 </script>

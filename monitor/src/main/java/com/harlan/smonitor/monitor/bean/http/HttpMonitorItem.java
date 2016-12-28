@@ -2,7 +2,9 @@ package com.harlan.smonitor.monitor.bean.http;
 
 
 import com.harlan.smonitor.api.impl.FieldDeclare;
+import com.harlan.smonitor.api.impl.TypeDeclare;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
+import com.harlan.smonitor.monitor.bean.host.check.CheckFile;
 import com.harlan.smonitor.monitor.bean.http.check.CheckBody;
 
 import java.util.ArrayList;
@@ -32,9 +34,14 @@ public class HttpMonitorItem extends MonitorItem {
 	}
 
 	@Override
-	protected Map<String, Class<?>> getCheckClassMap() {
-		Map<String, Class<?>> CHECK_MAP=new HashMap<String, Class<?>>();
-		CHECK_MAP.put("body",CheckBody.class);
+	protected Map<String, TypeDeclare> getCheckTypeMap() {
+		Map<String,TypeDeclare> CHECK_MAP=new HashMap<String,TypeDeclare>();
+		TypeDeclare body=new TypeDeclare();
+		body.setTypeValue("body");
+		body.setName("返回报文");
+		body.setDesc("可监控http服务返回报文");
+		body.setBeanClass(CheckBody.class);
+		CHECK_MAP.put(body.getTypeValue(),body);
 		return CHECK_MAP;
 	}
 

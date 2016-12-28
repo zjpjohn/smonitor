@@ -22,6 +22,9 @@ public abstract class CheckItem {
 
     @SuppressWarnings("unchecked")
     public void init(Map<String,Object> checkMap) {
+        if(checkMap.get("id")!=null){
+            id=Integer.valueOf(checkMap.get("id").toString());
+        }
         cronList= (List<String>) checkMap.get("cronList");
         name=checkMap.get("name").toString();
         if(checkMap.get("state")!=null){
@@ -41,6 +44,7 @@ public abstract class CheckItem {
      */
     public Map<String,Object> createMap() {
         Map<String,Object> check_map=new HashMap<String,Object>();
+        check_map.put("id",id);
         check_map.put("name",name);
         check_map.put("type",type);
         check_map.put("state",state);
@@ -68,7 +72,7 @@ public abstract class CheckItem {
     protected String type;
 
     /**
-     * checkItem的状态：执行/暂停
+     * checkItem的状态：执行/暂停，0是执行，1是暂停
      */
     protected Integer state;
     /**
@@ -78,6 +82,9 @@ public abstract class CheckItem {
     
     public abstract Class<? extends Job> getJobServiceImpl();
 
+    public Integer getState() {
+        return state;
+    }
 
     public Integer getId() {
         return id;

@@ -38,6 +38,10 @@
     <logger name="org">
         <level value="info" />
     </logger>
+    <logger name="org.springframework.web.servlet.mvc.method">
+        <level value="warn" />
+    </logger>
+
 
     <!-- 根logger的设置-->
     <root>

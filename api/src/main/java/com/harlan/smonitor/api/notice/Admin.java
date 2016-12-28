@@ -19,6 +19,17 @@ public abstract class Admin {
 		this.type = adminMap.get("type").toString();
 		getAttrs(adminMap);
 	}
+	/**
+	 * bean转化成xml元素时，需要将属性保存
+	 * @return
+	 */
+	public Map<String,Object> createMap(){
+		Map<String,Object> admin_map=new HashMap<String,Object>();
+		admin_map.put("id",id);
+		admin_map.put("type",type);
+		admin_map=setAttrs(admin_map);
+		return admin_map;
+	}
 
 	/**
 	 * 唯一标识，用于定位管理员
@@ -45,17 +56,6 @@ public abstract class Admin {
 		this.type = type;
 	}
 
-	/**
-	 * bean转化成xml元素时，需要将属性保存
-	 * @return
-	 */
-	public Map<String,Object> createMap(){
-		Map<String,Object> admin_map=new HashMap<String,Object>();
-		admin_map.put("id",id);
-		admin_map.put("type",type);
-		admin_map=setAttrs(admin_map);
-		return admin_map;
-	}
 
 	/**
 	 * 不同的admin实现类需要将各自属性set到这个map中
@@ -77,4 +77,12 @@ public abstract class Admin {
 	 * @return
 	 */
 	public abstract List<FieldDeclare> getFields();
+
+	@Override
+	public String toString() {
+		return "Admin{" +
+				"id='" + id + '\'' +
+				", type='" + type + '\'' +
+				'}';
+	}
 }

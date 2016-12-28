@@ -5,6 +5,7 @@ package com.harlan.smonitor.api.impl;
  * Created by harlan on 2016/12/9.
  */
 public class TypeDeclare {
+
     /**
      * type字段的值
      */

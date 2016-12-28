@@ -4,7 +4,10 @@ import com.harlan.smonitor.api.notice.Admin;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.Group;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
+import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 import org.quartz.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -13,6 +16,7 @@ import java.util.*;
  * Created by harlan on 2016/11/24.
  */
 class CachedData {
+    private final static Logger logger = LoggerFactory.getLogger(CachedData.class);
     static{
         ADMIN_MAP=new LinkedHashMap<String, Admin>();
         GROUP_MAP=new LinkedHashMap<Integer, Group>();
@@ -40,6 +44,11 @@ class CachedData {
     static Map<Integer,Integer> JOB_ALARM_COUNT;
 
     /**
+     * ==================================================
+     * admin
+     * ==================================================
+     */
+    /**
      * 添加admin，自带索引
      * @param admin
      */
@@ -50,7 +59,7 @@ class CachedData {
         return ADMIN_MAP.size();
     }
     public static Admin getAdmin(String id) {
-        return ADMIN_MAP.get(id);
+        return copyAdmin(ADMIN_MAP.get(id));
     }
     public static List<Admin> getAllAdmin() {
         List<Admin> admin_list=new ArrayList<Admin>(ADMIN_MAP.size());
@@ -58,13 +67,37 @@ class CachedData {
         while(it.hasNext()){
             String id= (String) it.next();
             Admin admin=ADMIN_MAP.get(id);
-            admin_list.add(admin);
+
+            Admin  copyAdmin=copyAdmin(admin);
+            admin_list.add(copyAdmin);
         }
         return admin_list;
     }
 
     /**
-     * 添加admin，自带索引
+     * 复制对象，防止后续业务侧修改了属性，影响原始数据
+     * @param admin
+     * @return
+     */
+    private static Admin copyAdmin(Admin admin) {
+        try {
+            Admin  copyAdmin = (Admin) ModuleRegister.getNoticeServiceImpl(admin.getType()).getTypeDeclare().getBeanClass().newInstance();
+            copyAdmin.init(admin.createMap());
+            return copyAdmin;
+        }  catch (Exception e) {
+            logger.error("admin复制对象异常",e);
+        }
+        return null;
+    }
+
+
+    /**
+     * ==================================================
+     * group
+     * ==================================================
+     */
+    /**
+     * group，自带索引
      * @param group
      */
     public static void putGroup(Group group) {
@@ -81,7 +114,7 @@ class CachedData {
         return GROUP_MAP.size();
     }
     public static Group getGroup(Integer id) {
-        return GROUP_MAP.get(id);
+        return copyGroup(GROUP_MAP.get(id));
     }
     public static List<Group> getAllGroup() {
         List<Group> group_list=new ArrayList<Group>(GROUP_MAP.size());
@@ -89,13 +122,35 @@ class CachedData {
         while(it.hasNext()){
             Integer id= (Integer) it.next();
             Group group=GROUP_MAP.get(id);
-            group_list.add(group);
+            group_list.add(copyGroup(group));
         }
         return group_list;
     }
 
+    private static Group copyGroup(Group group) {
+        Group copyGroup=new Group();
+        copyGroup.setName(group.getName());
+        copyGroup.setId(group.getId());
+        return copyGroup;
+    }
+    /**
+     * ==================================================
+     * MonitorItem
+     * ==================================================
+     */
     public static List<MonitorItem> getAllMonitorItem() {
-        return MONITOR_LIST;
+        List<MonitorItem> monitor_list=new ArrayList<MonitorItem>(MONITOR_LIST.size());
+        for (MonitorItem monitor:MONITOR_LIST) {
+            MonitorItem copyMonitor=copyMonitor(monitor);
+            monitor_list.add(copyMonitor);
+        }
+        return monitor_list;
+    }
+
+    private static MonitorItem copyMonitor(MonitorItem monitor) {
+        MonitorItem copyMonitor=MonitorItem.monitorInstance(monitor.getType());
+        copyMonitor.init(monitor.createMap());
+        return copyMonitor;
     }
 
     public static int monitorItemSize() {

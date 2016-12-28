@@ -19,7 +19,7 @@
                 <select class="form-control" name="type">
                     <option value="">-请选择-</option>
                 <#list types as type>
-                    <option value="${type}">${type}</option>
+                    <option value="${type.typeValue}">${type.name}</option>
                 </#list>
                 </select>
             </div>

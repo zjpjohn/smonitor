@@ -12,7 +12,7 @@
     </div>
     <hr>
 
-<#--添加form-->
+    <#--添加form-->
     <form id="add_form" action="toadd" method="post">
         <input type="hidden" name="check.srtial" class="check_srtial_hidden">
         <div class="row">
@@ -21,7 +21,8 @@
         <div class="row form-inline margin-top-sm">
             <div class="col-xs-6 col-md-4 margin-bottom-sm">
                 <label>类型：</label>
-                <input id="monitor_type" type="text" disabled class="form-control"/>
+                <input type="text" disabled class="form-control" value="${monitorType.name}"/>
+                <input type="hidden" name="type" value="${monitorType.typeValue}"/>
             </div>
             <div class="col-xs-6 col-md-4 margin-bottom-sm">
                 <label>分组：</label>
@@ -38,6 +39,15 @@
             </div>
             <div id="monitor_append_div"></div>
         </div>
+        <div class="row form-inline">
+            <div id="admin-btns-div" class="col-xs-9 margin-bottom-sm">
+                <label>联系人：</label>
+                <input type="hidden" name="admin_list">
+            </div>
+            <div class="col-xs-3 margin-bottom-sm">
+                <button id="add_admin_btn" type="button" class="btn btn-default">编辑联系人</button>
+            </div>
+        </div>
     </form>
     <hr>
     <div id="check_list_div">
@@ -48,7 +58,6 @@
     function checkItemInputs(obj) {
         var html='<div class="row"><div class="col-xs-6 col-md-6 margin-bottom-sm"><h4>检查项'+obj.id+':</h4></div></div>';
         html+='<div class="row form-inline">';
-        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>执行时间：</label><input type='text' class='form-control' value='"+obj.cronExpression+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>类型：</label><input type='text' class='form-control' value='"+obj.type+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>名称：</label><input type='text' class='form-control' value='"+obj.name+"' disabled/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>报警阀值：</label><input type='text' class='form-control' value='"+obj.alarmTimes+"' disabled/></div>";
@@ -61,14 +70,14 @@
         $.each(fields,function(i,item){
             var val=obj[item.fieldName];
             if (typeof(val) != "undefined") {
-                fhtml+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input value='"+val+"' type='text' class='form-control' disabled/></div>";
+                val="";
             }
+            fhtml+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input value='"+val+"' type='text' class='form-control' name='item.fieldName'/></div>";
         });
         return fhtml;
     }
     $(function(){
-        //console.log(monitor);
-        $("#monitor_type").val(monitor.type);
+        console.log(monitor);
         $("#group_select").val(monitor.groupId);
         $("#monitor_name").val(monitor.name);
         var monitorHtml=getFieldsHtml(monitor.fields,monitor);

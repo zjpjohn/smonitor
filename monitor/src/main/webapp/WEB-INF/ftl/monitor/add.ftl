@@ -35,7 +35,7 @@
                 <select id="monitor_type" class="form-control" name="type">
                     <option value="">-请选择-</option>
                     <#list types as type>
-                        <option value="${type}">${type}</option>
+                        <option value="${type.typeValue}">${type.name}</option>
                     </#list>
                 </select>
             </div>
@@ -269,7 +269,7 @@
                         if(data.success==true){
                             //console.log(data.obj);
                             $.each(data.obj,function(i,item){
-                                $("#check_type").append("<option value='"+item+"'>"+item+"</option>");
+                                $("#check_type").append("<option value='"+item.typeValue+"'>"+item.name+"</option>");
                             });
                         }else{
                             console.log("exception..."+data.msg);
