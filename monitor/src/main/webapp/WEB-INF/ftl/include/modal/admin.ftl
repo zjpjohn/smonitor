@@ -11,6 +11,7 @@
         margin: 0 !important;
     }
 </style>
+<link href="../plugin/bootstrap/iCheck/1.0.1/skins/square/green.css" rel="stylesheet">
 <div id="admin_modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="true" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

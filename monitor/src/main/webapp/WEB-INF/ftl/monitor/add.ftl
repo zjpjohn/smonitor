@@ -2,9 +2,7 @@
 <html>
 <head>
     <title>添加监控</title>
-
 <#include "/include/head.ftl">
-    <link href="../plugin/bootstrap/iCheck/1.0.1/skins/square/green.css" rel="stylesheet">
     <style>
         .runtime-row-div span{
             margin-left: 2px;
