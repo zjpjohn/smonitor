@@ -109,7 +109,6 @@
 </div>
 <#--选择管理员，使用这个模块-->
 <#include "/include/modal/admin.ftl">
-<script src="../plugin/bootstrap/iCheck/1.0.1/icheck.min.js"></script>
 <script>
     var checkFields;
     function showAddedCheck(obj) {

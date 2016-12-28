@@ -62,7 +62,7 @@
         </div>
     </div>
 </div>
-
+<script src="../plugin/bootstrap/iCheck/1.0.1/icheck.min.js"></script>
 <script>
     var div_id;
     /**
