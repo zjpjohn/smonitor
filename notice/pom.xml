@@ -25,7 +25,7 @@
         email - 发送邮件模块，待开发
     -->
     <modules>
-        <!--<module>notice-scsms</module>-->
+        <module>notice-scsms</module>
         <module>notice-email</module>
     </modules>
     <dependencies>
