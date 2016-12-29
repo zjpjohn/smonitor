@@ -160,9 +160,9 @@ public class MonitorController {
         check.init(param);
         //初始化了以后存到session中去
         String serialId;
-        if(notNull(param.get("check.srtial"))){
-            serialId=param.get("check.srtial").toString();
-            param.remove("check.srtial");
+        if(notNull(param.get("check.serial"))){
+            serialId=param.get("check.serial").toString();
+            param.remove("check.serial");
         }else{
             serialId=UUID.randomUUID().toString();
         }
@@ -177,6 +177,34 @@ public class MonitorController {
         Map<String,Object> checkMap=check.createMap();
         checkMap.put("serial",serialId);
         res.setObj(checkMap);
+        return JSON.toJSONString(res);
+    }
+
+    /**
+     * 将form值转化成json，再在页面中，将json展示出来，这样的好处是公用一套显示逻辑
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/form2json" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody
+    String form2json(@RequestParam Map<String,Object> param) throws Exception {
+        logger.info("添加checkItem param：{}",param);
+        String mtype=param.get("monitor.type").toString();
+        param.remove("monitor.type");
+        String runtimeStr=param.get("runtimes").toString();
+        String[] cronArray=runtimeStr.split("@");
+        List<String> cronList=new ArrayList<String>(cronArray.length);
+        for (String corn:cronArray) {
+            cronList.add(corn);
+        }
+        param.put("cronList",cronList);
+        MonitorItem item=MonitorItem.monitorInstance(mtype);
+        CheckItem check=item.checkInstance(param.get("type").toString());
+        check.init(param);
+        Result res=new Result();
+//        Map<String,Object> checkMap=check.createMap();
+        res.setObj(check);
         return JSON.toJSONString(res);
     }
 }
