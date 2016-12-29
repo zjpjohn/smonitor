@@ -167,7 +167,7 @@ public abstract class MonitorItem{
      * 每个类型的监控项都需要返回一个TypeDeclare的map
      * @return CheckItem对象
      */
-    protected abstract Map<String,TypeDeclare> getCheckTypeMap();
+    public abstract Map<String,TypeDeclare> getCheckTypeMap();
 
     /**
      * bean转化成json对象时

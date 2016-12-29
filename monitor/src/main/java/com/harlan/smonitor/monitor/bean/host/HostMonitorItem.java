@@ -65,7 +65,7 @@ public class HostMonitorItem extends MonitorItem {
     }
 
     @Override
-    protected Map<String, TypeDeclare> getCheckTypeMap() {
+    public Map<String, TypeDeclare> getCheckTypeMap() {
         Map<String,TypeDeclare> CHECK_MAP=new HashMap<String,TypeDeclare>();
         TypeDeclare file=new TypeDeclare();
         file.setTypeValue("file");

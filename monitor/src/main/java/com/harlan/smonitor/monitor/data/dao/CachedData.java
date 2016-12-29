@@ -1,6 +1,7 @@
 package com.harlan.smonitor.monitor.data.dao;
 
 import com.harlan.smonitor.api.notice.Admin;
+import com.harlan.smonitor.api.notice.INoticeService;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.Group;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
@@ -59,7 +60,11 @@ class CachedData {
         return ADMIN_MAP.size();
     }
     public static Admin getAdmin(String id) {
-        return copyAdmin(ADMIN_MAP.get(id));
+        if(ADMIN_MAP.get(id)!=null){
+            return copyAdmin(ADMIN_MAP.get(id));
+        }else{
+            return null;
+        }
     }
     public static List<Admin> getAllAdmin() {
         List<Admin> admin_list=new ArrayList<Admin>(ADMIN_MAP.size());
@@ -81,7 +86,9 @@ class CachedData {
      */
     private static Admin copyAdmin(Admin admin) {
         try {
-            Admin  copyAdmin = (Admin) ModuleRegister.getNoticeServiceImpl(admin.getType()).getTypeDeclare().getBeanClass().newInstance();
+            INoticeService service=ModuleRegister.getNoticeServiceImpl(admin.getType());
+            Class<?> adminClass=service.getTypeDeclare().getBeanClass();
+            Admin  copyAdmin = (Admin) adminClass.newInstance();
             copyAdmin.init(admin.createMap());
             return copyAdmin;
         }  catch (Exception e) {
