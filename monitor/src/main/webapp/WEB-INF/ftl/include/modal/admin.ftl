@@ -65,28 +65,31 @@
 </div>
 <script src="../plugin/bootstrap/iCheck/1.0.1/icheck.min.js"></script>
 <script>
-    var div_id;
+    var DIV_ID;
     /**
-     * 使用该方法需要
+     * 初始化选择联系人的modal
      * 传入div id，会在这个div中放入选中的admin button，并且会在div中寻找input把admin值放在input中
      * @param divId 存放admin标签div的id
      */
-    function adminModalInit(divId) {
-        div_id=divId;
+    function adminModalInit(adminDivId) {
+        DIV_ID=adminDivId;
         $("#admin_modal").modal("show");
+        $.each($(DIV_ID).find("button"),function (i,item) {
+            $("#admin_modal_selected_div").append('<button onclick="delAdmin(this);" class="btn btn-default">'+$(item).text()+'</button>');
+        });
         qryAdmin(0);
         //保存按钮绑定点击事件
         $("#admin_modal_save_btn").click(function () {
-            $(div_id).find("button").remove();
+            $(DIV_ID).find("button").remove();
             var adminString="";
             $.each($("#admin_modal_selected_div").find("button"),function(i,item){
                 //console.log($(item).text());
                 adminString+=$(item).text();
                 adminString+="|";
-                $(div_id).append('<button class="btn btn-default" disabled>'+$(item).text()+'</button>');
+                $(DIV_ID).append('<button class="btn btn-default" disabled>'+$(item).text()+'</button>');
             });
 
-            $(div_id).children("input").val(adminString.substr(0,adminString.length-1));
+            $(DIV_ID).children("input").val(adminString.substr(0,adminString.length-1));
             $("#admin_modal").modal("hide");
         });
     }

@@ -34,7 +34,7 @@ public class HttpMonitorItem extends MonitorItem {
 	}
 
 	@Override
-	protected Map<String, TypeDeclare> getCheckTypeMap() {
+	public Map<String, TypeDeclare> getCheckTypeMap() {
 		Map<String,TypeDeclare> CHECK_MAP=new HashMap<String,TypeDeclare>();
 		TypeDeclare body=new TypeDeclare();
 		body.setTypeValue("body");

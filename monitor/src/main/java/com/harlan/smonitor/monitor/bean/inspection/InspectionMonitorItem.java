@@ -21,7 +21,7 @@ public class InspectionMonitorItem extends MonitorItem {
 	}
 
 	@Override
-	protected Map<String, TypeDeclare> getCheckTypeMap() {
+	public Map<String, TypeDeclare> getCheckTypeMap() {
 		Map<String,TypeDeclare> CHECK_MAP=new HashMap<String,TypeDeclare>();
 		TypeDeclare self=new TypeDeclare();
 		self.setTypeValue("self");

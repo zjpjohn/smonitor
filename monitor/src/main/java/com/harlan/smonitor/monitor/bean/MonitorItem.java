@@ -75,7 +75,7 @@ public abstract class MonitorItem{
      */
     @SuppressWarnings("unchecked")
     public void init(Map<String, Object> itemMap) {
-        logger.debug("初始化公共参数...");
+        logger.debug("MonitorItem init...");
         if(itemMap.get("id")!=null){
             id=Integer.valueOf(itemMap.get("id").toString());
         }
@@ -154,8 +154,7 @@ public abstract class MonitorItem{
             if(implClass==null){
                 throw new RuntimeException("MonitorItem.getCheckClassMap()方法中，没有配置该类型监控项:"+type);
             }
-            CheckItem checkItem=(CheckItem)implClass.newInstance();
-            return checkItem;
+            return (CheckItem)implClass.newInstance();
         } catch (Exception e) {
             logger.error("实例化CheckItem异常",e);
         }
@@ -167,7 +166,7 @@ public abstract class MonitorItem{
      * 每个类型的监控项都需要返回一个TypeDeclare的map
      * @return CheckItem对象
      */
-    protected abstract Map<String,TypeDeclare> getCheckTypeMap();
+    public abstract Map<String,TypeDeclare> getCheckTypeMap();
 
     /**
      * bean转化成json对象时

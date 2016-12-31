@@ -9,6 +9,7 @@
     <div class="row margin-top-md">
         <a type="button" class="btn btn-success" href="list">列表</a>
         <button type="button" class="btn btn-primary">删除</button>
+        <button id="monitor_show_add_check_btn" type="button" class="btn btn-default">添加检查项</button>
     </div>
     <hr>
 
@@ -25,8 +26,8 @@
             </div>
             <div class="col-xs-6 col-md-4 margin-bottom-sm">
                 <label>类型：</label>
-                <input type="text" readonly class="form-control" value="${monitorType.name}"/>
-                <input type="hidden" name="type" value="${monitorType.typeValue}"/>
+                <input type="text" readonly class="form-control" value="${monitorTypeName}"/>
+                <input id="monitor_type" type="hidden" name="type"/>
             </div>
             <div class="col-xs-6 col-md-4 margin-bottom-sm">
                 <label>分组：</label>
@@ -57,18 +58,24 @@
     <div id="check_list_div">
     </div>
     <!-- 添加 检查项 form -->
-    <#include "/include/check.ftl">
+    <#include "/include/modal/check.ftl">
+    <div class="row text-center margin-top-md margin-bottom-lg">
+        <button id="modify_btn" type="button" class="btn btn-danger">修改</button>
+        <button type="button" class="btn btn-default">重置</button>
+    </div>
+
 </div>
 <#include "/include/modal/admin.ftl">
 <script>
     var MONITOR=${monitor};
     $(function(){
-        //resetAddCheckRow("#check_list_div");
         setMonitorType(MONITOR.type);
+        setMaps(${checkFieldsMap},${checkTypeNameMap});
+        $("#monitor_type").val(MONITOR.type);
         $("#monitor_id").val(MONITOR.id);
         $("#group_select").val(MONITOR.groupId);
         $("#monitor_name").val(MONITOR.name);
-        //添加自定义字段及值
+        //添加monitor自定义字段及值
         var monitorHtml=getFieldsHtml(MONITOR.fields,MONITOR);
         $("#monitor_append_div").append(monitorHtml);
         //添加联系人
@@ -85,7 +92,18 @@
         });
         //添加check
         $.each(MONITOR.checkList,function(i,check){
-            $("#check_list_div").append(checkItemInputs(check));
+            $("#check_list_div").append(checkRowHtml(check));
+        });
+        $("#monitor_show_add_check_btn").click(function () {
+            showAddCheck("#check_list_div");
+        });
+        $("#modify_btn").click(function () {
+            if($("input[name='admin_list']").val()==""){
+                alert("该监控项没有联系人，请添加联系人");
+            }else{
+                var monitorObj= getMonitorObj("#add_form");
+                console.log(monitorObj);
+            }
         });
     });
 

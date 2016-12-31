@@ -50,7 +50,12 @@ public class MonitorDao {
         return qry_monitor;
     }
 
-
+    /**
+     * 添加到内存
+     * @param monitorItem
+     * @return
+     * @throws Exception
+     */
     public static Result addMonitor(MonitorItem monitorItem) throws Exception {
         CachedData.putMonitorItem(monitorItem);
         return  new Result();
@@ -58,6 +63,12 @@ public class MonitorDao {
     public static int count(){
         return CachedData.monitorItemSize();
     }
+
+    /**
+     * 保存到文件
+     * @return
+     * @throws Exception
+     */
     public static Result saveMonitorItem() throws Exception {
         DataFileOperator.saveMonitor(CachedData.getAllMonitorItem());
         return  new Result();

@@ -50,7 +50,11 @@ public class HostMonitorItem extends MonitorItem {
             this.passwd =passwdService.getPassword(user);
 
         }
-        this.port = Integer.valueOf(itemMap.get("port").toString());
+        if(itemMap.get("port")==null){
+            this.port =22;//默认ssh端口22
+        }else{
+            this.port = Integer.valueOf(itemMap.get("port").toString());
+        }
     }
 
     @Override
@@ -59,13 +63,13 @@ public class HostMonitorItem extends MonitorItem {
         fieldList.add(new FieldDeclare("ip","IP地址","IP地址"));
         fieldList.add(new FieldDeclare("user","用户名","用户名"));
         fieldList.add(new FieldDeclare("passwd","密码","保存后会加密"));
-        fieldList.add(new FieldDeclare("passwdType","密码类型","制定使用哪个密码加密模块"));
+//        fieldList.add(new FieldDeclare("passwdType","密码类型","制定使用哪个密码加密模块"));
         fieldList.add(new FieldDeclare("port","ssh端口","ssh的端口"));
         return fieldList;
     }
 
     @Override
-    protected Map<String, TypeDeclare> getCheckTypeMap() {
+    public Map<String, TypeDeclare> getCheckTypeMap() {
         Map<String,TypeDeclare> CHECK_MAP=new HashMap<String,TypeDeclare>();
         TypeDeclare file=new TypeDeclare();
         file.setTypeValue("file");

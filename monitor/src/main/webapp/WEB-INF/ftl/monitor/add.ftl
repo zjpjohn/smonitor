@@ -3,27 +3,18 @@
 <head>
     <title>添加监控</title>
 <#include "/include/head.ftl">
-    <style>
-        .runtime-row-div span{
-            margin-left: 2px;
-            margin-right: 8px;
-        }
-        .del-runtime-row-btn span{
-            margin: 0;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
     <div class="row margin-top-md">
         <a type="button" class="btn btn-success" href="list">列表</a>
         <button type="button" class="btn btn-primary" disabled="disabled">新增</button>
+        <button id="monitor_show_add_check_btn" type="button" class="btn btn-default">添加检查项</button>
     </div>
     <hr>
 
     <#--添加 monitor form-->
-    <form id="add_form" action="toadd" method="post">
-        <input type="hidden" name="check.srtial" class="check_srtial_hidden">
+    <form id="add_form" action="addmonitor" method="post">
         <div class="row">
             <h3>监控项:</h3>
         </div>
@@ -67,9 +58,8 @@
     <div id="check_list_div">
     </div>
     <!-- 添加 检查项 form -->
-<#include "/include/check.ftl">
-    <hr>
-    <div class="btn-div row text-center margin-top-md">
+    <#include "/include/modal/check.ftl">
+    <div class="btn-div row text-center margin-top-md margin-bottom-lg">
         <button type="button" class="btn btn-danger">增加</button>
         <button type="button" class="btn btn-default">重置</button>
     </div>
@@ -77,66 +67,14 @@
 <#--选择管理员，使用这个模块-->
 <#include "/include/modal/admin.ftl">
 <script>
-
-    /*function showAddedCheck(obj) {
-        var html='<div class="row"><div class="col-xs-6 col-md-6 margin-bottom-sm"><h4>检查项:</h4></div></div>';
-        html+='<div class="row form-inline">';
-        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>类型：</label><input type='text' class='form-control' value='"+obj.type+"' disabled/></div>";
-        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>名称：</label><input type='text' class='form-control' value='"+obj.name+"' disabled/></div>";
-        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>报警阀值：</label><input type='text' class='form-control' value='"+obj.alarmTimes+"' disabled/></div>";
-        $.each(checkFields,function(i,item){
-            var val=obj[item.fieldName];
-            if (typeof(val) != "undefined") {
-                html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input value='"+val+"' type='text' class='form-control' disabled/></div>";
-            }
-        });
-        html+='</div>';
-        $.each(obj.cronList,function(i,item){
-            html+='<div class="row form-inline">';
-            html+='<div class="col-xs-2 margin-bottom-sm"><label>执行时间：</label></div>';
-            html+='<div class="col-xs-3 margin-bottom-sm">';
-            var runtimeArray=item.split(" ");
-            html+='<input disabled value="'+runtimeArray[0]+'" type="text" class="form-control small-input" placeholder="秒"/><span>秒&nbsp;</span>';
-            html+='<input disabled value="'+runtimeArray[1]+'" type="text" class="form-control small-input" placeholder="分"/><span>分&nbsp;</span>';
-            html+='<input disabled value="'+runtimeArray[2]+'" type="text" class="form-control small-input" placeholder="时"/><span>时&nbsp;</span>';
-            html+='</div>';
-            html+='<div class="col-xs-3 margin-bottom-sm">';
-            html+='<input disabled value="'+runtimeArray[3]+'" type="text" class="form-control small-input" placeholder="秒"/><span>日&nbsp;</span>';
-            html+='<input disabled value="'+runtimeArray[4]+'" type="text" class="form-control small-input" placeholder="分"/><span>月&nbsp;</span>';
-            html+='<input disabled value="'+runtimeArray[5]+'" type="text" class="form-control small-input" placeholder="时"/><span>周&nbsp;</span>';
-            html+='</div>';
-            if(runtimeArray.length>6){
-                html+='<div class="col-xs-4 margin-bottom-sm">';
-                html+='<input disabled value="'+runtimeArray[6]+'" type="text" class="form-control middle-input" placeholder="年(可选)"/><span>年</span>';
-                html+='</div>';
-            }
-            html+='</div>';
-        });
-        html+='<hr>';
-        return html;
-    }*/
     function resetAll() {
-        $("#check_type").html("<option value=''>-请选择-</option>");
         $("#monitor_append_div").html("");
         $("#check_append_div").html("");
         $(".check_srtial_hidden").val("");
-        $("#monitor_type_hidden").val("");
-        $(".del-runtime-row-btn").trigger("click");//触发删除按钮click事件，删除新增的执行时间行
-    }
-
-    function getValNotNull(obj){
-        if(obj.val()==""){
-            obj.parent("div").addClass("has-error");
-            alert("此处内容为必填");
-            return "";
-        }else{
-            obj.parent("div").removeClass("has-error");
-            return obj.val();
-        }
     }
 
     $(function(){
-        resetAddCheckRow("#check_list_div");
+//        showAddCheck("#check_list_div");
         //选择monitor类型时
         $("#monitor_type").change(function () {
             var type_val=$(this).val();
@@ -164,31 +102,36 @@
                     "error":function(xhr,err1,err2){
                     }
                 });
-                setMonitorType(type_val);
             }
+            setMonitorType(type_val);
         });
 
         //添加monitor按钮
         $(".btn-div .btn-danger").click(function () {
-            if($(".check_srtial_hidden").val()==""){
-                alert("该监控项没有检查项，请添加检查项");
-            }else if($("input[name='admin_list']").val()==""){
+            if($("input[name='admin_list']").val()==""){
                 alert("该监控项没有联系人，请添加联系人");
             }else{
-                $("#add_form").submit();
+                var monitorObj= getMonitorObj("#add_form");
+                //错误信息
+                if(typeof(monitorObj)=="string"){
+                    alert(monitorObj);
+                }
             }
         });
         //全部重置
         $(".btn-div .btn-default").click(function () {
             resetAll();
             $("#add_form")[0].reset();
-            $("#check_add_form")[0].reset();
+
         });
-
-
         $("#add_admin_btn").click(function () {
             adminModalInit("#admin-btns-div");
         });
+        $("#monitor_show_add_check_btn").click(function () {
+            showAddCheck("#check_list_div");
+        });
+        $("#monitor_type").focus();
+        
     });
 
 </script>
