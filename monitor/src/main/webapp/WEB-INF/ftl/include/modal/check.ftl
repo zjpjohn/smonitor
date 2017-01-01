@@ -58,7 +58,7 @@
 </div>
 <script>
     var CHECK_LIST_DIV_ID;
-    var MONITOR_TYPE;
+    var MONITOR_TYPE="";
     var CHECK_FIELDS_MAP;
     var CHECK_TYPE_NAME_MAP;
     $.fn.serializeObject = function()
@@ -261,12 +261,18 @@
             return "没有检查项";
         }
         var monitorJson=$(monitorForm).serializeObject();
+        if(typeof(monitorJson.adminList)=="undefined"){
+            return "没有联系人";
+        }
+        if(typeof(monitorJson.adminList)=="string"){
+            monitorJson.adminList=new Array(monitorJson.adminList);;
+        }
         var checkList=new Array();
         $.each($(".check_row_form"),function(i,item){
             saveCheckRuntime(item);
             var checkJsonObj=getCheckJsonObj(item);
             $(item).find("input[name='cronList']").remove();
-            checkList[i]=checkJsonObj;
+            checkList.push(checkJsonObj);
         });
         monitorJson.checkList=checkList;
         return monitorJson;
@@ -276,9 +282,7 @@
         var checkJsonObj=$(formid).serializeObject();
         //如果只有一个执行时间，要转化成数组
         if(typeof(checkJsonObj.cronList)=="string"){
-            var item = new Array(1);
-            item[0] = checkJsonObj.cronList;
-            checkJsonObj.cronList=item;
+            checkJsonObj.cronList=new Array(checkJsonObj.cronList);
         }
         return checkJsonObj;
     }

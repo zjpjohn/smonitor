@@ -57,6 +57,7 @@ public class MonitorDao {
      * @throws Exception
      */
     public static Result addMonitor(MonitorItem monitorItem) throws Exception {
+        logger.debug("monitor 添加到内存");
         CachedData.putMonitorItem(monitorItem);
         return  new Result();
     }
@@ -69,8 +70,12 @@ public class MonitorDao {
      * @return
      * @throws Exception
      */
-    public static Result saveMonitorItem() throws Exception {
+    public static Result saveMonitorFile() throws Exception {
+        logger.debug("monitor数据保存到文件");
         DataFileOperator.saveMonitor(CachedData.getAllMonitorItem());
         return  new Result();
+    }
+
+    public static void saveMonitor(MonitorItem item) {
     }
 }

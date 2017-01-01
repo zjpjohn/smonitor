@@ -75,7 +75,6 @@ public abstract class MonitorItem{
      */
     @SuppressWarnings("unchecked")
     public void init(Map<String, Object> itemMap) {
-        logger.debug("MonitorItem init...");
         if(itemMap.get("id")!=null){
             id=Integer.valueOf(itemMap.get("id").toString());
         }
@@ -92,7 +91,6 @@ public abstract class MonitorItem{
                 checkItem.init(map);
                 checkList.add(checkItem);
             }
-            logger.info("name={}的监控项，共配置了{}个检查项",name,checkList.size());
         }
         getProps(itemMap);
     }
@@ -149,7 +147,6 @@ public abstract class MonitorItem{
     }
     public CheckItem checkInstance(String checkType)  {
         try {
-            logger.debug("需要实例化的检查项 type:{}",checkType);
             Class<?> implClass= getCheckTypeMap().get(checkType).getBeanClass();
             if(implClass==null){
                 throw new RuntimeException("MonitorItem.getCheckClassMap()方法中，没有配置该类型监控项:"+type);

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
+import java.net.URLDecoder;
 import java.util.*;
 
 import static com.harlan.smonitor.monitor.common.Util.notNull;
@@ -35,7 +35,7 @@ public class MonitorController {
     @RequestMapping(value="/list")
     public ModelAndView list(@RequestParam Map<String,Object> param) throws Exception {
         String limit="4";
-        logger.debug("监控列表 param：{}",param);
+        logger.debug("list map：{}",param);
         ModelAndView mv = new ModelAndView("/monitor/list");
         mv.addObject("list", MonitorDao.getMonitorItemList(param.get("paging_start"),limit));
         mv.addObject("paging_count", MonitorDao.getMonitorItemList(null,null).size());
@@ -74,29 +74,43 @@ public class MonitorController {
         mv.addObject("groups", GroupDao.getGroupList(null,null));
         return mv;
     }
-    @SuppressWarnings("unchecked")
-    @RequestMapping(value="/addmonitor")
-    public ModelAndView toadd(@RequestParam Map<String,Object> param,HttpSession session) throws Exception {
-        logger.info("addmonitor -- map：{}",param.toString());
-        String serialId=param.get("check_srtial").toString();
-        param.remove("check_srtial");
-        List<CheckItem> checkItems= (List<CheckItem>) session.getAttribute(serialId);
-        if(checkItems==null){
-            throw new RuntimeException("没有监控项");
+    @RequestMapping(value="/addmonitor" ,produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody String toadd(@RequestBody String body){
+        Result res;
+        try {
+            String req= URLDecoder.decode(body, Constants.CHARSET);
+            logger.debug("addmonitor -- req：{}",req);
+            Map<String,Object> reqMap=JSON.parseObject(req);
+            MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
+            item.init(reqMap);
+            MonitorDao.addMonitor(item);
+            MonitorDao.saveMonitorFile();
+            res=new Result();
+        } catch (Exception e) {
+            logger.error("添加异常",e);
+            res=new Result(e.toString());
         }
-        String adminString=param.get("admin_list").toString();
-        String[] adminArray=adminString.split("\\|");
-        List<String> adminList=new ArrayList<String>(adminArray.length);
-        for (String admin:adminArray) {
-            adminList.add(admin);
+        return JSON.toJSONString(res);
+    }
+
+    @RequestMapping(value="/savemonitor" ,produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody String saveMonitor(@RequestBody String body){
+        Result res;
+        try {
+            String req= URLDecoder.decode(body, Constants.CHARSET);
+            logger.debug("savemonitor -- req：{}",req);
+            Map<String,Object> reqMap=JSON.parseObject(req);
+            MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
+            item.init(reqMap);
+            MonitorDao.saveMonitor(item);
+            //TODO 修改monitor
+            MonitorDao.saveMonitorFile();
+            res=new Result();
+        } catch (Exception e) {
+            logger.error("添加异常",e);
+            res=new Result(e.toString());
         }
-        param.put("adminList",adminList);
-        MonitorItem item=MonitorItem.monitorInstance(param.get("type").toString());
-        item.init(param);
-        item.setCheckList(checkItems);
-        MonitorDao.addMonitor(item);
-        MonitorDao.saveMonitorItem();
-        return new ModelAndView("/ok");
+        return JSON.toJSONString(res);
     }
     @RequestMapping(value="/qryadmin" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody String qryAdmin(@RequestParam("start") String startStr){
@@ -110,7 +124,6 @@ public class MonitorController {
         List<Admin> adminList=AdminDao.getAdminList(start,limit);
         //修改admin中type字段类型，展示名称
         for (Admin admin:adminList) {
-            logger.debug("admin:{}",admin);
             admin.setType(ModuleRegister.getNoticeServiceImpl(admin.getType()).getTypeDeclare().getName());
         }
         resultMap.put("list", adminList);
@@ -121,10 +134,10 @@ public class MonitorController {
         return JSON.toJSONString(res);
     }
 
-    @RequestMapping(value="/fields" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    @RequestMapping(value="/monitorfields" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody
     String noticeFields(@RequestParam String type) throws Exception {
-        logger.info("type：{}",type);
+        logger.debug("monitorfields -- type：{}",type);
         MonitorItem item=MonitorItem.monitorInstance(type);
         List<FieldDeclare> fields= item.getFields();
         Result res=new Result();
@@ -134,7 +147,7 @@ public class MonitorController {
     @RequestMapping(value="/checktype" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody
     String checkType(@RequestParam("mtype") String mtype){
-        logger.info("checkType -- mtype：{}",mtype);
+        logger.debug("checkType -- monitor type：{}",mtype);
         try {
             MonitorItem item=MonitorItem.monitorInstance(mtype);
             Result res=new Result();
@@ -148,78 +161,11 @@ public class MonitorController {
     @RequestMapping(value="/checkfields" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody
     String checkFields(@RequestParam("mtype") String mtype,@RequestParam("ctype") String ctype) throws Exception {
-        logger.info("查询check字段：monitor type：{} , check type:{}",mtype,ctype);
+        logger.debug("查询check字段：monitor type：{} , check type:{}",mtype,ctype);
         MonitorItem item=MonitorItem.monitorInstance(mtype);
         CheckItem check=item.checkInstance(ctype);
         Result res=new Result();
         res.setObj(check.getFields());
         return JSON.toJSONString(res);
     }
-//    @SuppressWarnings("unchecked")
-//    @RequestMapping(value="/addcheck" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
-//    public @ResponseBody
-//    String addCheck(@RequestParam Map<String,Object> param,HttpSession session) throws Exception {
-//        logger.info("添加checkItem param：{}",param);
-//        String mtype=param.get("monitor.type").toString();
-//        param.remove("monitor.type");
-//        String runtimeStr=param.get("runtimes").toString();
-//        String[] cronArray=runtimeStr.split("@");
-//        List<String> cronList=new ArrayList<String>(cronArray.length);
-//        for (String corn:cronArray) {
-//            cronList.add(corn);
-//        }
-//        param.put("cronList",cronList);
-//        MonitorItem item=MonitorItem.monitorInstance(mtype);
-//        CheckItem check=item.checkInstance(param.get("type").toString());
-//        check.init(param);
-//        //初始化了以后存到session中去
-//        String serialId;
-//        if(notNull(param.get("check.serial"))){
-//            serialId=param.get("check.serial").toString();
-//            param.remove("check.serial");
-//        }else{
-//            serialId=UUID.randomUUID().toString();
-//        }
-//        List<CheckItem> checkItems= (List<CheckItem>) session.getAttribute(serialId);
-//        if(checkItems==null){
-//            checkItems=new LinkedList<CheckItem>();
-//            session.setAttribute(serialId,checkItems);
-//        }
-//        checkItems.add(check);
-//        logger.info("添加checkItem的个数：{}",checkItems.size());
-//        Result res=new Result();
-//        res.setObj(serialId);
-//        return JSON.toJSONString(res);
-//    }
-
-    /**
-     * 将form值转化成json，再在页面中，将json展示出来，这样的好处是公用一套显示逻辑
-     * @param param
-     * @return
-     * @throws Exception
-     */
-//    @RequestMapping(value="/form2json" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
-//    public @ResponseBody
-//    String form2json(@RequestParam Map<String,Object> param) throws Exception {
-//        logger.info("添加checkItem param：{}",param);
-//        String mtype=param.get("monitor.type").toString();
-//        param.remove("monitor.type");
-//        String runtimeStr=param.get("runtimes").toString();
-//        String[] cronArray=runtimeStr.split("@");
-//        List<String> cronList=new ArrayList<String>(cronArray.length);
-//        for (String corn:cronArray) {
-//            cronList.add(corn);
-//        }
-//        param.put("cronList",cronList);
-//        MonitorItem item=MonitorItem.monitorInstance(mtype);
-//        CheckItem check=item.checkInstance(param.get("type").toString());
-//        check.init(param);
-//        Map<String, Object> checkMap=check.createMap();
-//        //checkMap中不包括这两个属性
-//        checkMap.put("fields",check.getFields());
-//        checkMap.put("typeName",item.getCheckTypeMap().get(param.get("type").toString()).getName());
-//        Result res=new Result();
-//        res.setObj(checkMap);
-//        return JSON.toJSONString(res);
-//    }
 }

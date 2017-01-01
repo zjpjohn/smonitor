@@ -37,7 +37,7 @@ public class CheckBodyServiceImpl extends AbstractService {
 		logger.info("检查http服务是否可以正常调用，服务的地址是:{}，调用的方式为:{},发送的数据为：{}",
 				httpItem.getUrl(), httpItem.getMethod(), httpItem.getData());
 
-		String response_string = null;
+		String response_string ;
 		if ("post".equalsIgnoreCase(httpItem.getMethod())) {
 			response_string = callUrlGetResp_post(httpItem.getUrl(),
 					httpItem.getData());
@@ -46,7 +46,7 @@ public class CheckBodyServiceImpl extends AbstractService {
 		}
 		logger.info("调用服务所接收到的返回内容：{}", response_string);
 		// 判断包含的关键字
-		List<String> contains = bodyItem.getContains();
+		String[] contains = bodyItem.getContains().split(",");
 		boolean flag = false;
 		for (String keyword : contains) {
 			// 如果包含关键字则报警
@@ -64,7 +64,7 @@ public class CheckBodyServiceImpl extends AbstractService {
 		}
 		flag = false;
 		// 判断不包含的关键字
-		List<String> exclude = bodyItem.getExclude();
+		String[] exclude = bodyItem.getExclude().split(",");;
 		for (String keyword : exclude) {
 			// 如果包含这个关键字就不报警
 			if (!response_string.contains(keyword)) {

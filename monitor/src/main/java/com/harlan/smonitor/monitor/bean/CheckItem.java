@@ -17,7 +17,7 @@ import org.quartz.TriggerKey;
  */
 public abstract class CheckItem {
     public CheckItem() {
-        state=0;
+        state=0;//默认启动状态
     }
 
     @SuppressWarnings("unchecked")
@@ -94,10 +94,6 @@ public abstract class CheckItem {
         return cronList;
     }
 
-    public void setCronList(List<String> cronList) {
-        this.cronList = cronList;
-    }
-
     public List<TriggerKey> getTriggerKeys() {
         return triggerKeys;
     }
@@ -137,6 +133,8 @@ public abstract class CheckItem {
     /**
      * 每个实现类，允许有自己特殊的字段，但该字段要在后台界面展示出来，并要填写值
      * 所以要用这个方法，把自定义字段的字段名称，意义展示出来
+     * 这里的定义的字段，会展示在界面
+     * 并且可以在 getAttrs 中取出，但目前只支持String
      * @return
      */
     public abstract List<FieldDeclare> getFields();

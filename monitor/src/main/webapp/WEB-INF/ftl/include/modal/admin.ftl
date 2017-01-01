@@ -74,6 +74,7 @@
     function adminModalInit(adminDivId) {
         DIV_ID=adminDivId;
         $("#admin_modal").modal("show");
+        $("#admin_modal_selected_div").find("button").remove();
         $.each($(DIV_ID).find("button"),function (i,item) {
             $("#admin_modal_selected_div").append('<button onclick="delAdmin(this);" class="btn btn-default">'+$(item).text()+'</button>');
         });
@@ -81,15 +82,11 @@
         //保存按钮绑定点击事件
         $("#admin_modal_save_btn").click(function () {
             $(DIV_ID).find("button").remove();
-            var adminString="";
+            $(DIV_ID).find("input").remove();
             $.each($("#admin_modal_selected_div").find("button"),function(i,item){
-                //console.log($(item).text());
-                adminString+=$(item).text();
-                adminString+="|";
+                $(DIV_ID).append('<input type="hidden" name="adminList" value="'+$(item).text()+'">');
                 $(DIV_ID).append('<button class="btn btn-default" disabled>'+$(item).text()+'</button>');
             });
-
-            $(DIV_ID).children("input").val(adminString.substr(0,adminString.length-1));
             $("#admin_modal").modal("hide");
         });
     }

@@ -11,16 +11,15 @@ import org.quartz.Job;
 
 public class CheckBody extends CheckItem {
 
-	private List<String> contains;
+	private String contains;
 	
-	private List<String> exclude;
-	@SuppressWarnings("unchecked")
+	private String exclude;
 	public void getAttrs(Map<String,Object> checkMap) {
 		if(checkMap.get("contains")!=null){
-			contains= (List<String>) checkMap.get("contains");
+			contains= checkMap.get("contains").toString();
 		}
 		if(checkMap.get("exclude")!=null){
-			exclude= (List<String>) checkMap.get("exclude");
+			exclude=  checkMap.get("exclude").toString();
 		}
 	}
 
@@ -43,12 +42,11 @@ public class CheckBody extends CheckItem {
 		return CheckBodyServiceImpl.class;
 	}
 
-
-
-	public List<String> getContains() {
+	public String getContains() {
 		return contains;
 	}
-	public List<String> getExclude() {
+
+	public String getExclude() {
 		return exclude;
 	}
 }

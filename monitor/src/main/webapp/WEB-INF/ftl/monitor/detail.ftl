@@ -14,7 +14,7 @@
     <hr>
 
     <#--添加form-->
-    <form id="add_form" action="toadd" method="post">
+    <form id="modify_form" action="toadd" method="post">
         <input type="hidden" name="check.srtial" class="check_srtial_hidden">
         <div class="row">
             <h3>监控项:</h3>
@@ -47,7 +47,6 @@
         <div class="row form-inline">
             <div id="admin-btns-div" class="col-xs-9 margin-bottom-sm">
                 <label>联系人：</label>
-                <input type="hidden" name="admin_list">
             </div>
             <div class="col-xs-3 margin-bottom-sm">
                 <button id="add_admin_btn" type="button" class="btn btn-default">编辑联系人</button>
@@ -79,14 +78,10 @@
         var monitorHtml=getFieldsHtml(MONITOR.fields,MONITOR);
         $("#monitor_append_div").append(monitorHtml);
         //添加联系人
-        var adminStr="";
         $.each(MONITOR.adminList,function(i,admin){
-            adminStr+=admin;
-            adminStr+="|";
             $("#admin-btns-div").append('<button class="btn btn-default" disabled>'+admin+'</button>');
+            $("#admin-btns-div").append('<input type="hidden" name="adminList" value="'+admin+'" >');
         });
-        adminStr=adminStr.substr(0,adminStr.length-1);
-        $("#admin-btns-div").find("input").val(adminStr);
         $("#add_admin_btn").click(function () {
             adminModalInit("#admin-btns-div");
         });
@@ -98,12 +93,28 @@
             showAddCheck("#check_list_div");
         });
         $("#modify_btn").click(function () {
-            if($("input[name='admin_list']").val()==""){
-                alert("该监控项没有联系人，请添加联系人");
-            }else{
-                var monitorObj= getMonitorObj("#add_form");
-                console.log(monitorObj);
+            var monitorObj= getMonitorObj("#modify_form");
+            //错误信息
+            if(typeof(monitorObj)=="string"){
+                alert(monitorObj);
+                return ;
             }
+            $.ajax({
+                "url":"savemonitor",
+                "type":"post",
+                "data":JSON.stringify(monitorObj),
+                "dataType":"json",
+                "contentType":"application/json",
+                "success":function(data){
+                    if(data.success==true){
+                        window.location="list";
+                    }else{
+                        console.log("exception..."+data.msg);
+                    }
+                },
+                "error":function(xhr,err1,err2){
+                }
+            });
         });
     });
 

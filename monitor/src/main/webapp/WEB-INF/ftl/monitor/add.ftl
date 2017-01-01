@@ -45,7 +45,6 @@
         <div class="row form-inline">
             <div id="admin-btns-div" class="col-xs-9 margin-bottom-sm">
                 <label>联系人：</label>
-                <input type="hidden" name="admin_list">
             </div>
             <div class="col-xs-3 margin-bottom-sm">
                 <button id="add_admin_btn" type="button" class="btn btn-default">编辑联系人</button>
@@ -59,9 +58,9 @@
     </div>
     <!-- 添加 检查项 form -->
     <#include "/include/modal/check.ftl">
-    <div class="btn-div row text-center margin-top-md margin-bottom-lg">
-        <button type="button" class="btn btn-danger">增加</button>
-        <button type="button" class="btn btn-default">重置</button>
+    <div class="row text-center margin-top-md margin-bottom-lg">
+        <button id="add_monitor_btn" type="button" class="btn btn-danger">增加</button>
+        <button id="add_reset_monitor_btn" type="button" class="btn btn-default">重置</button>
     </div>
 </div>
 <#--选择管理员，使用这个模块-->
@@ -82,7 +81,7 @@
             if(type_val!=""){
                 //查询监控项的字段
                 $.ajax({
-                    "url":"fields",
+                    "url":"monitorfields",
                     "type":"post",
                     "data":{"type":type_val},
                     "dataType":"json",
@@ -107,19 +106,32 @@
         });
 
         //添加monitor按钮
-        $(".btn-div .btn-danger").click(function () {
-            if($("input[name='admin_list']").val()==""){
-                alert("该监控项没有联系人，请添加联系人");
-            }else{
-                var monitorObj= getMonitorObj("#add_form");
-                //错误信息
-                if(typeof(monitorObj)=="string"){
-                    alert(monitorObj);
-                }
+        $("#add_monitor_btn").click(function () {
+            var monitorObj= getMonitorObj("#add_form");
+            //错误信息
+            if(typeof(monitorObj)=="string"){
+                alert(monitorObj);
+                return ;
             }
+            $.ajax({
+                "url":"addmonitor",
+                "type":"post",
+                "data":JSON.stringify(monitorObj),
+                "dataType":"json",
+                "contentType":"application/json",
+                "success":function(data,desc1){
+                    if(data.success==true){
+                        window.location="list";
+                    }else{
+                        console.log("exception..."+data.msg);
+                    }
+                },
+                "error":function(xhr,err1,err2){
+                }
+            });
         });
         //全部重置
-        $(".btn-div .btn-default").click(function () {
+        $("#add_reset_monitor_btn").click(function () {
             resetAll();
             $("#add_form")[0].reset();
 
