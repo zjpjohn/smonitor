@@ -65,8 +65,8 @@ public abstract class AbstractService implements Job {
 	 */
 	protected void checkAndSendMsg(CheckItem checkItem,List<String> adminList,String title,String content) {
 		int count= JobDao.jobAlamIncrease(checkItem.getId());
-		if(count>=checkItem.getAlarmTimes()){
-			logger.info("ID为 {} 的检查项，满足条件，发送通知，通知题目为 ：{},通知内容：{}",checkItem.getId(),title,content);
+		if(count>=checkItem.getAlarmTime()){
+			logger.info("ID为 {} 的检查项，达到报警阀值：{}，发送通知，通知题目为 ：{},通知内容：{}",checkItem.getId(),checkItem.getAlarmTime(),title,content);
 			sendNotice(adminList,title,content);
 		}
 	}

@@ -17,7 +17,7 @@ import java.util.*;
  * 如：数据库oracle的一次连接，mongodb的一次连接
  * @author harlan
  */
-public abstract class MonitorItem{
+public abstract class MonitorItem implements Cloneable{
     private final static Logger logger = LoggerFactory.getLogger(MonitorItem.class);
     private static Map<String,TypeDeclare> TYPE_MAP;
     static {
@@ -202,5 +202,30 @@ public abstract class MonitorItem{
 
     public List<String> getAdminList() {
         return adminList;
+    }
+
+    public void setAdminList(List<String> adminList) {
+        this.adminList = adminList;
+    }
+
+    @Override
+    public MonitorItem clone(){
+        MonitorItem monitor=null;
+            try {
+                monitor=(MonitorItem)super.clone();
+                //复制admingList
+                List<String> copyAdminList=new ArrayList<String>(monitor.getAdminList().size());
+                copyAdminList.addAll(monitor.getAdminList());
+                monitor.setAdminList(copyAdminList);
+                //复制checkList
+                List<CheckItem> copyCheckList=new ArrayList<CheckItem>(monitor.getCheckList().size());
+                for (CheckItem check:monitor.getCheckList()) {
+                    copyCheckList.add(check.clone());
+                }
+                monitor.setCheckList(copyCheckList);
+            } catch (CloneNotSupportedException e) {
+                logger.error("复制异常",e);
+            }
+        return monitor;
     }
 }

@@ -1,5 +1,6 @@
 package com.harlan.smonitor.monitor.data.dao;
 
+import com.harlan.smonitor.api.Result;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.common.Constants;
@@ -47,43 +48,70 @@ public class JobDao {
         CachedData.JOB_ALARM_COUNT.put(checkItemId,count);
         return count;
     }
+    public static Result addMonior(MonitorItem monitor){
+        Result res=new Result();
+        for (CheckItem checkItem:monitor.getCheckList()) {
+            if(checkItem.getState()== Constants.CHECK_RUN){
+                try {
+                    JobDetail job = newJob(checkItem.getJobServiceImpl())
+//						.withIdentity("job_"+name)
+                            .build();
+                    job.getJobDataMap().put("item",monitor);
+                    job.getJobDataMap().put("check",checkItem);
+                    Set<Trigger> triggerSet=new HashSet<Trigger>(checkItem.getCronList().size());
+                    List<TriggerKey> triggerKeyList=new ArrayList<TriggerKey>(checkItem.getCronList().size());
+                    for (String cronStr:checkItem.getCronList()) {
+                        logger.debug("添加的触发器：checkId:{},cron:{}",checkItem.getId(),cronStr);
+                        Trigger trigger = newTrigger()
+//						.withIdentity("trigger_"+name)
+                                .startNow()
+                                .withSchedule(cronSchedule(cronStr))
+                                .build();
+                        triggerSet.add(trigger);
+                    }
 
-    public static void start(){
+                    checkItem.setJobKey(job.getKey());
+//                  checkItem.setTriggerKeys(triggerKeyList);
+                    CachedData.SCHEDULER.scheduleJob(job,triggerSet,true);
+                } catch (Exception e) {
+                    res.setSuccess(false);
+                    logger.info("添加检查项时异常",e);
+                }
+            }
+        }
+        //因为这个对象中又存了几个属性，而get方法取出的是复制的对象
+        // 所以需要再put下
+        MonitorDao.addMonitor(monitor);
+        return res;
+    }
+    public static void pauseCheck(JobKey key){
+        try {
+            CachedData.SCHEDULER.pauseJob(key);
+        } catch (SchedulerException e) {
+            logger.error("check暂停时异常",e);
+        }
+    }
+    public static void restartCheck(JobKey key){
+        try {
+            CachedData.SCHEDULER.resumeJob(key);
+        } catch (SchedulerException e) {
+            logger.error("check暂停时异常",e);
+        }
+    }
+    public static boolean removeCheck(JobKey key){
+        try {
+            return CachedData.SCHEDULER.deleteJob(key);
+        } catch (SchedulerException e) {
+            logger.error("check暂停时异常",e);
+            return false;
+        }
+    }
+    public static void init(){
         logger.info("任务模块 开始初始化...");
         try{
             Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-            int n=0;
-            for (MonitorItem monitorItem : CachedData.getAllMonitorItem()) {
-                for (CheckItem checkItem:monitorItem.getCheckList()) {
-                    if(checkItem.getState()== Constants.CHECK_RUN){
-                        n++;
-                        JobDetail job = newJob(checkItem.getJobServiceImpl())
-//						.withIdentity("job_"+name)
-                                .build();
-                        job.getJobDataMap().put("item",monitorItem);
-                        job.getJobDataMap().put("check",checkItem);
-                        Set<Trigger> triggerSet=new HashSet<Trigger>(checkItem.getCronList().size());
-                        List<TriggerKey> triggerKeyList=new ArrayList<TriggerKey>(checkItem.getCronList().size());
-                        for (String cronStr:checkItem.getCronList()) {
-                            logger.debug("添加的触发器：checkId:{},cron:{}",checkItem.getId(),cronStr);
-                            Trigger trigger = newTrigger()
-//						.withIdentity("trigger_"+name)
-                                    .startNow()
-                                    .withSchedule(cronSchedule(cronStr))
-                                    .build();
-                            triggerSet.add(trigger);
-                        }
-
-                        checkItem.setJobKey(job.getKey());
-                        checkItem.setTriggerKeys(triggerKeyList);
-                        scheduler.scheduleJob(job,triggerSet,true);
-//                      logger.debug("检查项id:{},key：{}",checkItem.getId(),checkItem.getTriggerKey());
-                    }
-                }
-            }
             CachedData.SCHEDULER=scheduler;
             CachedData.SCHEDULER.start();
-            logger.info("任务模块启动成功，共添加任务个数:{}",n);
         }catch (Exception e){
             logger.error("任务模块启动时发生异常，已停止启动",e);
         }

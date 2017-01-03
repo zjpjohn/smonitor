@@ -14,7 +14,7 @@
     <hr>
 
     <#--添加 monitor form-->
-    <form id="add_form" action="addmonitor" method="post">
+    <form id="add_form" >
         <div class="row">
             <h3>监控项:</h3>
         </div>
@@ -73,11 +73,11 @@
     }
 
     $(function(){
-//        showAddCheck("#check_list_div");
         //选择monitor类型时
         $("#monitor_type").change(function () {
             var type_val=$(this).val();
             resetAll();
+            addCheckModalInit("#check_list_div",type_val);
             if(type_val!=""){
                 //查询监控项的字段
                 $.ajax({
@@ -102,7 +102,6 @@
                     }
                 });
             }
-            setMonitorType(type_val);
         });
 
         //添加monitor按钮
@@ -110,7 +109,7 @@
             var monitorObj= getMonitorObj("#add_form");
             //错误信息
             if(typeof(monitorObj)=="string"){
-                alert(monitorObj);
+                showMsg(monitorObj);
                 return ;
             }
             $.ajax({
@@ -140,7 +139,7 @@
             adminModalInit("#admin-btns-div");
         });
         $("#monitor_show_add_check_btn").click(function () {
-            showAddCheck("#check_list_div");
+            showCheckModal();
         });
         $("#monitor_type").focus();
         

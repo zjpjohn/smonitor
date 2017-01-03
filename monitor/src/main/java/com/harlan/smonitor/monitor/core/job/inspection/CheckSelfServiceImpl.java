@@ -20,13 +20,11 @@ public class CheckSelfServiceImpl extends AbstractService {
     	
     	logger.info("开始检查,检查类型：系统自检");
     	logger.info("检查当前监控系统是否在运行状态");
-    	logger.info("开始发送消息，通知管理员");
-    	
+
     	String msg = inspectionItem.getName()+checkSelf.getName();
 
 		checkAndSendMsg(checkItem,item.getAdminList(),TITLE,msg);
-		logger.info("消息发送完成");
-    	
+
     	logger.info("---------------------------check end---------------------------");
 	}
 

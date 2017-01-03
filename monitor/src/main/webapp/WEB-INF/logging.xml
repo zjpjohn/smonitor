@@ -35,8 +35,8 @@
     <logger name="com.harlan">
         <level value="debug" />
     </logger>
-    <logger name="org">
-        <level value="info" />
+    <logger name="org.quartz">
+        <level value="warn" />
     </logger>
     <logger name="org.springframework.web.servlet.mvc.method">
         <level value="warn" />

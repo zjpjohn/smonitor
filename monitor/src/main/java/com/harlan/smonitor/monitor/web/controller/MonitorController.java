@@ -103,7 +103,6 @@ public class MonitorController {
             MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
             item.init(reqMap);
             MonitorDao.saveMonitor(item);
-            //TODO 修改monitor
             MonitorDao.saveMonitorFile();
             res=new Result();
         } catch (Exception e) {
@@ -158,7 +157,7 @@ public class MonitorController {
             return JSON.toJSONString(new Result(e.toString()));
         }
     }
-    @RequestMapping(value="/checkfields" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    @RequestMapping(value="/checkfields", produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody
     String checkFields(@RequestParam("mtype") String mtype,@RequestParam("ctype") String ctype) throws Exception {
         logger.debug("查询check字段：monitor type：{} , check type:{}",mtype,ctype);
@@ -166,6 +165,16 @@ public class MonitorController {
         CheckItem check=item.checkInstance(ctype);
         Result res=new Result();
         res.setObj(check.getFields());
+        return JSON.toJSONString(res);
+    }
+    @RequestMapping(value="/delmonitor",produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody
+    String delMonitor(@RequestParam String monitorid){
+        logger.debug("delmonitor -- monitorid：{}",monitorid);
+        Integer id=Integer.valueOf(monitorid);
+        MonitorDao.deleteMonitor(id);
+        MonitorDao.saveMonitorFile();
+        Result res=new Result();
         return JSON.toJSONString(res);
     }
 }

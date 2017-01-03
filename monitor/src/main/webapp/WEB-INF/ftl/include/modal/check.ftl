@@ -15,6 +15,7 @@
         }
     }
 </style>
+<link href="../plugin/bootstrap/switch/3.3.2/css/bootstrap-switch.min.css" rel="stylesheet">
 <div id="check_modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="true" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -37,7 +38,7 @@
                             </select>
                         </div>
                         <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="name" type="text" class="form-control"/></div>
-                        <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>报警阀值：</label><input name="alarmTimes"  type="text" class="form-control middle-input"/></div>
+                        <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>通知阀值：</label><input name="alarmTime"  type="text" class="form-control middle-input"/></div>
                         <div id="check_append_div"></div>
                     </div>
                     <div id="check_runtime_div">
@@ -56,7 +57,41 @@
         </div>
     </div>
 </div>
+
+<div id="showMsgModal" class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="mySmallModalLabel">提示：</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirmModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">请确认：</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">放弃</button>
+                <button id="confirm_modal_btn" type="button" class="btn btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../plugin/bootstrap/switch/3.3.2/js/bootstrap-switch.min.js"></script>
 <script>
+    //switch全局变量
+    $.fn.bootstrapSwitch.defaults.size = 'small';
+
     var CHECK_LIST_DIV_ID;
     var MONITOR_TYPE="";
     var CHECK_FIELDS_MAP;
@@ -77,21 +112,17 @@
         });
         return o;
     };
-    /**
-     * 初始化添加检查项的div，并获得焦点
-     * @param check_list_div_id
-     */
-    function showAddCheck(check_list_div_id) {
-        CHECK_LIST_DIV_ID=check_list_div_id;
-        //初始化添加一行（没有删除按钮）
-        resetAddCheck();
-        if(MONITOR_TYPE==""){
-            $(".check-modal-add-msg").removeClass("sr-only");
-        }else{
-            $(".check-modal-add-msg").addClass("sr-only");
-        }
-        $("#check_modal").modal("show");
+    function showMsg(msg) {
+        $("#showMsgModal").find(".modal-body").html(msg);
+        $("#showMsgModal").modal("show");
     }
+    function confirmAndRun(msg,fn) {
+        $("#confirmModal").find(".modal-body").html(msg);
+        $("#confirmModal").modal("show");
+        $("#confirm_modal_btn").unbind("click");
+        $("#confirm_modal_btn").click(fn);
+    }
+
     function resetAddCheck() {
         //初始化
         $("#check_runtime_div").html("");
@@ -99,50 +130,69 @@
         addRuntimeRow(false);
         $("#check_add_form")[0].reset();
     }
-    function setMaps(checkFieldsMap,checkTypeNameMap) {
-        CHECK_FIELDS_MAP=checkFieldsMap;
-        CHECK_TYPE_NAME_MAP=checkTypeNameMap;
+    /**
+     * 显示添加check的modal
+     */
+    function showCheckModal() {
+        if(MONITOR_TYPE==""){
+            $(".check-modal-add-msg").removeClass("sr-only");
+        }else{
+            $(".check-modal-add-msg").addClass("sr-only");
+        }
+        for(var typeVal in CHECK_TYPE_NAME_MAP){//遍历CHECK_TYPE_NAME_MAP对象中的属性
+            console.log(typeVal+"="+CHECK_TYPE_NAME_MAP[typeVal]);
+            $("#check_type").append("<option value='"+typeVal+"'>"+CHECK_TYPE_NAME_MAP[typeVal]+"</option>");
+        }
+        resetAddCheck();
+        $("#check_modal").modal("show");
     }
     /**
-     * 根据监控项type初始化检查项类型
-     * 初始化添加检查项div
-     * @param mType
+     * 初始化 check modal
+     * @param check_list_div html中存放check的div
+     * @param monitor_type monitor的类型
+     * @param check_type_name_map map数据
+     * @param check_fields_map map数据
      */
-    function setMonitorType(mType) {
-        resetAddCheck();
+    function addCheckModalInit(check_list_div,monitor_type,check_type_name_map,check_fields_map) {
+        CHECK_LIST_DIV_ID=check_list_div;
+        MONITOR_TYPE=monitor_type;
+        CHECK_TYPE_NAME_MAP=check_type_name_map;
+        CHECK_FIELDS_MAP=check_fields_map;
         $("#check_type").html("<option value=''>-请选择-</option>");
-        //将monitor的type存在变量中，常用
-        MONITOR_TYPE=mType;
-        CHECK_TYPE_NAME_MAP={};
-        CHECK_FIELDS_MAP={};
-        //修改 monitor 类型，之前填写的 check要清空
-        $(CHECK_LIST_DIV_ID).html("");
-        //查询这个类型的监控，有哪些类型的检查项
-        if(mType!=""){
-            $.ajax({
-                "url":"checktype",
-                "type":"post",
-                "data":{"mtype":mType},
-                "dataType":"json",
-                "success":function(data,desc1){
-                    if(data.success==true){
-                        $.each(data.obj,function(i,item){
-                            CHECK_TYPE_NAME_MAP[item.typeValue]=item.name;
-                            $("#check_type").append("<option value='"+item.typeValue+"'>"+item.name+"</option>");
-                        });
-                    }else{
-                        console.log("exception..."+data.msg);
-                    }
-                },
-                "error":function(xhr,err1,err2){
-                }
-            });
+        resetAddCheck();
+        if(typeof(CHECK_FIELDS_MAP)=="undefined"){
+            CHECK_FIELDS_MAP={};
         }
+        $(CHECK_LIST_DIV_ID).html("");
+        if(typeof(CHECK_TYPE_NAME_MAP)=="undefined"){
+            CHECK_TYPE_NAME_MAP={};
+            if(MONITOR_TYPE!=""){
+                $.ajax({
+                    "url":"checktype",
+                    "type":"post",
+                    "data":{"mtype":MONITOR_TYPE},
+                    "dataType":"json",
+                    "success":function(data){
+                        if(data.success==true){
+                            $.each(data.obj,function(i,item){
+                                CHECK_TYPE_NAME_MAP[item.typeValue]=item.name;
+                            });
+                        }else{
+                            console.log("exception..."+data.msg);
+                        }
+                    },
+                    "error":function(xhr,err1,err2){
+                    }
+                });
+            }
+        }
+
+
     }
     function getValNotNull(obj){
         if(obj.val()==""){
             obj.parent("div").addClass("has-error");
-            alert("此处内容为必填");
+            showMsg("此处内容为必填");
             return "";
         }else{
             obj.parent("div").removeClass("has-error");
@@ -188,6 +238,8 @@
                 if(value!=""){
                     runtimeInputVal+=value;
                     runtimeInputVal+=" ";
+                }else{
+                    return ;
                 }
             }
             var yy=$(item).find("input").eq(6).val();
@@ -200,10 +252,25 @@
         });
 
     }
-    function checkRowHtml(obj) {
+    /**
+     * 删除本行check
+     * */
+    function delCheck(obj) {
+        $(obj).parents('.check_row_form').remove();
+    }
+    function addCheck2Html(obj,hasSwitchBtn) {
         var html="<form class='check_row_form'>";
         html+="<input type='hidden' name='type' value='"+obj.type+"'/>";
-        html+='<div class="row"><div class="col-xs-6 col-md-6 margin-bottom-sm"><h4>检查项:</h4></div></div>';
+        html+='<div class="row">';
+        html+='<div class="col-xs-6 margin-bottom-sm"><h4>检查项:</h4></div>';
+        html+='<div class="col-xs-4 margin-bottom-sm text-right">';
+        if(hasSwitchBtn==true){
+            html+='<label>运行状态：</label>';
+            html+='<input type="checkbox" class="check-job-switch bootstrap-switch bootstrap-switch-small ">';
+        }
+        html+='</div>';
+        html+='<div class="col-xs-2 margin-bottom-sm text-right"><button type="button" onclick="delCheck(this);" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>';
+        html+='</div>';
         html+='<div class="row form-inline">';
 
         if(typeof(obj.id) != "undefined"){
@@ -211,7 +278,7 @@
         }
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>类型：</label><input type='text' class='form-control' value='"+CHECK_TYPE_NAME_MAP[obj.type]+"' readonly/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>名称：</label><input type='text' name='name' class='form-control' value='"+obj.name+"'/></div>";
-        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>报警阀值：</label><input type='text' name='alarmTimes' class='form-control' value='"+obj.alarmTimes+"'/></div>";
+        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>通知阀值：</label><input type='text' name='alarmTime' class='form-control' value='"+obj.alarmTime+"'/></div>";
         html+=getFieldsHtml(CHECK_FIELDS_MAP[obj.type],obj);
         html+='</div>';
         $.each(obj.cronList,function(i,item){
@@ -239,7 +306,10 @@
         });
         html+='<hr>';
         html+="</form>";
-        return html;
+        $(CHECK_LIST_DIV_ID).append(html);
+        if(hasSwitchBtn==true){
+
+        }
     }
     function getFieldsHtml(fields, obj) {
         var fhtml="";
@@ -323,8 +393,7 @@
             //先保存执行时间
             saveCheckRuntime("#check_add_form");
             var checkJsonObj=getCheckJsonObj("#check_add_form");
-            var  append_html=checkRowHtml(checkJsonObj);
-            $(CHECK_LIST_DIV_ID).append(append_html);
+            addCheck2Html(checkJsonObj);
             $("#check_modal").modal("hide");
             $("#check_add_form").find("input[name='cronList']").remove();
         });

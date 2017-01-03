@@ -21,7 +21,7 @@ class CachedData {
     static{
         ADMIN_MAP=new LinkedHashMap<String, Admin>();
         GROUP_MAP=new LinkedHashMap<Integer, Group>();
-        MONITOR_LIST=new LinkedList<MonitorItem>();
+        MONITOR_MAP=new LinkedHashMap<Integer,MonitorItem>();
         JOB_ALARM_COUNT=new HashMap<Integer, Integer>();
         MONITOR_INDEX=0;
         CHECK_INDEX=0;
@@ -36,7 +36,7 @@ class CachedData {
     //通讯录，储存所有管理员
     private  static Map<String, Admin> ADMIN_MAP;
     //所有监控任务列表
-    private static List<MonitorItem> MONITOR_LIST;
+    private static Map<Integer, MonitorItem> MONITOR_MAP;
     //分类
     private static Map<Integer, Group> GROUP_MAP;
     //调度管理对象
@@ -51,7 +51,7 @@ class CachedData {
      */
     /**
      * 添加admin，自带索引
-     * @param admin
+     * @param admin 需要添加的对象
      */
     public static void putAdmin(Admin admin) {
         ADMIN_MAP.put(admin.getId(),admin);
@@ -81,8 +81,8 @@ class CachedData {
 
     /**
      * 复制对象，防止后续业务侧修改了属性，影响原始数据
-     * @param admin
-     * @return
+     * @param admin 原对象
+     * @return 复制后的对象
      */
     private static Admin copyAdmin(Admin admin) {
         try {
@@ -142,28 +142,27 @@ class CachedData {
     }
     /**
      * ==================================================
-     * MonitorItem
+     * Monitor
      * ==================================================
      */
     public static List<MonitorItem> getAllMonitorItem() {
-        List<MonitorItem> monitor_list=new ArrayList<MonitorItem>(MONITOR_LIST.size());
-        for (MonitorItem monitor:MONITOR_LIST) {
-            MonitorItem copyMonitor=copyMonitor(monitor);
+        List<MonitorItem> monitor_list=new ArrayList<MonitorItem>(MONITOR_MAP.size());
+        for (MonitorItem monitor:MONITOR_MAP.values()) {
+            MonitorItem copyMonitor=monitor.clone();
             monitor_list.add(copyMonitor);
         }
         return monitor_list;
     }
 
-    private static MonitorItem copyMonitor(MonitorItem monitor) {
-        MonitorItem copyMonitor=MonitorItem.monitorInstance(monitor.getType());
-        copyMonitor.init(monitor.createMap());
-        return copyMonitor;
-    }
-
     public static int monitorItemSize() {
-        return MONITOR_LIST.size();
+        return MONITOR_MAP.size();
     }
 
+    /**
+     * put方法是直接放到内存
+     * 所以在放入内存后，尽量不要修改入参
+     * @param monitorItem
+     */
     public static void putMonitorItem(MonitorItem monitorItem) {
         if(monitorItem.getId()==null){
             monitorItem.setId(++MONITOR_INDEX);
@@ -179,6 +178,18 @@ class CachedData {
                 CachedData.CHECK_INDEX=item.getId();
             }
         }
-        MONITOR_LIST.add(monitorItem);
+        MONITOR_MAP.put(monitorItem.getId(),monitorItem);
+    }
+    public static void removeMonitor(Integer monitorId){
+        MONITOR_MAP.remove(monitorId);
+    }
+
+    /**
+     * 获得的monitor是复制的对象，修改不会影响内存中存储的monitor
+     * @param monitorId
+     * @return
+     */
+    public static MonitorItem getMonitor(Integer monitorId){
+        return MONITOR_MAP.get(monitorId).clone();
     }
 }

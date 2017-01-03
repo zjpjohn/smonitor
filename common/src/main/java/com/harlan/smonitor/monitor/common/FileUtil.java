@@ -3,13 +3,14 @@ package com.harlan.smonitor.monitor.common;
 import java.io.*;
 
 /**
+ * FileUtil
  * Created by harlan on 2016/12/2.
  */
 public class FileUtil {
     /**
      * 文件重写
-     * @param fileName
-     * @param content
+     * @param fileName 文件的绝对路径（目标文件的目录不存在会报错）
+     * @param content 内容
      * @throws IOException
      */
     public static void rewrite(String fileName, String content) throws IOException {

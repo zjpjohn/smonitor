@@ -1,5 +1,6 @@
 package com.harlan.smonitor.monitor.core.init;
 
+import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.data.DataFileOperator;
 import com.harlan.smonitor.monitor.data.dao.JobDao;
 import com.harlan.smonitor.monitor.data.dao.MonitorDao;
@@ -33,7 +34,10 @@ public class MonitorInitServlet implements InitializingBean {
 
             logger.info("monitor 数据加载完毕");
 
-            JobDao.start();
+            JobDao.init();
+            for (MonitorItem monitorItem : MonitorDao.getMonitorItemList(null,null)) {
+                JobDao.addMonior(monitorItem);
+            }
         } catch (Exception e) {
             logger.error("初始化过程中出现异常", e);
         }

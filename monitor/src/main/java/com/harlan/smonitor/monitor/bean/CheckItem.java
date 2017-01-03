@@ -1,13 +1,17 @@
 package com.harlan.smonitor.monitor.bean;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.harlan.smonitor.api.impl.FieldDeclare;
+import com.harlan.smonitor.monitor.common.Constants;
 import org.quartz.Job;
 import org.quartz.JobKey;
 import org.quartz.TriggerKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -15,9 +19,10 @@ import org.quartz.TriggerKey;
  * 每个检查项是一个quertz 的job
  * 不同的检查项需要实现此父类
  */
-public abstract class CheckItem {
+public abstract class CheckItem  implements Cloneable{
+    private final static Logger logger = LoggerFactory.getLogger(MonitorItem.class);
     public CheckItem() {
-        state=0;//默认启动状态
+        state= Constants.CHECK_PAUSE;//默认暂停状态
     }
 
     @SuppressWarnings("unchecked")
@@ -31,8 +36,8 @@ public abstract class CheckItem {
             state=Integer.valueOf(checkMap.get("state").toString());
         }
         type=checkMap.get("type").toString();
-        if(checkMap.get("alarmTimes")!=null){
-            alarmTimes=Integer.valueOf(checkMap.get("alarmTimes").toString());
+        if(checkMap.get("alarmTime")!=null){
+            alarmTime=Integer.valueOf(checkMap.get("alarmTime").toString());
         }
         getAttrs(checkMap);
     }
@@ -48,13 +53,13 @@ public abstract class CheckItem {
         check_map.put("name",name);
         check_map.put("type",type);
         check_map.put("state",state);
-        check_map.put("alarmTimes",alarmTimes.toString());
+        check_map.put("alarmTime",alarmTime.toString());
         check_map.put("cronList",cronList);
         check_map= setAttrs(check_map);
         return check_map;
     }
     protected Integer id;
-    protected List<TriggerKey> triggerKeys;
+//    protected List<TriggerKey> triggerKeys;
     protected JobKey jobKey;
     /**
      * 检查间隔，单位：分
@@ -78,7 +83,7 @@ public abstract class CheckItem {
     /**
      * 不符合预期状态达到多少次之后报警
      */
-    protected Integer alarmTimes;
+    protected Integer alarmTime;
     
     public abstract Class<? extends Job> getJobServiceImpl();
 
@@ -94,14 +99,6 @@ public abstract class CheckItem {
         return cronList;
     }
 
-    public List<TriggerKey> getTriggerKeys() {
-        return triggerKeys;
-    }
-
-    public void setTriggerKeys(List<TriggerKey> triggerKeys) {
-        this.triggerKeys = triggerKeys;
-    }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -110,10 +107,6 @@ public abstract class CheckItem {
 		return name;
 	}
 
-	public Integer getAlarmTimes() {
-		return alarmTimes;
-	}
-    
 	public String getType() {
 		return type;
 	}
@@ -130,6 +123,14 @@ public abstract class CheckItem {
 
     public abstract void getAttrs(Map<String,Object> attrMap);
 
+    public void setCronList(List<String> cronList) {
+        this.cronList = cronList;
+    }
+
+    public Integer getAlarmTime() {
+        return alarmTime;
+    }
+
     /**
      * 每个实现类，允许有自己特殊的字段，但该字段要在后台界面展示出来，并要填写值
      * 所以要用这个方法，把自定义字段的字段名称，意义展示出来
@@ -138,4 +139,18 @@ public abstract class CheckItem {
      * @return
      */
     public abstract List<FieldDeclare> getFields();
+
+    @Override
+    public CheckItem clone(){
+        CheckItem copyCheck=null;
+        try {
+            copyCheck= (CheckItem) super.clone();
+            List<String> copyCornList=new ArrayList<String>(copyCheck.getCronList().size());
+            copyCornList.addAll(copyCheck.getCronList());
+            copyCheck.setCronList(copyCornList);
+        } catch (Exception e) {
+            logger.info("");
+        }
+        return copyCheck;
+    }
 }

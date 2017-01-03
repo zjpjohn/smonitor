@@ -6,6 +6,7 @@ import com.harlan.smonitor.monitor.data.DataFileOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,14 +41,7 @@ public class MonitorDao {
     }
 
     public static MonitorItem getMonitor(Integer id){
-        MonitorItem qry_monitor=null;
-        for (MonitorItem monitor:CachedData.getAllMonitorItem()) {
-            if(monitor.getId().equals(id)){
-                qry_monitor=monitor;
-                break;
-            }
-        }
-        return qry_monitor;
+        return CachedData.getMonitor(id);
     }
 
     /**
@@ -56,7 +50,7 @@ public class MonitorDao {
      * @return
      * @throws Exception
      */
-    public static Result addMonitor(MonitorItem monitorItem) throws Exception {
+    public static Result addMonitor(MonitorItem monitorItem) {
         logger.debug("monitor 添加到内存");
         CachedData.putMonitorItem(monitorItem);
         return  new Result();
@@ -70,12 +64,25 @@ public class MonitorDao {
      * @return
      * @throws Exception
      */
-    public static Result saveMonitorFile() throws Exception {
+    public static Result saveMonitorFile(){
         logger.debug("monitor数据保存到文件");
-        DataFileOperator.saveMonitor(CachedData.getAllMonitorItem());
+        try {
+            DataFileOperator.saveMonitor(CachedData.getAllMonitorItem());
+        } catch (Exception e) {
+            logger.error("保存monitor文件数据发生异常",e);
+        }
         return  new Result();
     }
 
     public static void saveMonitor(MonitorItem item) {
+        if(item.getId()==null){
+            throw new RuntimeException("保存monitor时，id为空");
+        }
+        CachedData.removeMonitor(item.getId());
+        CachedData.putMonitorItem(item);
+    }
+
+    public static void deleteMonitor(Integer monitorid) {
+        CachedData.removeMonitor(monitorid);
     }
 }
