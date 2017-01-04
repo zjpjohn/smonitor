@@ -48,7 +48,7 @@
             <div id="admin-btns-div" class="col-xs-9 margin-bottom-sm">
                 <label>联系人：</label>
             </div>
-            <div class="col-xs-3 margin-bottom-sm">
+            <div class="col-xs-12 col-md-3 margin-bottom-sm text-right">
                 <button id="add_admin_btn" type="button" class="btn btn-default">编辑联系人</button>
             </div>
         </div>
@@ -67,7 +67,7 @@
 <#include "/include/modal/admin.ftl">
 <script>
     var MONITOR=${monitor};
-    function test() {
+    function del() {
         $.ajax({
             "url":"delmonitor",
             "type":"post",
@@ -102,9 +102,8 @@
             adminModalInit("#admin-btns-div");
         });
         //添加check
-        $.each(MONITOR.checkList,function(i,check){
-            addCheck2Html(check,true);
-        });
+        addChecks2html(MONITOR.checkList);
+
         $("#monitor_show_add_check_btn").click(function () {
             showCheckModal();
         });
@@ -133,7 +132,7 @@
             });
         });
         $("#monitor_detail_del_check_btn").click(function () {
-            confirmAndRun("确认删除此监控项？",test);
+            confirmAndRun("删除监控项会终止全部检查任务，确认删除此监控项？",del);
         });
     });
 

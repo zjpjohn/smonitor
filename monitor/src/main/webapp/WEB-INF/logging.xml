@@ -6,7 +6,7 @@
     <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
-                   value="[smonitor][%p_%r_%t][class:%c]- %m%n" />
+                   value="[smonitor][%p_%r_%t][class:%c][%d{yyyy-MM-dd-HH:mm:ss}]- %m%n" />
         </layout>
     </appender>
     <appender name="FILE_APPENDER" class="org.apache.log4j.DailyRollingFileAppender">

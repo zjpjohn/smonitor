@@ -115,6 +115,14 @@ public abstract class CheckItem  implements Cloneable{
         this.jobKey = jobKey;
     }
 
+    public JobKey getJobKey() {
+        return jobKey;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
     /**
      * bean转化成xml元素时
      * 需要各个实现类，需要将个性字段创建成xml元素

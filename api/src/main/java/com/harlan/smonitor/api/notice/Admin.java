@@ -13,9 +13,6 @@ public abstract class Admin {
 	 */
 	public void init(Map<String,Object> adminMap) {
 		this.id = adminMap.get("id").toString();
-		if(id.contains("|")){
-			throw new RuntimeException("联系人id不能含有‘|’");
-		}
 		this.type = adminMap.get("type").toString();
 		getAttrs(adminMap);
 	}

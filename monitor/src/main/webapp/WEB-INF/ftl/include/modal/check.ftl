@@ -140,7 +140,6 @@
             $(".check-modal-add-msg").addClass("sr-only");
         }
         for(var typeVal in CHECK_TYPE_NAME_MAP){//遍历CHECK_TYPE_NAME_MAP对象中的属性
-            console.log(typeVal+"="+CHECK_TYPE_NAME_MAP[typeVal]);
             $("#check_type").append("<option value='"+typeVal+"'>"+CHECK_TYPE_NAME_MAP[typeVal]+"</option>");
         }
         resetAddCheck();
@@ -258,18 +257,25 @@
     function delCheck(obj) {
         $(obj).parents('.check_row_form').remove();
     }
+    /**
+     * 讲一个 check json 添加转化成html添加至 div
+     * */
     function addCheck2Html(obj,hasSwitchBtn) {
         var html="<form class='check_row_form'>";
         html+="<input type='hidden' name='type' value='"+obj.type+"'/>";
         html+='<div class="row">';
-        html+='<div class="col-xs-6 margin-bottom-sm"><h4>检查项:</h4></div>';
-        html+='<div class="col-xs-4 margin-bottom-sm text-right">';
+        html+='<div class="col-xs-12 col-md-6 margin-bottom-sm"><h4>检查项:</h4></div>';
+        html+='<div class="col-xs-10 col-md-5 margin-bottom-sm text-right">';
         if(hasSwitchBtn==true){
             html+='<label>运行状态：</label>';
-            html+='<input type="checkbox" class="check-job-switch bootstrap-switch bootstrap-switch-small ">';
+            html+='<input type="checkbox" class="check-job-switch"';
+            if(obj.state==0){
+                html+=' checked ';
+            }
+            html+=">";
         }
         html+='</div>';
-        html+='<div class="col-xs-2 margin-bottom-sm text-right"><button type="button" onclick="delCheck(this);" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>';
+        html+='<div class="col-xs-2 col-md-1 margin-bottom-sm text-right"><button type="button" onclick="delCheck(this);" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button></div>';
         html+='</div>';
         html+='<div class="row form-inline">';
 
@@ -307,9 +313,6 @@
         html+='<hr>';
         html+="</form>";
         $(CHECK_LIST_DIV_ID).append(html);
-        if(hasSwitchBtn==true){
-
-        }
     }
     function getFieldsHtml(fields, obj) {
         var fhtml="";
@@ -355,6 +358,40 @@
             checkJsonObj.cronList=new Array(checkJsonObj.cronList);
         }
         return checkJsonObj;
+    }
+    function addChecks2html(checkList) {
+        $.each(checkList,function(i,check){
+            addCheck2Html(check,true);
+        });
+        $(".check-job-switch").bootstrapSwitch();
+        $('.check-job-switch').on('switchChange.bootstrapSwitch', function(event, state) {
+            var checkId=$(this).parents(".check_row_form").find("input[name='id']").val();
+            var obj=this;
+            var url="";
+            if(state){
+                //打开
+                url="startcheck";
+            }else{
+                //关闭
+                url="pausecheck";
+            }
+            $.ajax({
+                "url":url,
+                "type":"post",
+                "data":{"mtype":MONITOR_TYPE,"cid":checkId},
+                "dataType":"json",
+                "success":function(data){
+                    if(data.success==true){
+                    }else{
+                        $(obj).bootstrapSwitch('toggleState');
+                        showMsg(data.msg);
+                    }
+                },
+                "error":function(xhr,err1,err2){
+                }
+            });
+
+        });
     }
     $(function(){
         //查询这个检查项的字段有哪些

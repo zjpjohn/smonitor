@@ -61,6 +61,7 @@ public class MonitorDao {
 
     /**
      * 保存到文件
+     * 这个方法不能放在其他方法中，因为初始化读文件时也调用了这个方法
      * @return
      * @throws Exception
      */

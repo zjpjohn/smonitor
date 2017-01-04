@@ -11,6 +11,7 @@ import com.harlan.smonitor.monitor.common.Constants;
 import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 import com.harlan.smonitor.monitor.data.dao.AdminDao;
 import com.harlan.smonitor.monitor.data.dao.GroupDao;
+import com.harlan.smonitor.monitor.data.dao.JobDao;
 import com.harlan.smonitor.monitor.data.dao.MonitorDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class MonitorController {
     }
     @RequestMapping(value="/detail")
     public ModelAndView detail(Integer id){
-        logger.debug("监控详情 id：{}",id);
+        logger.debug("detail id：{}",id);
         ModelAndView mv=new ModelAndView("/monitor/detail");
         MonitorItem monitor=MonitorDao.getMonitor(id);
         Map<String, Object> monitorMap = monitor.createMap();
@@ -172,9 +173,65 @@ public class MonitorController {
     String delMonitor(@RequestParam String monitorid){
         logger.debug("delmonitor -- monitorid：{}",monitorid);
         Integer id=Integer.valueOf(monitorid);
+        MonitorItem monitor=MonitorDao.getMonitor(id);
+        for (CheckItem check:monitor.getCheckList()) {
+            if(check.getJobKey()!=null){
+                JobDao.removeCheck(check.getJobKey());
+            }
+        }
         MonitorDao.deleteMonitor(id);
         MonitorDao.saveMonitorFile();
         Result res=new Result();
+        return JSON.toJSONString(res);
+    }
+    @RequestMapping(value="/startcheck" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody
+    String startCheck(@RequestParam("cid") String cid) throws Exception {
+        logger.debug("startCheck -- cid:{}",cid);
+        Result res=new Result();
+        List<MonitorItem> monitors=MonitorDao.getMonitorItemList(null,null);
+        for (MonitorItem monitor:monitors) {
+            for (CheckItem check:monitor.getCheckList()) {
+                if(check.getId().equals(Integer.valueOf(cid))){
+                    if(check.getJobKey()!=null){
+                        logger.debug("restartCheck -- checkId：{}",check.getId());
+                        JobDao.restartCheck(check.getJobKey());
+                    }else{
+                        logger.debug("Jobkey 不存在，addCheck -- checkId：{}",check.getId());
+                        res=JobDao.addCheck(check,monitor);
+                    }
+                    if(res.isSuccess()){
+                        check.setState(Constants.CHECK_RUN);
+                        MonitorDao.saveMonitor(monitor);
+                        MonitorDao.saveMonitorFile();
+                    }
+
+                    break;
+                }
+            }
+        }
+        return JSON.toJSONString(res);
+    }
+    @RequestMapping(value="/pausecheck" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody
+    String pauseCheck(@RequestParam("cid") String cid) throws Exception {
+        logger.debug("pausecheck -- cid:{}",cid);
+        Result res=new Result();
+        List<MonitorItem> monitors=MonitorDao.getMonitorItemList(null,null);
+        for (MonitorItem monitor:monitors) {
+            for (CheckItem check:monitor.getCheckList()) {
+                if(check.getId().equals(Integer.valueOf(cid))){
+                    res=JobDao.pauseCheck(check.getJobKey());
+                    if(res.isSuccess()){
+                        check.setState(Constants.CHECK_PAUSE);
+                        MonitorDao.saveMonitor(monitor);
+                        MonitorDao.saveMonitorFile();
+                    }
+                    break;
+                }
+            }
+        }
+
         return JSON.toJSONString(res);
     }
 }

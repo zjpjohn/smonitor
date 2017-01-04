@@ -52,31 +52,7 @@ public class JobDao {
         Result res=new Result();
         for (CheckItem checkItem:monitor.getCheckList()) {
             if(checkItem.getState()== Constants.CHECK_RUN){
-                try {
-                    JobDetail job = newJob(checkItem.getJobServiceImpl())
-//						.withIdentity("job_"+name)
-                            .build();
-                    job.getJobDataMap().put("item",monitor);
-                    job.getJobDataMap().put("check",checkItem);
-                    Set<Trigger> triggerSet=new HashSet<Trigger>(checkItem.getCronList().size());
-                    List<TriggerKey> triggerKeyList=new ArrayList<TriggerKey>(checkItem.getCronList().size());
-                    for (String cronStr:checkItem.getCronList()) {
-                        logger.debug("添加的触发器：checkId:{},cron:{}",checkItem.getId(),cronStr);
-                        Trigger trigger = newTrigger()
-//						.withIdentity("trigger_"+name)
-                                .startNow()
-                                .withSchedule(cronSchedule(cronStr))
-                                .build();
-                        triggerSet.add(trigger);
-                    }
-
-                    checkItem.setJobKey(job.getKey());
-//                  checkItem.setTriggerKeys(triggerKeyList);
-                    CachedData.SCHEDULER.scheduleJob(job,triggerSet,true);
-                } catch (Exception e) {
-                    res.setSuccess(false);
-                    logger.info("添加检查项时异常",e);
-                }
+                addCheck(checkItem,monitor);
             }
         }
         //因为这个对象中又存了几个属性，而get方法取出的是复制的对象
@@ -84,26 +60,51 @@ public class JobDao {
         MonitorDao.addMonitor(monitor);
         return res;
     }
-    public static void pauseCheck(JobKey key){
+    public static Result pauseCheck(JobKey key){
+        Result res=new Result();
         try {
             CachedData.SCHEDULER.pauseJob(key);
         } catch (SchedulerException e) {
+            res.setMsg("暂停任务时异常");
+            res.setSuccess(false);
             logger.error("check暂停时异常",e);
         }
+        return res;
+    }
+    public static Result addCheck(CheckItem checkItem,MonitorItem monitor){
+        Result res=new Result();
+        try {
+            JobDetail job = newJob(checkItem.getJobServiceImpl())
+                    .build();
+            job.getJobDataMap().put("item",monitor);
+            job.getJobDataMap().put("check",checkItem);
+            Set<Trigger> triggerSet=new HashSet<Trigger>(checkItem.getCronList().size());
+//            List<TriggerKey> triggerKeyList=new ArrayList<TriggerKey>(checkItem.getCronList().size());
+            for (String cronStr:checkItem.getCronList()) {
+                logger.debug("添加的触发器：checkId:{},cron:{}",checkItem.getId(),cronStr);
+                Trigger trigger = newTrigger()
+                        .startNow()
+                        .withSchedule(cronSchedule(cronStr))
+                        .build();
+                triggerSet.add(trigger);
+            }
+            checkItem.setJobKey(job.getKey());
+//          checkItem.setTriggerKeys(triggerKeyList);
+            CachedData.SCHEDULER.scheduleJob(job,triggerSet,true);
+            logger.info("加载任务成功 checkid:{}",checkItem.getId());
+        } catch (Exception e) {
+            logger.info("添加检查项时异常",e);
+            res.setMsg("新建任务异常");
+            res.setSuccess(false);
+            return res;
+        }
+        return res;
     }
     public static void restartCheck(JobKey key){
         try {
             CachedData.SCHEDULER.resumeJob(key);
         } catch (SchedulerException e) {
             logger.error("check暂停时异常",e);
-        }
-    }
-    public static boolean removeCheck(JobKey key){
-        try {
-            return CachedData.SCHEDULER.deleteJob(key);
-        } catch (SchedulerException e) {
-            logger.error("check暂停时异常",e);
-            return false;
         }
     }
     public static void init(){
@@ -115,9 +116,18 @@ public class JobDao {
         }catch (Exception e){
             logger.error("任务模块启动时发生异常，已停止启动",e);
         }
-
-
     }
 
 
+    public static Result removeCheck(JobKey jobKey) {
+        Result res=new Result();
+        try {
+            CachedData.SCHEDULER.deleteJob(jobKey);
+        } catch (SchedulerException e) {
+            res.setMsg("删除任务时异常");
+            res.setSuccess(false);
+            logger.error("check删除时异常",e);
+        }
+        return res;
+    }
 }
