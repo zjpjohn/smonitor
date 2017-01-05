@@ -18,17 +18,12 @@ public class MonitorDao {
     private final static Logger logger = LoggerFactory.getLogger(MonitorDao.class);
 
 
-    public static List<MonitorItem> getMonitorItemList(Object start_str, Object limit_str){
-        int start,limit;
-        if(start_str==null){
+    public static List<MonitorItem> getMonitorItemList(Integer start, Integer limit){
+        if(start==null){
             start=0;
-        }else {
-            start=Integer.valueOf(start_str.toString());
         }
-        if(limit_str==null){
-            limit=CachedData.monitorItemSize();
-        }else{
-            limit=Integer.valueOf(limit_str.toString());
+        if(limit==null){
+            limit=CachedData.adminSize();
         }
         List<MonitorItem> qryMonitorItemList=new LinkedList<MonitorItem>();
         List<MonitorItem> allMonitorItemList=CachedData.getAllMonitorItem();

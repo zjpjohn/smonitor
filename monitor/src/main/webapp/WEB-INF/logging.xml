@@ -15,13 +15,13 @@
         <param name="Encoding" value="UTF-8"/>
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{yyyy-MM-dd-HH:mm:ss}|%m%n" />
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}|%m%n" />
         </layout>
     </appender>
     <appender name="RECORD_APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="File" value="${SMONITOR_DATA_DIR}/record/record.csv" />
         <param name="Append" value="true" />
-        <param name="Encoding" value="UTF-8"/>
+         <param name="Encoding" value="UTF-8"/>
         <param name="DatePattern" value="'.'yyyy-MM-dd-HH-mm"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{yyyy-MM-dd-HH:mm},%m%n" />

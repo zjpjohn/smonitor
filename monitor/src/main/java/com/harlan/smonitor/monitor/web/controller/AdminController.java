@@ -31,17 +31,19 @@ public class AdminController {
 
     @RequestMapping(value="/list")
     public ModelAndView list(@RequestParam Map<String,Object> param) throws Exception {
-        Integer limit=4;
-        Integer start=0;
+        logger.debug("param：{}",param);
+        Integer start=null,limit=null;
         if(param.get("paging_start")!=null){
             start=Integer.valueOf(param.get("paging_start").toString());
         }
-        logger.debug("param：{}",param);
+        if(param.get("paging_limit")!=null){
+            limit=Integer.valueOf(param.get("paging_limit").toString());
+        }
         ModelAndView mv = new ModelAndView("/admin/list");
         mv.addObject("list", AdminDao.getAdminList(start,limit));
         mv.addObject("paging_count", AdminDao.getAdminList(null,null).size());
-        mv.addObject("paging_limit",limit);
         mv.addObject("notice_types", PageCache.NOTICE_TYPES);
+        mv.addObject("paging_start", start==null?0:start);
         mv.addAllObjects(param);
         return mv;
     }

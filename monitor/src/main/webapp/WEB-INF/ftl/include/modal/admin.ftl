@@ -5,10 +5,6 @@
     }
     .admin-pagination{
         margin-right: 40px;
-
-    }
-    .admin-pagination .pagination{
-        margin: 0 !important;
     }
 </style>
 <link href="../plugin/bootstrap/iCheck/1.0.1/skins/square/green.css" rel="stylesheet">
@@ -43,17 +39,8 @@
                 </div>
                 <hr style="margin-left: 30px;margin-right: 30px">
                 <div id="admin_modal_list_div"></div>
-                <div class="row form-inline">
-                    <nav class="text-right admin-pagination">
-                        <ul class="pagination">
-                            <li><a href='javascript:qryAdmin(0);' aria-label='第一页'>&laquo;</a></li>
-                            <li><a href='javascript:;' aria-label='上一页'>&lsaquo;</a></li>
-                            <li class='disabled'><span aria-hidden='true'>NaN/NaN页</span></li>
-                            <li class='disabled'><span aria-hidden='true'>NaN条</span></li>
-                            <li><a href='javascript:;' aria-label='下一页'>&rsaquo;</a></li>
-                            <li><a href='javascript:;' aria-label='最后页'>&raquo;</a></li>
-                        </ul>
-                    </nav>
+                <div class="row form-inline" >
+                    <div id="pagingBtnGroupDiv" class="admin-pagination text-right" data-limit="5"></div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -64,6 +51,7 @@
     </div>
 </div>
 <script src="../plugin/bootstrap/iCheck/1.0.1/icheck.min.js"></script>
+<script src="../plugin/paging/bootstrap.paging.js"></script>
 <script>
     var DIV_ID;
     /**
@@ -78,7 +66,7 @@
         $.each($(DIV_ID).find("button"),function (i,item) {
             $("#admin_modal_selected_div").append('<button onclick="delAdmin(this);" class="btn btn-default">'+$(item).text()+'</button>');
         });
-        qryAdmin(0);
+        qryAdmin(0,$("#pagingBtnGroupDiv").data("limit"));
         //保存按钮绑定点击事件
         $("#admin_modal_save_btn").click(function () {
             $(DIV_ID).find("button").remove();
@@ -104,50 +92,18 @@
         html+='</div></div>';
         $("#admin_modal_list_div").append(html);
     }
-    //刷新翻页按钮
-    function pageingFresh(start, limit, count) {
-        //console.log("start:"+start+" limit:"+limit+" count:"+count);
-        count=parseInt(count);
-        start=parseInt(start);
-        limit=parseInt(limit);
-        var now_page=start/limit+1;
-        var total_page=Math.ceil(count/limit);
-        if(total_page==0){
-            total_page=1;
-        }
-        var next_page_start=start+limit;
-        var pre_page_start=start-limit;
-        var last_page_start=(total_page-1)*limit;
-        if(now_page==1){
-            $(".pagination").children("li").eq(0).prop("class","disabled");
-            $(".pagination").children("li").eq(1).prop("class","disabled");
-        }else{
-            $(".pagination").children("li").eq(0).removeProp("class").find("a").prop("href","javascript:qryAdmin(0);");
-            $(".pagination").children("li").eq(1).removeProp("class").find("a").prop("href","javascript:qryAdmin("+pre_page_start+");");
-        }
-        if(next_page_start>count){
-            $(".pagination").children("li").eq(4).prop("class","disabled");
-            $(".pagination").children("li").eq(5).prop("class","disabled");
-        }else{
-            $(".pagination").children("li").eq(4).removeProp("class").find("a").prop("href","javascript:qryAdmin("+next_page_start+");");
-            $(".pagination").children("li").eq(5).removeProp("class").find("a").prop("href","javascript:qryAdmin("+last_page_start+");");
-        }
-        $(".pagination").children("li").eq(2).find("span").text(now_page+"/"+total_page+"页");
-        $(".pagination").children("li").eq(3).find("span").text(count+"条");
-
-    }
     //分页查询方法
-    function qryAdmin(startNum) {
+    function qryAdmin(startNum,limitNum) {
         $.ajax({
             "url":"qryadmin",
             "type":"post",
-            "data":{start:startNum},
+            "data":{start:startNum,limit:limitNum},
             "dataType":"json",
-            "success":function(data,desc1){
+            "success":function(data){
                 if(data.success==true){
                     //console.log(data.obj);
                     $(".admin-modal-row").remove();
-                    pageingFresh(startNum,data.obj.limit,data.obj.count);
+                    $("#pagingBtnGroupDiv").pageBtnFresh(startNum,data.obj.count);
                     $.each(data.obj.list,function(i,item){
                         addRow(item);
                     });
@@ -162,21 +118,23 @@
                     });
                     $('.icheck-input').on('ifChecked', function(){
                         var text=$(this).parents(".admin-modal-row").find(".admin-modal-row-id").text();
-                        //console.log("选中的id:"+text);
-                        var num=$("#admin_modal_selected_div").find("button:contains('"+text+"')").length;
-                        //console.log("已选区域中这个id的admin个数："+num);
-                        if(num==0){
+                        var hasBtn=false;
+                        $.each($("#admin_modal_selected_div").find("button"),function (i,item) {
+                            if($(item).text()==text){
+                                hasBtn=true;
+                            }
+                        });
+                        if(hasBtn==false){
                             $("#admin_modal_selected_div").append('<button onclick="delAdmin(this);" class="btn btn-default">'+text+'</button>');
                         }
                     });
                     $('.icheck-input').on('ifUnchecked', function(){
                         var text=$(this).parents(".admin-modal-row").find(".admin-modal-row-id").text();
-                        //console.log("选中的id:"+text);
-                        var num=$("#admin_modal_selected_div").find("button:contains('"+text+"')").length;
-                        //console.log("已选区域中这个id的admin个数："+num);
-                        if(num==1){
-                            $("#admin_modal_selected_div").find("button:contains('"+text+"')").remove();
-                        }
+                        $.each($("#admin_modal_selected_div").find("button"),function (i,item) {
+                            if($(item).text()==text){
+                                $(item).remove();
+                            }
+                        });
                     });
                 }else{
                     console.log("exception..."+data.msg);
@@ -189,4 +147,9 @@
     function delAdmin(obj) {
         $(obj).remove();
     }
+    $(function () {
+        $("#pagingBtnGroupDiv").pageBtnCallback(function (start,limit) {
+            qryAdmin(start,limit);
+        });
+    })
 </script>

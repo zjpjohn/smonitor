@@ -9,10 +9,7 @@ import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.common.Constants;
 import com.harlan.smonitor.monitor.core.init.ModuleRegister;
-import com.harlan.smonitor.monitor.data.dao.AdminDao;
-import com.harlan.smonitor.monitor.data.dao.GroupDao;
-import com.harlan.smonitor.monitor.data.dao.JobDao;
-import com.harlan.smonitor.monitor.data.dao.MonitorDao;
+import com.harlan.smonitor.monitor.data.dao.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -35,12 +32,18 @@ public class MonitorController {
 
     @RequestMapping(value="/list")
     public ModelAndView list(@RequestParam Map<String,Object> param) throws Exception {
-        String limit="4";
         logger.debug("list map：{}",param);
+        Integer start=null,limit=null;
+        if(param.get("paging_start")!=null){
+            start=Integer.valueOf(param.get("paging_start").toString());
+        }
+        if(param.get("paging_limit")!=null){
+            limit=Integer.valueOf(param.get("paging_limit").toString());
+        }
         ModelAndView mv = new ModelAndView("/monitor/list");
-        mv.addObject("list", MonitorDao.getMonitorItemList(param.get("paging_start"),limit));
+        mv.addObject("list", MonitorDao.getMonitorItemList(start,limit));
         mv.addObject("paging_count", MonitorDao.getMonitorItemList(null,null).size());
-        mv.addObject("paging_limit",limit);
+        mv.addObject("paging_start", start==null?0:start);
         mv.addObject("types", MonitorItem.getTypes());
         mv.addAllObjects(param);
         return mv;
@@ -113,11 +116,14 @@ public class MonitorController {
         return JSON.toJSONString(res);
     }
     @RequestMapping(value="/qryadmin" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
-    public @ResponseBody String qryAdmin(@RequestParam("start") String startStr){
-        Integer limit=6;
+    public @ResponseBody String qryAdmin(@RequestParam("start") String startStr,@RequestParam("limit") String limitStr){
+        Integer limit=4;
         Integer start=0;
         if(notNull(startStr)){
             start=Integer.valueOf(startStr);
+        }
+        if(notNull(limitStr)){
+            limit=Integer.valueOf(limitStr);
         }
         logger.debug("qryadmin start：{}，limit:{}",start,limit);
         Map<String,Object> resultMap=new HashMap<String,Object>();
@@ -128,7 +134,6 @@ public class MonitorController {
         }
         resultMap.put("list", adminList);
         resultMap.put("count", AdminDao.count());
-        resultMap.put("limit",limit);
         Result res=new Result();
         res.setObj(resultMap);
         return JSON.toJSONString(res);

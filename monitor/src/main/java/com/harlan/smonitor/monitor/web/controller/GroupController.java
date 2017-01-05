@@ -22,12 +22,19 @@ public class GroupController {
 
     @RequestMapping(value="/list")
     public ModelAndView list(@RequestParam Map<String,Object> param) throws Exception {
-        String limit="4";
         logger.debug("param：{}",param);
+        Integer start=null,limit=null;
+        if(param.get("paging_start")!=null){
+            start=Integer.valueOf(param.get("paging_start").toString());
+        }
+        if(param.get("paging_limit")!=null){
+            limit=Integer.valueOf(param.get("paging_limit").toString());
+        }
         ModelAndView mv = new ModelAndView("/group/list");
-        mv.addObject("list", GroupDao.getGroupList(param.get("paging_start"),limit));
+        mv.addObject("list", GroupDao.getGroupList(start,limit));
         mv.addObject("paging_count", GroupDao.getGroupList(null,null).size());
         mv.addObject("paging_limit",limit);
+        mv.addObject("paging_start", start==null?0:start);
         mv.addAllObjects(param);
         return mv;
     }

@@ -21,17 +21,12 @@ public class GroupDao {
         return  CachedData.getGroup(groupId);
     }
 
-    public static List<Group> getGroupList(Object start_str, Object limit_str){
-        int start,limit;
-        if(start_str==null){
+    public static List<Group> getGroupList(Integer start,Integer limit){
+        if(start==null){
             start=0;
-        }else {
-            start=Integer.valueOf(start_str.toString());
         }
-        if(limit_str==null){
+        if(limit==null){
             limit=CachedData.groupSize();
-        }else{
-            limit=Integer.valueOf(limit_str.toString());
         }
         List<Group> qryGroupList=new LinkedList<Group>();
         List<Group> allGroupList=CachedData.getAllGroup();

@@ -1,77 +1,75 @@
-/***
- * bootstrap.paging.js  v1.0
- * 该插件用于（基于bootstrap的）动态分页页面（非ajax）
- * 使用该插件，需要页面中：
- * 一个 form id默认为：paging.query.form
- *     其中，form中的查询字段需要返回
- * 一个 div id默认为：paging.btn.div
- *    其中，div有以下几个属性需要从后台返回数据
- *	  data-count：查询条件下，查出数据总条数
- *	  data-start：起始条数
- *	  data-limit：每页展示条数
- */
-var query_form_id="paging_query_form";
-var paging_div_id="paging_btn_div";
-var query_form_start_input_name="paging_start";
-var query_form_limit_input_name="paging_limit";
+;(function($,window,document,undefined){
+    var PAGINATION;
+    var CALLBACK_FUNCTION;
+    function getInitHtml() {
+        var html='<nav>';
+        html+='<ul class="pagination" style="margin:0">';
+        html+='<li><a aria-label="第一页">&laquo;</a></li>';
+        html+='<li><a aria-label="上一页">&lsaquo;</a></li>';
+        html+='<li class="disabled"><span aria-hidden="true">NaN/NaN页</span></li>';
+        html+='<li class="disabled"><span aria-hidden="true">NaN条</span></li>';
+        html+='<li><a aria-label="下一页">&rsaquo;</a></li>';
+        html+='<li><a aria-label="最后页">&raquo;</a></li>';
+        html+='</ul>';
+        html+='</nav>';
+        return html;
+    }
 
-//===================================================
-var count=$("#"+paging_div_id).attr("data-count");
-var start=$("#"+paging_div_id).attr("data-start");
-var limit=$("#"+paging_div_id).attr("data-limit");
-function toPage(start){
-	$("#"+query_form_id).append("<input type='hidden' name='"+query_form_start_input_name+"'value='"+start+"'/>").append("<input type='hidden' name='"+query_form_limit_input_name+"'value='"+limit+"'/>").submit();
-}
-function pagingBtnInit(){
-	if (typeof(limit) == "undefined" ||limit=="") {
-		alert("未发现设置每页显示数量，应在controller中设置并回传至页面");
-		return ;
-	}
-	if (typeof(count) == "undefined" ||count=="") { 
-		 alert("未发现查询的总数量，应在controller中设置并回传至页面");
-		return ;
-	}
-	if (typeof(start) == "undefined" ||start=="") {
-		start=0;
-	}
-	count=parseInt(count);
-	start=parseInt(start);
-	limit=parseInt(limit);
-	console.log("count:"+count);
-	console.log("start:"+start);
-	console.log("limit:"+limit);
-	var last_page=start-limit;
-	if(last_page<0){
-		last_page=0;
-	}
-	var now_page=start/limit+1;
-	var next_page=start+limit;
-	var total_page=Math.ceil(count/limit);
-	if(total_page==0){
-		total_page=1;
-	}
-	var paging_html="<nav class='text-right'><ul class='pagination'>";
-	if(now_page==1){
-		paging_html+="<li class='disabled'><a href='javascript:;' aria-label='第一页'><span aria-hidden='true'>&laquo;</span></a></li>";
-		paging_html+="<li class='disabled'><a href='javascript:;' aria-label='上一页'><span aria-hidden='true'>&lsaquo;</span></a></li>";
-	}else{
-		paging_html+="<li><a href='javascript:toPage(0);' aria-label='第一页'><span aria-hidden='true'>&laquo;</span></a></li>";
-		paging_html+="<li><a href='javascript:toPage("+last_page+");' aria-label='上一页'><span aria-hidden='true'>&lsaquo;</span></a></li>";
-	}
-	paging_html+="<li><span aria-hidden='true'>第"+now_page+"页</span></li>";
-	paging_html+="<li><span aria-hidden='true'>共"+total_page+"页</span></li>";
-	paging_html+="<li><span aria-hidden='true'>"+count+"条</span></li>";
-	if(total_page==now_page || total_page==0){
-		paging_html+="<li class='disabled'><a href='javascript:;' aria-label='下一页'><span aria-hidden='true'>&rsaquo;</span></a></li>";
-		paging_html+="<li class='disabled'><a href='javascript:;' aria-label='最后页'><span aria-hidden='true'>&raquo;</span></a></li>";
-	}else{
-		paging_html+="<li><a href='javascript:toPage("+next_page+");' aria-label='下一页'><span aria-hidden='true'>&rsaquo;</span></a></li>";
-		paging_html+="<li><a href='javascript:toPage("+((total_page-1)*limit)+");' aria-label='最后页'><span aria-hidden='true'>&raquo;</span></a></li>";
-	}
-	paging_html+="</ul></nav>";
-	$("#"+paging_div_id).html(paging_html);
-}
-
-$(function(){
-	pagingBtnInit();
-});
+    //刷新翻页按钮
+    function pageingFresh(start,count,limit) {
+        var now_page=start/limit+1;
+        var total_page=(Math.ceil(count/limit)==0?1:Math.ceil(count/limit));
+        var next_page_start=start+limit;
+        var pre_page_start=start-limit;
+        var last_page_start=(total_page-1)*limit;
+        if(now_page==1){
+            PAGINATION.children("li").eq(0).prop("class","disabled");
+            PAGINATION.children("li").eq(1).prop("class","disabled");
+        }else{
+            PAGINATION.children("li").eq(0).removeProp("class").find("a").unbind("click").bind("click",function () {
+                CALLBACK_FUNCTION(0,limit);
+            });
+            PAGINATION.children("li").eq(1).removeProp("class").find("a").unbind("click").bind("click",function () {
+                CALLBACK_FUNCTION(pre_page_start,limit);
+            });
+        }
+        if(next_page_start<count){
+            PAGINATION.children("li").eq(4).removeProp("class").find("a").unbind("click").bind("click",function () {
+                CALLBACK_FUNCTION(next_page_start,limit);
+            });
+            PAGINATION.children("li").eq(5).removeProp("class").find("a").unbind("click").bind("click",function () {
+                CALLBACK_FUNCTION(last_page_start,limit);
+            });
+        }else{
+            PAGINATION.children("li").eq(4).prop("class","disabled");
+            PAGINATION.children("li").eq(5).prop("class","disabled");
+        }
+        PAGINATION.children("li").eq(2).find("span").text(now_page+"/"+total_page+"页");
+        PAGINATION.children("li").eq(3).find("span").text(count+"条");
+    }
+    $.fn.pageBtnFresh = function(start,count) {
+        if(typeof(PAGINATION)=="undefined"){
+            this.html(getInitHtml());
+            PAGINATION=this.find(".pagination");
+        }
+        var limit =this.data("limit");
+        if(typeof limit =="undefined" || limit==""){
+            alert(this.prop("id")+" need data-limit");
+            return ;
+        }
+        if(typeof count =="undefined"){
+            alert("pageBtnFresh need count");
+            return;
+        }
+        if(typeof start =="undefined"){
+            start=0;
+        }
+        start=parseInt(start);
+        count=parseInt(count);
+        limit=parseInt(limit);
+        pageingFresh(start,count,limit);
+    }
+    $.fn.pageBtnCallback = function(fn) {
+        CALLBACK_FUNCTION=fn;
+    }
+})(jQuery,window,document);

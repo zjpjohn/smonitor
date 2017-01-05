@@ -13,6 +13,8 @@
 
 <#--查询form-->
     <form id="paging_query_form" action="list" method="post">
+        <input type="hidden" name="paging_start"/>
+        <input type="hidden" name="paging_limit"/>
         <div class="row form-inline">
             <div class="col-xs-4 margin-top-sm"><label>名称：</label><input name="mark" value="${admin.mark}" type="text" class="form-control"></div>
             <div class="col-xs-6 col-md-4 margin-top-sm"><label>类型：</label>
@@ -53,18 +55,25 @@
             </#list>
             </tbody>
         </table>
-        <div id="paging_btn_div" data-start="${paging_start}" data-count="${paging_count}" data-limit="${paging_limit}">
+        <div id="paging_btn_div" class="text-right" data-limit="5">
         </div>
     </div>
 </div>
+    <script src="../plugin/paging/bootstrap.paging.js"></script>
     <script type="text/javascript">
         $(function(){
+            $("#paging_btn_div").pageBtnCallback(function (start,limit) {
+                $("#paging_query_form").find("input[name='paging_start']").val(start);
+                $("#paging_query_form").find("input[name='paging_limit']").val(limit);
+                $("#paging_query_form").submit();
+            });
+            $("#paging_btn_div").pageBtnFresh(${paging_start},${paging_count});
             $("#list_tbody tr").click(function(){
                 var id=$(this).children("th").html();
                 window.location="detail?id="+id;
             });
         });
     </script>
-    <script src="../plugin/paging/bootstrap.paging.js"></script>
+
 </body>
 </html>
