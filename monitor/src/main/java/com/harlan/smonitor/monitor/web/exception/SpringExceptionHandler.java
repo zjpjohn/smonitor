@@ -29,7 +29,7 @@ public class SpringExceptionHandler implements HandlerExceptionResolver{
 			     *  {"ok":true,"reg":true}
 			     *  {"ok":true,"send":true}
 			     *  {"ok":false}
-			     */				
+			     */
 				PrintWriter out = response.getWriter();
 				response.setContentType(Constants.JSON_PRODUCES);
 				Result res = new Result("发生异常");

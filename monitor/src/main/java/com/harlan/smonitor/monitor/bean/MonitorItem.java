@@ -74,7 +74,7 @@ public abstract class MonitorItem implements Cloneable{
      * @param itemMap
      */
     @SuppressWarnings("unchecked")
-    public void init(Map<String, Object> itemMap) {
+    public void init(Map<String, Object> itemMap) throws Exception{
         if(itemMap.get("id")!=null){
             id=Integer.valueOf(itemMap.get("id").toString());
         }
@@ -99,7 +99,7 @@ public abstract class MonitorItem implements Cloneable{
      * 直接使用一个map方便之后字段拼装map
      * @return
      */
-    public Map<String,Object> createMap(){
+    public Map<String,Object> createMap()throws Exception{
         Map<String,Object> item_map=new HashMap<String,Object>();
         item_map.put("id",id);
         item_map.put("name",name);
@@ -132,30 +132,20 @@ public abstract class MonitorItem implements Cloneable{
      */
     public abstract List<FieldDeclare> getFields();
 
-    public  static MonitorItem monitorInstance(String type){
+    public  static MonitorItem monitorInstance(String type)throws Exception{
         Class<?> implClass= TYPE_MAP.get(type).getBeanClass();
         if(implClass==null){
             throw new RuntimeException("MonitorItem.createMonitor()方法中，没有配置该类型监控项:"+type);
         }
-        MonitorItem item= null;
-        try {
-            item = (MonitorItem)implClass.newInstance();
-        } catch (Exception e) {
-            logger.error("实例化monitorItem异常",e);
-        }
+        MonitorItem item = (MonitorItem)implClass.newInstance();
         return item;
     }
-    public CheckItem checkInstance(String checkType)  {
-        try {
-            Class<?> implClass= getCheckTypeMap().get(checkType).getBeanClass();
-            if(implClass==null){
-                throw new RuntimeException("MonitorItem.getCheckClassMap()方法中，没有配置该类型监控项:"+type);
-            }
-            return (CheckItem)implClass.newInstance();
-        } catch (Exception e) {
-            logger.error("实例化CheckItem异常",e);
+    public CheckItem checkInstance(String checkType)throws Exception{
+        Class<?> implClass= getCheckTypeMap().get(checkType).getBeanClass();
+        if(implClass==null){
+            throw new RuntimeException("MonitorItem.getCheckClassMap()方法中，没有配置该类型监控项:"+type);
         }
-        return null;
+        return (CheckItem)implClass.newInstance();
     }
 
     /**
@@ -166,12 +156,20 @@ public abstract class MonitorItem implements Cloneable{
     public abstract Map<String,TypeDeclare> getCheckTypeMap();
 
     /**
-     * bean转化成json对象时
-     * 个监控项实现类从需要将个性字段放入itemMap
+     * bean转化成json对象时调用此方法
+     * 用于  1、存文件，2、传到页面展示
+     * 所以每个监控项的实现类需要将个性字段放入itemMap中，以便可展示和保存字段值
      * @return itemMap
      */
-    protected abstract Map<String,Object> setProps(Map<String,Object> itemMap);
-    protected abstract void getProps(Map<String,Object> itemMap);
+    protected abstract Map<String,Object> setProps(Map<String,Object> itemMap)throws Exception;
+
+    /**
+     * json转化成bean时调用此方法
+     * 用于：1、从文件中读取数据  2、页面参数传值过来保存
+     * 所以每个监控项的实现类需要将个性字段从itemMap中取出，以便可使用
+     * @param itemMap
+     */
+    protected abstract void getProps(Map<String,Object> itemMap) throws Exception;
     public String getName() {
         return name;
     }

@@ -4,7 +4,6 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class Util {
@@ -59,12 +58,20 @@ public class Util {
 	 * @return
 	 */
 	public static boolean notNull(Object strObj) {
-		if(strObj==null){
-			return false;
+		return !isNull(strObj);
+	}
+
+	/**
+	 * 判断是否空，只是用于String类型
+	 * @param stringObj String类型的变量
+	 * @return
+	 */
+	public static boolean isNull(Object stringObj) {
+		if(stringObj instanceof String){
+			return isNull((String)stringObj);
+		}else{
+			return stringObj==null;
 		}
-		if(strObj.toString().trim().length()<=0){
-			return false;
-		}
-		return true;
+
 	}
 }

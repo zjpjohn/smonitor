@@ -77,7 +77,7 @@ public class DataFileOperator {
         logger.info("monitor 监控项加载完毕，加载{}个监控项",MonitorDao.count());
     }
 
-    public static synchronized void saveMonitor(List<MonitorItem> item_list) throws IOException {
+    public static synchronized void saveMonitor(List<MonitorItem> item_list) throws Exception {
         JSONArray item_json_array=new JSONArray();
         for (MonitorItem item : item_list) {
             Map<String,Object> admin_map= item.createMap();

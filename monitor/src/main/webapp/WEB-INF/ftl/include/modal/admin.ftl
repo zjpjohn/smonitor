@@ -51,7 +51,7 @@
     </div>
 </div>
 <script src="../plugin/bootstrap/iCheck/1.0.1/icheck.min.js"></script>
-<script src="../plugin/paging/bootstrap.paging.js"></script>
+<script src="../plugin/bootstrap/paging/bootstrap.paging.js"></script>
 <script>
     var DIV_ID;
     /**

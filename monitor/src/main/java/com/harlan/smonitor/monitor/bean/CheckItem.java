@@ -157,7 +157,7 @@ public abstract class CheckItem  implements Cloneable{
             copyCornList.addAll(copyCheck.getCronList());
             copyCheck.setCronList(copyCornList);
         } catch (Exception e) {
-            logger.info("");
+            logger.error("colne exception:",e);
         }
         return copyCheck;
     }

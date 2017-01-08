@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
 
@@ -49,7 +50,7 @@ public class MonitorController {
         return mv;
     }
     @RequestMapping(value="/detail")
-    public ModelAndView detail(Integer id){
+    public ModelAndView detail(Integer id)throws Exception{
         logger.debug("detail id：{}",id);
         ModelAndView mv=new ModelAndView("/monitor/detail");
         MonitorItem monitor=MonitorDao.getMonitor(id);
@@ -64,6 +65,7 @@ public class MonitorController {
         for (CheckItem check:monitor.getCheckList()) {
             checkFieldsMap.put(check.getType(),check.getFields());
         }
+        logger.debug("monitor:{}",JSON.toJSONString(monitor));
         mv.addObject("monitor",JSON.toJSONString(monitorMap));
         mv.addObject("checkTypeNameMap",JSON.toJSONString(checkTypeNameMap));
         mv.addObject("checkFieldsMap",JSON.toJSONString(checkFieldsMap));
@@ -79,40 +81,28 @@ public class MonitorController {
         return mv;
     }
     @RequestMapping(value="/addmonitor" ,produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
-    public @ResponseBody String toadd(@RequestBody String body){
-        Result res;
-        try {
-            String req= URLDecoder.decode(body, Constants.CHARSET);
-            logger.debug("addmonitor -- req：{}",req);
-            Map<String,Object> reqMap=JSON.parseObject(req);
-            MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
-            item.init(reqMap);
-            MonitorDao.addMonitor(item);
-            MonitorDao.saveMonitorFile();
-            res=new Result();
-        } catch (Exception e) {
-            logger.error("添加异常",e);
-            res=new Result(e.toString());
-        }
+    public @ResponseBody String toadd(@RequestBody String body) throws Exception {
+        Result res=new Result();
+        String req= URLDecoder.decode(body, Constants.CHARSET);
+        logger.debug("addmonitor -- req：{}",req);
+        Map<String,Object> reqMap=JSON.parseObject(req);
+        MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
+        item.init(reqMap);
+        MonitorDao.addMonitor(item);
+        MonitorDao.saveMonitorFile();
         return JSON.toJSONString(res);
     }
 
     @RequestMapping(value="/savemonitor" ,produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
-    public @ResponseBody String saveMonitor(@RequestBody String body){
-        Result res;
-        try {
-            String req= URLDecoder.decode(body, Constants.CHARSET);
-            logger.debug("savemonitor -- req：{}",req);
-            Map<String,Object> reqMap=JSON.parseObject(req);
-            MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
-            item.init(reqMap);
-            MonitorDao.saveMonitor(item);
-            MonitorDao.saveMonitorFile();
-            res=new Result();
-        } catch (Exception e) {
-            logger.error("添加异常",e);
-            res=new Result(e.toString());
-        }
+    public @ResponseBody String saveMonitor(@RequestBody String body)throws Exception{
+        Result res=new Result();
+        String req= URLDecoder.decode(body, Constants.CHARSET);
+        logger.debug("savemonitor -- req：{}",req);
+        Map<String,Object> reqMap=JSON.parseObject(req);
+        MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
+        item.init(reqMap);
+        MonitorDao.saveMonitor(item);
+        MonitorDao.saveMonitorFile();
         return JSON.toJSONString(res);
     }
     @RequestMapping(value="/qryadmin" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)

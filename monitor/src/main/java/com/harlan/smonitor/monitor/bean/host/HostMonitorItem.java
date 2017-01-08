@@ -4,12 +4,12 @@ package com.harlan.smonitor.monitor.bean.host;
 import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.impl.TypeDeclare;
 import com.harlan.smonitor.api.password.IPasswdService;
-import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.bean.host.check.CheckCPU;
 import com.harlan.smonitor.monitor.bean.host.check.CheckDisk;
 import com.harlan.smonitor.monitor.bean.host.check.CheckFile;
 import com.harlan.smonitor.monitor.bean.host.check.CheckMem;
+import com.harlan.smonitor.monitor.common.AESUtil;
 import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 
 import java.util.ArrayList;
@@ -17,44 +17,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.harlan.smonitor.monitor.common.Util.isNull;
+import static com.harlan.smonitor.monitor.common.Util.notNull;
+
 /**
  * HostMonitorItem
  * Created by harlan on 2016/8/3.
  */
 public class HostMonitorItem extends MonitorItem {
+    private static String KEY = "04c3cddbb8a4e96b";
     private String ip;
     private String user;
     private String passwd;
-    private String passwdType;
+    private String encryptPwd;
+//    private String passwdType;
     private Integer port;
 
     @Override
-    protected Map<String,Object> setProps(Map<String,Object> itemMap) {
+    protected Map<String,Object> setProps(Map<String,Object> itemMap)throws Exception {
         itemMap.put("ip",ip);
         itemMap.put("user",user);
         itemMap.put("port",port);
-        itemMap.put("passwd",passwd);
-        itemMap.put("passwdType",passwdType);
+        //密码不能放在map里，也就不能查看和存在文件中
+        itemMap.put("passwd","******");
+        itemMap.put("encryptPwd",encryptPwd);
+//        itemMap.put("passwdType",passwdType);
         return itemMap;
     }
 
     @Override
-    protected void getProps(Map<String, Object> itemMap) {
+    protected void getProps(Map<String, Object> itemMap) throws Exception {
         this.ip = itemMap.get("ip").toString();
         this.user = itemMap.get("user").toString();
-        if(itemMap.get("passwd-type")==null){
-            this.passwd = itemMap.get("passwd").toString();
-        }else{
-            this.passwdType=itemMap.get("passwd-type").toString();
-            IPasswdService passwdService= ModuleRegister.getPasswdServiceImpl(this.passwdType);
-            this.passwd =passwdService.getPassword(user);
-
+        this.encryptPwd = isNull(itemMap.get("encryptPwd"))?null:itemMap.get("encryptPwd").toString();
+        this.passwd = itemMap.get("passwd").toString();
+        //端口默认是22
+        this.port =isNull(itemMap.get("port"))?22:Integer.valueOf(itemMap.get("port").toString());
+        if(isNull(encryptPwd) && notNull(passwd) && !"******".equals(passwd)){
+            //页面传过来的map，正在初始化host对象
+            this.encryptPwd= AESUtil.encrypt(passwd,KEY);
         }
-        if(itemMap.get("port")==null){
-            this.port =22;//默认ssh端口22
-        }else{
-            this.port = Integer.valueOf(itemMap.get("port").toString());
+        if(notNull(encryptPwd) && "******".equals(passwd)){
+            //这种情况是文件初始化时，密码需要解密
+            this.passwd=AESUtil.decrypt(encryptPwd,KEY);
         }
+//        if(itemMap.get("passwd-type")!=null){
+//            this.passwdType=itemMap.get("passwd-type").toString();
+//            IPasswdService passwdService= ModuleRegister.getPasswdServiceImpl(this.passwdType);
+//            this.passwd =passwdService.getPassword(user);
+//        }
     }
 
     @Override

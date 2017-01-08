@@ -59,7 +59,7 @@
         </div>
     </div>
 </div>
-    <script src="../plugin/paging/bootstrap.paging.js"></script>
+    <script src="../plugin/bootstrap/paging/bootstrap.paging.js"></script>
     <script type="text/javascript">
         $(function(){
             $("#paging_btn_div").pageBtnCallback(function (start,limit) {
