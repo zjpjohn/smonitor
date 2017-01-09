@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class IndexController {
-    private final static Logger logger = LoggerFactory.getLogger(AdminController.class);
+    private final static Logger logger = LoggerFactory.getLogger(IndexController.class);
     @RequestMapping(value="/")
     public String index() throws Exception {
         return "index";

@@ -4,8 +4,6 @@ import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.core.job.host.CheckCPUServiceImpl;
 import org.quartz.Job;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +11,7 @@ import java.util.Map;
 
 
 public class CheckCPU extends CheckItem {
-	private final static Logger logger = LoggerFactory.getLogger(CheckCPU.class);
-	
+
 	private Double exceed;
 
 	public void getAttrs(Map<String,Object> checkMap) {

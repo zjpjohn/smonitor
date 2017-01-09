@@ -7,7 +7,7 @@ import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.bean.host.HostMonitorItem;
 import com.harlan.smonitor.monitor.bean.host.check.CheckMem;
 import com.harlan.smonitor.monitor.common.SshConnecter;
-import com.harlan.smonitor.monitor.core.connection.SSHSource;
+import com.harlan.smonitor.monitor.core.connection.SshPool;
 import com.harlan.smonitor.monitor.data.DataRecorder;
 import com.harlan.smonitor.monitor.core.job.AbstractService;
 import org.slf4j.Logger;
@@ -30,10 +30,9 @@ public class CheckMemServiceImpl extends AbstractService {
 				memItem.getType());
 		logger.info("检查{}{}是否超过了{}", hostItem.getName(), memItem.getName(),
 				exceed);
-		SshConnecter ssh = SSHSource.obtainSSHConn(hostItem.getIp(), hostItem.getUser());
+		SshConnecter ssh = SshPool.getSsh(hostItem.getIp(),hostItem.getPort(), hostItem.getUser(), hostItem.getPasswd());
 		logger.info("ssh链接建立成功");
 		List<String> list = ssh.command("free");
-		SSHSource.recoverSSHConn(hostItem.getIp(), hostItem.getUser(), ssh);
 		double memVal = 0;
 		for (String string : list) {
 			if (string.contains("Mem")) {

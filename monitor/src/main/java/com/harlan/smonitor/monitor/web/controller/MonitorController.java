@@ -141,17 +141,12 @@ public class MonitorController {
     }
     @RequestMapping(value="/checktype" , produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody
-    String checkType(@RequestParam("mtype") String mtype){
+    String checkType(@RequestParam("mtype") String mtype)throws Exception{
         logger.debug("checkType -- monitor type：{}",mtype);
-        try {
-            MonitorItem item=MonitorItem.monitorInstance(mtype);
-            Result res=new Result();
-            res.setObj(item.getCheckTypes());
-            return JSON.toJSONString(res);
-        } catch (Exception e) {
-            logger.error("查询checkType异常",e);
-            return JSON.toJSONString(new Result(e.toString()));
-        }
+        MonitorItem item=MonitorItem.monitorInstance(mtype);
+        Result res=new Result();
+        res.setObj(item.getCheckTypes());
+        return JSON.toJSONString(res);
     }
     @RequestMapping(value="/checkfields", produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody

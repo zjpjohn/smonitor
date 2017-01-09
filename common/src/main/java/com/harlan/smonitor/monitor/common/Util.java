@@ -1,14 +1,11 @@
 package com.harlan.smonitor.monitor.common;
 
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class Util {
 	private final static FastDateFormat DATE_FRMAT_DEFAULT = FastDateFormat.getInstance("yyyyMMddHHmmss");
-	private static Logger logger = LoggerFactory.getLogger(Util.class);
 	/**
 	 * 将字符串时间转化为date
 	 * @param date_string 格式为yyyyMMddHHmmss

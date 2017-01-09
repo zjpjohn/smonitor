@@ -36,9 +36,8 @@ public class DataFileOperator {
      * @return
      */
     private static void initDataFilePath() {
-        String data_dir;
         try {
-            data_dir=System.getProperty("SMONITOR_DATA_DIR");
+            String data_dir=System.getProperty("SMONITOR_DATA_DIR");
             if(Util.isNull(data_dir)){
                 data_dir = DataFileOperator.class.getClassLoader().getResource(".").getPath();
             }

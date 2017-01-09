@@ -15,7 +15,7 @@ import java.util.Properties;
  * @author zhaohl
  */
 public class SshConnecter implements Cloneable{
-    private final static Logger logger = LoggerFactory.getLogger("detail");
+    private final Logger logger = LoggerFactory.getLogger(SshConnecter.class);
 
     private ChannelSftp sftpChannel = null;
     private Session sshSession = null;
@@ -43,7 +43,7 @@ public class SshConnecter implements Cloneable{
             sshConfig.put("StrictHostKeyChecking", "no");
             sshSession.setConfig(sshConfig);
             sshSession.connect();
-            logger.debug("Connected to {} ...", host);
+            logger.debug("Connected to {} , port:{}, username:{} ,passwd:{}", host, port, username, password);
         }
     }
 
