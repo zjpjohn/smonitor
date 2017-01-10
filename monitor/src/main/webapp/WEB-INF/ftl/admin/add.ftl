@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
 <#include "/include/head.ftl">
 </head>
@@ -26,8 +26,8 @@
             <div class="append-div"></div>
         </div>
         <div class="row text-center margin-top-md">
-            <button type="submit" class="btn btn-danger">增加</button>
-            <button type="reset" class="btn btn-default">重置</button>
+            <button class="btn btn-danger" type="submit">增加</button>
+            <button class="btn btn-default" type="reset">重置</button>
         </div>
         <hr>
     </form>
@@ -38,7 +38,6 @@
             var type_val=$(this).val();
             if(type_val!=""){
                 $(".append-div").html("");
-                console.log("去查询");
                 $.ajax({
                     "url":"fields",
                     "type":"post",
@@ -46,12 +45,10 @@
                     "dataType":"json",
                     "success":function(data,desc1){
                         if(data.success==true){
-                            console.log(data.obj);
                             var append_html="";
                             $.each(data.obj,function(i,item){
                                 append_html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input name='"+item.fieldName+"'  type='text' class='form-control'/></div>";
                             });
-                            //console.log(append_html);
                             $(".append-div").append(append_html);
                         }else{
                             console.log("exception..."+data.msg);

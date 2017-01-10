@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <title>添加监控</title>
 <#include "/include/head.ftl">
@@ -56,13 +56,16 @@
     <#--所有检查项-->
     <div id="check_list_div">
     </div>
-    <!-- 添加 检查项 form -->
-    <#include "/include/modal/check.ftl">
+
     <div class="row text-center margin-top-md margin-bottom-lg">
         <button id="add_monitor_btn" type="button" class="btn btn-danger">增加</button>
         <button id="add_reset_monitor_btn" type="button" class="btn btn-default">重置</button>
     </div>
 </div>
+<#-- 提示框modal -->
+<#include "/include/modal/alert.ftl">
+<#-- 添加 检查项 form -->
+<#include "/include/modal/check.ftl">
 <#--选择管理员，使用这个模块-->
 <#include "/include/modal/admin.ftl">
 <script>

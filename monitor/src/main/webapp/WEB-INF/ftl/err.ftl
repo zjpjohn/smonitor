@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 	<head>
         <title>错误提示</title>

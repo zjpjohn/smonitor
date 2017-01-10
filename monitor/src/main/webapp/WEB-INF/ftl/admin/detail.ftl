@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
 <#include "/include/head.ftl">
 </head>
@@ -7,7 +7,7 @@
 <div class="container">
     <div class="row margin-top-md">
         <a type="button" class="btn btn-success" href="list">列表</a>
-        <button type="button" class="btn btn-primary" >删除</button>
+        <button class="btn btn-primary" id="del_admin_btn" type="button"  >删除</button>
     </div>
     <hr class="margin-bottom-xs">
 
@@ -32,9 +32,14 @@
         <hr>
     </form>
 </div>
+<#-- 提示框modal -->
+<#include "/include/modal/alert.ftl">
 <script>
     var fields=${fields};
     var adminObj=${admin};
+    function del() {
+        console.log(adminObj.id);
+    }
     $(function(){
         $("input[name='id']").val(adminObj.id);
         $("select[name='type']").val(adminObj.type);
@@ -58,6 +63,9 @@
                 "error":function(xhr,err1,err2){
                 }
             });
+        });
+        $("#del_admin_btn").click(function () {
+            confirmAndRun("确认删除此管理员？",del);
         });
     });
 </script>

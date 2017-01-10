@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 	<head>
 	<#include "/include/head.ftl">

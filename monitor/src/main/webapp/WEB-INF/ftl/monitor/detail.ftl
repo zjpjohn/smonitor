@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <title>监控详情</title>
 <#include "/include/head.ftl">
@@ -56,14 +56,17 @@
     <hr>
     <div id="check_list_div">
     </div>
-    <!-- 添加 检查项 form -->
-    <#include "/include/modal/check.ftl">
+
     <div class="row text-center margin-top-md margin-bottom-lg">
         <button id="modify_btn" type="button" class="btn btn-danger">修改</button>
         <button type="button" class="btn btn-default">重置</button>
     </div>
 
 </div>
+<#-- 提示框modal -->
+<#include "/include/modal/alert.ftl">
+<!-- 添加 检查项 form -->
+<#include "/include/modal/check.ftl">
 <#include "/include/modal/admin.ftl">
 <script>
     var MONITOR=${monitor};

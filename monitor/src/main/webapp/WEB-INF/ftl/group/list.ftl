@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
 <#include "/include/head.ftl">
 </head>
@@ -49,7 +49,7 @@
     </div>
 </div>
     <script src="../plugin/bootstrap/paging/bootstrap.paging.js"></script>
-    <script type="text/javascript">
+    <script>
         $(function(){
             $("#paging_btn_div").pageBtnCallback(function (start,limit) {
                 $("#paging_query_form").find("input[name='paging_start']").val(start);

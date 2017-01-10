@@ -57,36 +57,6 @@
         </div>
     </div>
 </div>
-
-<div id="showMsgModal" class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="mySmallModalLabel">提示：</h4>
-            </div>
-            <div class="modal-body">
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="confirmModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">请确认：</h4>
-            </div>
-            <div class="modal-body">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">放弃</button>
-                <button id="confirm_modal_btn" type="button" class="btn btn-primary">确认</button>
-            </div>
-        </div>
-    </div>
-</div>
 <script src="../plugin/bootstrap/switch/3.3.2/js/bootstrap-switch.min.js"></script>
 <script>
     //switch全局变量
@@ -95,17 +65,6 @@
     var MONITOR_TYPE="";
     var CHECK_FIELDS_MAP;
     var CHECK_TYPE_NAME_MAP;
-    function showMsg(msg) {
-        $("#showMsgModal").find(".modal-body").html(msg);
-        $("#showMsgModal").modal("show");
-    }
-    function confirmAndRun(msg,fn) {
-        $("#confirmModal").find(".modal-body").html(msg);
-        $("#confirmModal").modal("show");
-        $("#confirm_modal_btn").unbind("click");
-        $("#confirm_modal_btn").click(fn);
-    }
-
     function resetAddCheck() {
         //初始化
         $("#check_runtime_div").html("");
@@ -170,16 +129,6 @@
         }
 
 
-    }
-    function getValNotNull(obj){
-        if(obj.val()==""){
-            obj.parent("div").addClass("has-error");
-            showMsg("此处内容为必填");
-            return "";
-        }else{
-            obj.parent("div").removeClass("has-error");
-            return obj.val();
-        }
     }
     function addRuntimeRow(couldDelete) {
         var html='<div class="row form-inline runtime-row-div">';
