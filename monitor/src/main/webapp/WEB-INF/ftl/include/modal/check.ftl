@@ -91,27 +91,10 @@
 <script>
     //switch全局变量
     $.fn.bootstrapSwitch.defaults.size = 'small';
-
     var CHECK_LIST_DIV_ID;
     var MONITOR_TYPE="";
     var CHECK_FIELDS_MAP;
     var CHECK_TYPE_NAME_MAP;
-    $.fn.serializeObject = function()
-    {
-        var o = {};
-        var a = this.serializeArray();
-        $.each(a, function() {
-            if (o[this.name] !== undefined) {
-                if (!o[this.name].push) {
-                    o[this.name] = [o[this.name]];
-                }
-                o[this.name].push(this.value || '');
-            } else {
-                o[this.name] = this.value || '';
-            }
-        });
-        return o;
-    };
     function showMsg(msg) {
         $("#showMsgModal").find(".modal-body").html(msg);
         $("#showMsgModal").modal("show");
@@ -314,17 +297,7 @@
         html+="</form>";
         $(CHECK_LIST_DIV_ID).append(html);
     }
-    function getFieldsHtml(fields, obj) {
-        var fhtml="";
-        $.each(fields,function(i,item){
-            var val=obj[item.fieldName];
-            if (typeof(val) == "undefined") {
-                val="";
-            }
-            fhtml+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input value='"+val+"' type='text' class='form-control' name='"+item.fieldName+"'/></div>";
-        });
-        return fhtml;
-    }
+
     /**
      * 预保存所有的已添加的check到session
      * 返回serialId，用于确认session

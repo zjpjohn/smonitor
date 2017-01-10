@@ -38,9 +38,9 @@ public class AdminDao {
         return  qryAdminList;
     }
     public static Result addAdmin(Admin admin) throws Exception {
-        if(getAdmin(admin.getId())!=null){
-            throw new RuntimeException("repeat admin id ...");
-        }
+//        if(getAdmin(admin.getId())!=null){
+//            throw new RuntimeException("repeat admin id ...");
+//        }
         CachedData.putAdmin(admin);
         return  new Result();
     }

@@ -7,3 +7,4 @@
 <link href="../plugin/bootstrap/common/css/bootstrap.common.css" rel="stylesheet">
 <script src="../plugin/jquery/1.11.3/jquery.min.js"></script>
 <script src="../plugin/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="../plugin/common.js"></script>

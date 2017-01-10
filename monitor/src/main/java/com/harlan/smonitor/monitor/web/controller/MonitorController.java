@@ -93,7 +93,7 @@ public class MonitorController {
         return JSON.toJSONString(res);
     }
 
-    @RequestMapping(value="/savemonitor" ,produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    @RequestMapping(value="/savemonitor",produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody String saveMonitor(@RequestBody String body)throws Exception{
         Result res=new Result();
         String req= URLDecoder.decode(body, Constants.CHARSET);

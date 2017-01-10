@@ -11,12 +11,10 @@ import com.harlan.smonitor.monitor.web.cache.PageCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +51,27 @@ public class AdminController {
         ModelAndView mv=new ModelAndView("/admin/add");
         mv.addObject("notice_types", PageCache.NOTICE_TYPES);
         return mv;
+    }
+    @RequestMapping(value="/detail")
+    public ModelAndView detail(String id) throws Exception {
+        ModelAndView mv=new ModelAndView("/admin/detail");
+        Admin admin=AdminDao.getAdmin(id);
+        mv.addObject("admin",JSON.toJSONString(admin.createMap()));
+        mv.addObject("fields",JSON.toJSONString(admin.getFields()));
+        mv.addObject("notice_types", PageCache.NOTICE_TYPES);
+        return mv;
+    }
+    @RequestMapping(value="/save",produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody String save(@RequestBody String body) throws Exception {
+        Result res=new Result();
+        String req= URLDecoder.decode(body, Constants.CHARSET);
+        logger.debug("saveadmin -- req：{}",req);
+        Map<String,Object> reqMap=JSON.parseObject(req);
+        Admin admin= (Admin) ModuleRegister.getNoticeServiceImpl(reqMap.get("type").toString()).getTypeDeclare().getBeanClass().newInstance();
+        admin.init(reqMap);
+        AdminDao.addAdmin(admin);
+        AdminDao.saveAdmin();
+        return JSON.toJSONString(res);
     }
     @RequestMapping(value="/toadd")
     public ModelAndView toadd(@RequestParam Map<String,Object> param) throws Exception {
