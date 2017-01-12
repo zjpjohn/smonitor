@@ -51,4 +51,11 @@ public class AdminDao {
         DataFileOperator.saveAdmin(CachedData.getAllAdmin());
         return  new Result();
     }
+
+    public static void removeAdmin(String admin) {
+        if(getAdmin(admin)==null){
+            throw new RuntimeException("no this admin  ...");
+        }
+        CachedData.removeAdmin(admin);
+    }
 }

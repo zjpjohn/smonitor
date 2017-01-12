@@ -38,7 +38,21 @@
     var fields=${fields};
     var adminObj=${admin};
     function del() {
-        console.log(adminObj.id);
+        $.ajax({
+            "url":"delete",
+            "type":"post",
+            "data":{"admin":adminObj.id},
+            "dataType":"json",
+            "success":function(data){
+                if(data.success==true){
+                    window.location="list";
+                }else{
+                    console.log("exception..."+data.msg);
+                }
+            },
+            "error":function(xhr,err1,err2){
+            }
+        });
     }
     $(function(){
         $("input[name='id']").val(adminObj.id);

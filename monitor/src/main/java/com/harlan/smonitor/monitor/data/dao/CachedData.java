@@ -96,7 +96,9 @@ class CachedData {
         }
         return null;
     }
-
+    public static void removeAdmin(String admin) {
+        ADMIN_MAP.remove(admin);
+    }
 
     /**
      * ==================================================
@@ -192,4 +194,6 @@ class CachedData {
     public static MonitorItem getMonitor(Integer monitorId){
         return MONITOR_MAP.get(monitorId).clone();
     }
+
+
 }

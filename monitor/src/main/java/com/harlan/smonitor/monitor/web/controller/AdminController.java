@@ -61,6 +61,14 @@ public class AdminController {
         mv.addObject("notice_types", PageCache.NOTICE_TYPES);
         return mv;
     }
+    @RequestMapping(value="/delete",produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
+    public @ResponseBody   String delete(@RequestParam String admin) throws Exception {
+        logger.debug("delete -- admin：{}",admin);
+        AdminDao.removeAdmin(admin);
+        AdminDao.saveAdmin();
+        Result res=new Result();
+        return JSON.toJSONString(res);
+    }
     @RequestMapping(value="/save",produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody String save(@RequestBody String body) throws Exception {
         Result res=new Result();
