@@ -15,7 +15,7 @@
         }
     }
 </style>
-<link href="../plugin/bootstrap/switch/3.3.2/css/bootstrap-switch.min.css" rel="stylesheet">
+<link href="../plugin/switch/3.3.2/css/bootstrap-switch.min.css" rel="stylesheet">
 <div id="check_modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="true" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -57,7 +57,7 @@
         </div>
     </div>
 </div>
-<script src="../plugin/bootstrap/switch/3.3.2/js/bootstrap-switch.min.js"></script>
+<script src="../plugin/switch/3.3.2/js/bootstrap-switch.min.js"></script>
 <script>
     //switch全局变量
     $.fn.bootstrapSwitch.defaults.size = 'small';

@@ -7,7 +7,7 @@
         margin-right: 40px;
     }
 </style>
-<link href="../plugin/bootstrap/iCheck/1.0.1/skins/square/green.css" rel="stylesheet">
+<link href="../plugin/iCheck/1.0.1/skins/square/green.css" rel="stylesheet">
 <div id="admin_modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="true" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -50,8 +50,8 @@
         </div>
     </div>
 </div>
-<script src="../plugin/bootstrap/iCheck/1.0.1/icheck.min.js"></script>
-<script src="../plugin/bootstrap/paging/bootstrap.paging.js"></script>
+<script src="../plugin/iCheck/1.0.1/icheck.min.js"></script>
+<script src="../plugin/paging/bootstrap.paging.js"></script>
 <script>
     var DIV_ID;
     /**
