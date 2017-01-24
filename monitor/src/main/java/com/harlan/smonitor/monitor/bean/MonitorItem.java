@@ -28,12 +28,12 @@ public abstract class MonitorItem implements Cloneable{
         host.setDesc("可监控主机cpu、磁盘、文件修改时间等");
         host.setBeanClass(HostMonitorItem.class);
         TYPE_MAP.put(host.getTypeValue(),host);
-        TypeDeclare http=new TypeDeclare();
-        http.setTypeValue("http");
-        http.setName("http服务");
-        http.setDesc("可监控http服务");
-        http.setBeanClass(HttpMonitorItem.class);
-        TYPE_MAP.put(http.getTypeValue(),http);
+//        TypeDeclare http=new TypeDeclare();
+//        http.setTypeValue("http");
+//        http.setName("http服务");
+//        http.setDesc("可监控http服务");
+//        http.setBeanClass(HttpMonitorItem.class);
+//        TYPE_MAP.put(http.getTypeValue(),http);
         TypeDeclare inspection=new TypeDeclare();
         inspection.setTypeValue("inspection");
         inspection.setName("自检");

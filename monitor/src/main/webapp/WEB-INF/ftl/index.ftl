@@ -78,7 +78,7 @@
     $(function () {
         $(".treeview-menu a").click(function () {
             var src=$(this).data("href");
-            console.log("src="+src);
+//            console.log("src="+src);
             $("#dashboard_content").prop("src",src);
         });
     });

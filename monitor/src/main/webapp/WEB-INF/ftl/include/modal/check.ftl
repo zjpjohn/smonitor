@@ -222,13 +222,13 @@
         $.each(obj.cronList,function(i,item){
             html+='<div class="row form-inline runtime-row-div">';
             html+='<div class="col-xs-2 margin-bottom-sm"><label>执行时间：</label></div>';
-            html+='<div class="col-xs-3 margin-bottom-sm">';
+            html+='<div class="col-xs-4 margin-bottom-sm">';
             var runtimeArray=item.split(" ");
             html+='<input value="'+runtimeArray[0]+'" type="text" class="form-control small-input" placeholder="秒"/><span>秒</span>';
             html+='<input value="'+runtimeArray[1]+'" type="text" class="form-control small-input" placeholder="分"/><span>分</span>';
             html+='<input value="'+runtimeArray[2]+'" type="text" class="form-control small-input" placeholder="时"/><span>时</span>';
             html+='</div>';
-            html+='<div class="col-xs-3 margin-bottom-sm">';
+            html+='<div class="col-xs-4 margin-bottom-sm">';
             html+='<input value="'+runtimeArray[3]+'" type="text" class="form-control small-input" placeholder="秒"/><span>日</span>';
             html+='<input value="'+runtimeArray[4]+'" type="text" class="form-control small-input" placeholder="分"/><span>月</span>';
             html+='<input value="'+runtimeArray[5]+'" type="text" class="form-control small-input" placeholder="时"/><span>周</span>';
@@ -237,7 +237,7 @@
             if(runtimeArray.length>6){
                 yy=runtimeArray[6];
             }
-            html+='<div class="col-xs-4 margin-bottom-sm">';
+            html+='<div class="col-xs-2 margin-bottom-sm">';
             html+='<input value="'+yy+'" type="text" class="form-control middle-input" placeholder="年(可选)"/><span>年</span>';
             html+='</div>';
             html+='</div>';

@@ -23,7 +23,7 @@ public class MonitorDao {
             start=0;
         }
         if(limit==null){
-            limit=CachedData.adminSize();
+            limit=CachedData.monitorItemSize();
         }
         List<MonitorItem> qryMonitorItemList=new LinkedList<MonitorItem>();
         List<MonitorItem> allMonitorItemList=CachedData.getAllMonitorItem();

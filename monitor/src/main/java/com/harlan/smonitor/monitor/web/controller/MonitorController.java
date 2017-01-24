@@ -83,9 +83,8 @@ public class MonitorController {
     @RequestMapping(value="/addmonitor" ,produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody String toadd(@RequestBody String body) throws Exception {
         Result res=new Result();
-        String req= URLDecoder.decode(body, Constants.CHARSET);
-        logger.debug("addmonitor -- req：{}",req);
-        Map<String,Object> reqMap=JSON.parseObject(req);
+        logger.debug("addmonitor -- body：{}",body);
+        Map<String,Object> reqMap=JSON.parseObject(body);
         MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
         item.init(reqMap);
         MonitorDao.addMonitor(item);
@@ -96,9 +95,8 @@ public class MonitorController {
     @RequestMapping(value="/savemonitor",produces= Constants.JSON_PRODUCES, method= RequestMethod.POST)
     public @ResponseBody String saveMonitor(@RequestBody String body)throws Exception{
         Result res=new Result();
-        String req= URLDecoder.decode(body, Constants.CHARSET);
-        logger.debug("savemonitor -- req：{}",req);
-        Map<String,Object> reqMap=JSON.parseObject(req);
+        logger.debug("savemonitor -- body：{}",body);
+        Map<String,Object> reqMap=JSON.parseObject(body);
         MonitorItem item=MonitorItem.monitorInstance(reqMap.get("type").toString());
         item.init(reqMap);
         MonitorDao.saveMonitor(item);
