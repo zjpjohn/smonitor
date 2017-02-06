@@ -84,12 +84,6 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>2.6.1</version>
         </dependency>-->
-        <!--四川发短信模块-->
-        <dependency>
-            <groupId>com.harlan.smonitor</groupId>
-            <artifactId>notice-scsms</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
         <!--发邮件模块-->
         <dependency>
             <groupId>com.harlan.smonitor</groupId>
@@ -102,6 +96,12 @@
             <artifactId>passwd-scmobile</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <!--其他模块
+        <dependency>
+            <groupId>xxx.xxx.xxx</groupId>
+            <artifactId>xxxx</artifactId>
+            <version>xxx</version>
+        </dependency>-->
         <!--************** 自定义的配置 END************** -->
     </dependencies>
     <build>
