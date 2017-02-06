@@ -56,6 +56,7 @@ public class AdminDao {
         if(getAdmin(admin)==null){
             throw new RuntimeException("no this admin  ...");
         }
+        //TODO 删除管理员时需要判断是否已经绑定到了监控项？
         CachedData.removeAdmin(admin);
     }
 }

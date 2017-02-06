@@ -148,6 +148,7 @@ class CachedData {
      * ==================================================
      */
     public static List<MonitorItem> getAllMonitorItem() {
+        //TODO 需要排序，可以在修改、初始化时排序一下
         List<MonitorItem> monitor_list=new ArrayList<MonitorItem>(MONITOR_MAP.size());
         for (MonitorItem monitor:MONITOR_MAP.values()) {
             MonitorItem copyMonitor=monitor.clone();
