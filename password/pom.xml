@@ -15,15 +15,13 @@
     <!--该模块的子模块，是不同的通知实现逻辑
 
     开发子模块：
-    1、该模块的所有子模块包名 需要在com.harlan.smonitor.password下
-    2、实现接口 com.harlan.smonitor.api.notice.IPasswdService
-    3、实现类需要在monitor模块的 ImplRegister 中注册一下
+    1、实现接口 com.harlan.smonitor.api.notice.IPasswdService
+    2、模块中如有有 properties配置文件，请使用模块artifactId命名properties，避免冲突
 
     使用子模块：
-    1、需要在monitor模块的pom中配置需要使用的子模块即可
-    2、在 monitor-item 配置文件中，type字段配置通知模块实现类的类型
-        目前可用的type有：
-        scmonile - 四川移动4A使用的加密
+    1、需要在monitor模块的pom中配置需要使用的子模块
+    2、需要在monitor模块 WEB-INF 下的 modules.xml 中配置 IPasswdService 实现类的路径
+
     -->
     <modules>
         <module>passwd-scmobile</module>

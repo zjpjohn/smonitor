@@ -13,19 +13,17 @@
     <packaging>pom</packaging>
     <artifactId>notice</artifactId>
     <!--该模块的子模块，是不同的通知实现逻辑
+
     开发子模块：
-    1、该模块的所有子模块包名 为com.harlan.smonitor.notice
-    2、实现接口 com.harlan.smonitor.api.notice.INoticeService
-    3、实现类需要在monitor模块的 ImplRegister 中注册一下
+    1、实现接口 com.harlan.smonitor.api.notice.INoticeService
+    2、模块中如有有 properties配置文件，请使用模块artifactId命名properties，避免冲突
+
     使用子模块：
     1、需要在monitor模块的pom中配置需要使用的子模块
-    2、在 monitor-admin配置文件中，host节点 passwd-type字段配置密码加密模块实现类的类型
-        目前可用的type有：
-        scsms - 四川短信通知模块
-        email - 发送邮件模块，待开发
+    2、需要在monitor模块 WEB-INF 下的 modules.xml 中配置 INoticeService 实现类的路径
+
     -->
     <modules>
-        <module>notice-scsms</module>
         <module>notice-email</module>
     </modules>
     <dependencies>
