@@ -72,6 +72,7 @@ public abstract class AbstractService implements Job {
 	}
 
 	private void sendNotice(List<String> adminList,String title,String content){
+		//TODO 修改INoticeService api 发送方法需要是多个admin一期发送
 		for (String admin:adminList) {
 			Admin admin_bean= AdminDao.getAdmin(admin);
 			INoticeService service= ModuleRegister.getNoticeServiceImpl(admin_bean.getType());
