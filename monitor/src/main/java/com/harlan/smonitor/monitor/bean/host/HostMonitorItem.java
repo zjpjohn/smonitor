@@ -72,10 +72,10 @@ public class HostMonitorItem extends MonitorItem {
     public List<FieldDeclare> getFields() {
         List<FieldDeclare> fieldList=new ArrayList<FieldDeclare>();
         fieldList.add(new FieldDeclare("ip","IP地址","IP地址"));
-        fieldList.add(new FieldDeclare("user","用户名","用户名"));
-        fieldList.add(new FieldDeclare("passwd","密码","保存后会加密"));
+        fieldList.add(new FieldDeclare("user","用户名","主机用户名"));
+        fieldList.add(new FieldDeclare("passwd","密码","用户名密码"));
 //        fieldList.add(new FieldDeclare("passwdType","密码类型","制定使用哪个密码加密模块"));
-        fieldList.add(new FieldDeclare("port","ssh端口","ssh的端口"));
+        fieldList.add(new FieldDeclare("port","ssh端口","可空，默认22"));
         return fieldList;
     }
 

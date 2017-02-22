@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class CheckMemServiceImpl extends AbstractService {
 	private final static Logger logger = LoggerFactory.getLogger(CheckMemServiceImpl.class);
-	private String TITLE="主机文件监控报警";
+	private String TITLE="主机内存监控报警";
 	@Override
 	protected void run(MonitorItem item, CheckItem checkItem) throws Exception {
 

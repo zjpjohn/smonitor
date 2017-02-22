@@ -88,14 +88,11 @@
                     "type":"post",
                     "data":{"type":type_val},
                     "dataType":"json",
-                    "success":function(data,desc1){
+                    "success":function(data){
                         if(data.success==true){
-                            //console.log(data.obj);
-                            var append_html="";
-                            $.each(data.obj,function(i,item){
-                                append_html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input name='"+item.fieldName+"'  type='text' class='form-control'/></div>";
-                            });
-                            //console.log(append_html);
+                            var fields=data.obj;
+                            //console.log(fields);
+                            var append_html=getFieldsHtml(fields);
                             $("#monitor_append_div").append(append_html);
                         }else{
                             console.log("exception..."+data.msg);

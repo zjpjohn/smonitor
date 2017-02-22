@@ -29,9 +29,9 @@ public class CheckDisk extends CheckItem {
 	@Override
 	public List<FieldDeclare> getFields() {
 		List<FieldDeclare> fieldList=new ArrayList<FieldDeclare>();
-		fieldList.add(new FieldDeclare("exceed","磁盘阀值","规则：磁盘超过这个值"));
-		fieldList.add(new FieldDeclare("inodeExceed","inode阀值","规则：inode超过这个值"));
-		fieldList.add(new FieldDeclare("path","文件系统","规则：绝对路径"));
+		fieldList.add(new FieldDeclare("exceed","磁盘阀值","不可空，磁盘超过这个值"));
+		fieldList.add(new FieldDeclare("inodeExceed","inode阀值","可空"));
+		fieldList.add(new FieldDeclare("path","文件系统","不可空，绝对路径"));
 		return fieldList;
 	}
 

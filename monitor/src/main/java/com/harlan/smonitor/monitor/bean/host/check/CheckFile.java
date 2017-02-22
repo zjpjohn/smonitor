@@ -53,10 +53,10 @@ public class CheckFile extends CheckItem {
     @Override
     public List<FieldDeclare> getFields() {
         List<FieldDeclare> fieldList=new ArrayList<FieldDeclare>();
-        fieldList.add(new FieldDeclare("path","文件路径","规则：绝对路径"));
-        fieldList.add(new FieldDeclare("modifyIn","几分钟内修改","几分钟内修改、几分钟内未修改、文件新增行数 三个只能选一个填写并生效"));
-        fieldList.add(new FieldDeclare("notModifyIn","几分钟内未修改","几分钟内修改、几分钟内未修改、文件新增行数 三个只能选一个填写并生效"));
-        fieldList.add(new FieldDeclare("rowsIncrease","文件新增行数","几分钟内修改、几分钟内未修改、文件新增行数 三个只能选一个填写并生效"));
+        fieldList.add(new FieldDeclare("path","文件路径","不可空，绝对路径"));
+        fieldList.add(new FieldDeclare("modifyIn","几分钟内修改","可空"));
+        fieldList.add(new FieldDeclare("notModifyIn","几分钟内未修改","可空"));
+        fieldList.add(new FieldDeclare("rowsIncrease","新增行数","可空"));
         return fieldList;
     }
 

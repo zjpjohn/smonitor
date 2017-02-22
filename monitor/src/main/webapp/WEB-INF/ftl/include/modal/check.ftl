@@ -190,7 +190,7 @@
         $(obj).parents('.check_row_form').remove();
     }
     /**
-     * 讲一个 check json 添加转化成html添加至 div
+     * 将一个 check json 添加转化成html添加至 div
      * */
     function addCheck2Html(obj,hasSwitchBtn) {
         var html="<form class='check_row_form'>";
@@ -326,13 +326,11 @@
                     "type":"post",
                     "data":{"mtype":MONITOR_TYPE,"ctype":ctype_val},
                     "dataType":"json",
-                    "success":function(data,desc1){
+                    "success":function(data){
                         if(data.success==true){
-                            var append_html="";
-                            CHECK_FIELDS_MAP[ctype_val]=data.obj;
-                            $.each(data.obj,function(i,item){
-                                append_html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>"+item.name+"：</label><input name='"+item.fieldName+"'  type='text' class='form-control'/></div>";
-                            });
+                            var fields=data.obj;
+                            CHECK_FIELDS_MAP[ctype_val]=fields;
+                            var append_html=getFieldsHtml(fields);
                             $("#check_append_div").append(append_html);
                         }else{
                             console.log("exception..."+data.msg);
