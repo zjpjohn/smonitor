@@ -192,10 +192,14 @@ public class SshConnecter implements Cloneable{
         InputStream in = channel.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String buf;
+        logger.debug("执行结果如下:======");
         while ((buf = reader.readLine()) != null) {
             response.add(buf);
+            logger.debug(buf);
         }
+        logger.debug("执行结果如上:======");
         channel.disconnect();
+
         return response;
     }
     @Override

@@ -181,6 +181,9 @@ public class CheckFileServiceImpl extends AbstractService {
 				logger.info("离上一次修改时间相差{}分钟",minute);
 			}
 		}
+		if(minute==null){
+			throw new RuntimeException("未获取到文件修改时间，请检查文件是否存在。。。");
+		}
     	return minute;
     } 
     /**

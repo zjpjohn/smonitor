@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list>
     <module>com.harlan.smonitor.notice.email.EmailNoticeService</module>
-    <module>com.harlan.smonitor.password.scmobile.ScmobilePasswdService</module>
 </list>

@@ -12,7 +12,8 @@
     <hr class="margin-bottom-xs">
 
 <#--查询form-->
-    <form id="paging_query_form" action="list" method="post">
+
+    <#--<form id="paging_query_form" action="list" method="post">
         <input type="hidden" name="paging_start"/>
         <input type="hidden" name="paging_limit"/>
         <div class="row form-inline">
@@ -32,7 +33,7 @@
         </div>
         <hr>
     </form>
-
+-->
 <#--列表div-->
     <div  id="list_table" >
         <table class="table table-hover">
