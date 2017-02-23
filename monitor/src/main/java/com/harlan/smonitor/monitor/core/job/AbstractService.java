@@ -25,17 +25,18 @@ public abstract class AbstractService implements Job {
 
 	@Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        MonitorItem item = (MonitorItem) context.getMergedJobDataMap().get("item");
-        logger.debug("监控项 name:{} ",item.getName());
+        MonitorItem monitor = (MonitorItem) context.getMergedJobDataMap().get("monitor");
         CheckItem checkItem=(CheckItem) context.getMergedJobDataMap().get("check");
         try {
-            run(item,checkItem);
+			logger.info("---------------------------check start---------------------------");
+            run(monitor,checkItem);
+			logger.info("---------------------------check end-----------------------------");
         } catch (Exception e) {
             logger.error("任务执行时出现异常",e);
 			//出现异常时需要通知所有管理员
-			String title=checkItem.getName()+"在执行时抛出异常";
+			String title=checkItem.getName()+",在执行时抛出异常";
 			String content=title+",异常是："+e.toString();
-			sendNotice(item.getAdminList(),title,content);
+			sendNotice(monitor.getAdminList(),title,content);
         }
     }
 
@@ -46,33 +47,16 @@ public abstract class AbstractService implements Job {
      */
     protected abstract void run(MonitorItem item, CheckItem checkItem) throws Exception;
     
-	/**
-	 * 重置计数器
-	 * @return
-	 */
-	protected void restAlarmCount(Integer checkItemId){
-		logger.info("重置ID为 {} 的检查项，报警计数器",checkItemId);
-		JobDao.jobAlarmReset(checkItemId);
 
-	}
-    
 	/**
-	 * 报警计数器+1，如果超过报警阀值，发送通知
-	 * @param checkItem 检查项
-	 * @param adminList 联系人列表
+	 * 发送通知信息
+	 * @param adminList 管理员列表
 	 * @param title 标题
 	 * @param content 内容
 	 */
-	protected void checkAndSendMsg(CheckItem checkItem,List<String> adminList,String title,String content) {
-		int count= JobDao.jobAlamIncrease(checkItem.getId());
-		if(count>=checkItem.getAlarmTime()){
-			logger.info("ID为 {} 的检查项，达到报警阀值：{}，发送通知，通知题目为 ：{},通知内容：{}",checkItem.getId(),checkItem.getAlarmTime(),title,content);
-			sendNotice(adminList,title,content);
-		}
-	}
-
-	private void sendNotice(List<String> adminList,String title,String content){
+	protected void sendNotice(List<String> adminList,String title,String content){
 		//TODO 修改INoticeService api 发送方法需要是多个admin一起通知
+		logger.debug("发送通知通知管理员，管理员数量：{},title:{},内容：{}",adminList.size(),title,content);
 		for (String admin:adminList) {
 			Admin admin_bean= AdminDao.getAdmin(admin);
 			INoticeService service= ModuleRegister.getNoticeServiceImpl(admin_bean.getType());

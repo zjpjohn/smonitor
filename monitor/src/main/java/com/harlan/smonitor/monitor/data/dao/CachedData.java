@@ -22,7 +22,6 @@ class CachedData {
         ADMIN_MAP=new LinkedHashMap<String, Admin>();
         GROUP_MAP=new LinkedHashMap<Integer, Group>();
         MONITOR_MAP=new LinkedHashMap<Integer,MonitorItem>();
-        JOB_ALARM_COUNT=new HashMap<Integer, Integer>();
         MONITOR_INDEX=0;
         CHECK_INDEX=0;
         GROUP_INDEX=0;
@@ -41,8 +40,6 @@ class CachedData {
     private static Map<Integer, Group> GROUP_MAP;
     //调度管理对象
     static Scheduler SCHEDULER;
-    //每个job对应一个报警计数器
-    static Map<Integer,Integer> JOB_ALARM_COUNT;
 
     /**
      * ==================================================

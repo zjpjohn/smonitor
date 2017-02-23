@@ -15,11 +15,10 @@ import org.slf4j.LoggerFactory;
 
 public class CheckMemServiceImpl extends AbstractService {
 	private final static Logger logger = LoggerFactory.getLogger(CheckMemServiceImpl.class);
-	private String TITLE="主机内存监控报警";
+	private static final String TITLE="主机内存监控报警";
 	@Override
 	protected void run(MonitorItem item, CheckItem checkItem) throws Exception {
 
-		logger.info("---------------------------check start---------------------------");
 		HostMonitorItem hostItem = (HostMonitorItem) item;
 		CheckMem memItem = (CheckMem) checkItem;
 		// ip地址
@@ -31,29 +30,24 @@ public class CheckMemServiceImpl extends AbstractService {
 		logger.info("检查{}{}是否超过了{}", hostItem.getName(), memItem.getName(),
 				exceed);
 		SshConnecter ssh = SshPool.getSsh(hostItem.getIp(),hostItem.getPort(), hostItem.getUser(), hostItem.getPasswd());
-		logger.info("ssh链接建立成功");
-		List<String> list = ssh.command("free");
-		double memVal = 0;
-		for (String string : list) {
-			if (string.contains("Mem")) {
-				String[] arr = string.split("\\s+");
-				Double val = Double.valueOf(arr[2]) / Double.valueOf(arr[1]);
-				Long l = Math.round(val * 100);
-				memVal = l.intValue();
-				break;
-			}
+		List<String> result = ssh.command("free -m | sed -n '2p' | awk '{print $3/$2*100}'");
+		double memVal ;
+		if(result==null || result.size()==0){
+			throw new RuntimeException("free命令返回空");
 		}
+		memVal = Double.valueOf(result.get(0));
 		//记录检测结果信息到单独的日志文件中
+		logger.info("当前内存使用率：{}%",memVal);
 		DataRecorder.record(hostItem.getName()+checkItem.getName(), memVal+"");
 		if (memVal > exceed) {
-			logger.info("当前内存使用率{}超过设置的阀值{},满足单次报警条件", memVal, exceed);
-			String msg = hostItem.getName() + checkItem.getName()+"达到"+memVal+"超过设置的阀值"+exceed;
-			checkAndSendMsg(checkItem,item.getAdminList(),TITLE,msg);
+			boolean needSendMsg=memItem.increaseAlarmCount();
+			if(needSendMsg){
+				String msg = hostItem.getName() + checkItem.getName()+"达到"+memVal+"超过设置的阀值"+exceed;
+				sendNotice(hostItem.getAdminList(),TITLE,msg);
+			}
 		} else {
-			logger.info("当前内存使用率{}没有超过设置的阀值{},重置报警次数", memVal, exceed);
-			restAlarmCount(checkItem.getId());
+			checkItem.resetAlarmCount();
 		}
-		logger.info("---------------------------check end---------------------------");
 	}
 
 }

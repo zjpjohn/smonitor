@@ -9,7 +9,6 @@ import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.monitor.common.Constants;
 import org.quartz.Job;
 import org.quartz.JobKey;
-import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +19,12 @@ import org.slf4j.LoggerFactory;
  * 不同的检查项需要实现此父类
  */
 public abstract class CheckItem  implements Cloneable{
-    private final static Logger logger = LoggerFactory.getLogger(MonitorItem.class);
-//    private static Map<Integer,Integer> ALARM_COUNT;
+    private final static Logger logger = LoggerFactory.getLogger(CheckItem.class);
+    //储存报警阀值
+    private static Map<Integer,Integer> ALARM_COUNT;
     public CheckItem() {
         state= Constants.CHECK_PAUSE;//默认暂停状态
-//        ALARM_COUNT=new HashMap<Integer, Integer>();
+        ALARM_COUNT=new HashMap<Integer, Integer>();
     }
 
     @SuppressWarnings("unchecked")
@@ -61,12 +61,27 @@ public abstract class CheckItem  implements Cloneable{
         return check_map;
     }
 
-//    public boolean increaseAlarmCount(){
-//        return true;
-//    }
-//    public void resetAlarmCount(){
-//
-//    }
+    public boolean increaseAlarmCount(){
+        Integer count;
+        synchronized (this){
+            count=ALARM_COUNT.get(id);
+            if(count==null){
+                count=0;
+            }
+            count++;
+            ALARM_COUNT.put(id,count);
+        }
+        logger.info("增加报警次数:check_id={},name={},alarmCount={}",id,name,count);
+        if(count>=alarmTime){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public void resetAlarmCount(){
+        logger.debug("重置报警次数:check_id={},name={}",id,name);
+        ALARM_COUNT.put(id,0);
+    }
 
     protected Integer id;
 //    protected List<TriggerKey> triggerKeys;

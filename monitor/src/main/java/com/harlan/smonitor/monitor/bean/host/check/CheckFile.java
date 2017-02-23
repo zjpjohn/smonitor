@@ -6,6 +6,7 @@ import com.harlan.smonitor.monitor.core.job.host.CheckFileServiceImpl;
 import org.quartz.Job;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,14 @@ import static com.harlan.smonitor.monitor.common.Util.notNull;
  * Created by harlan on 2016/9/21.
  */
 public class CheckFile extends CheckItem {
+    /**
+     * 行数增长检查，记录上次行数
+     */
+    private static Map<Integer, Long> idRowsMap;
+    static{
+        idRowsMap=new HashMap<Integer, Long>();
+    }
+
     /**
      * 需要监控的文件绝对路径
      */
@@ -69,7 +78,14 @@ public class CheckFile extends CheckItem {
         return checkMap;
     }
 
-    
+    public void setRows(Long rowsNum){
+        synchronized (this){
+            idRowsMap.put(id,rowsNum);
+        }
+    }
+    public Long getRows(){
+        return idRowsMap.get(id);
+    }
     public String getPath() {
 		return path;
 	}

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class CheckBodyServiceImpl extends AbstractService {
 	private final static Logger logger = LoggerFactory.getLogger(CheckBodyServiceImpl.class);
-	private String TITLE="http服务监控报警";
+	private static final String TITLE="http服务监控报警";
 	@Override
 	protected void run(MonitorItem item, CheckItem checkItem) throws Exception {
 
@@ -53,14 +53,17 @@ public class CheckBodyServiceImpl extends AbstractService {
 			if (response_string.contains(keyword)) {
 				flag = true;
 				logger.info("调用当前服务得到的返回结果中包含{}关键字,满足单次报警条件", keyword);
-				checkAndSendMsg(checkItem,item.getAdminList(),TITLE,"调用"+httpItem.getUrl()+"服务得到的返回结果中包含"+keyword+"关键字");
+				boolean needSendMsg=bodyItem.increaseAlarmCount();
+				if(needSendMsg){
+					String msg = "调用"+httpItem.getUrl()+"服务得到的返回结果中包含"+keyword+"关键字";
+					sendNotice(item.getAdminList(),TITLE,msg);
+				}
 				//一次有一个关键字满足就达到单次报警条件，不继续执行了
 				break;
 			}
 		}
 		if (!flag) {
-			logger.info("包含关键字检查中没有匹配到配置的任何关键字,重置报警次数");
-			restAlarmCount(checkItem.getId());
+			checkItem.resetAlarmCount();
 		}
 		flag = false;
 		// 判断不包含的关键字
@@ -70,14 +73,17 @@ public class CheckBodyServiceImpl extends AbstractService {
 			if (!response_string.contains(keyword)) {
 				flag = true;
 				logger.info("调用当前服务得到的返回结果中不包含{}关键字,满足单次报警条件", keyword);
-				checkAndSendMsg(checkItem,item.getAdminList(),TITLE,"调用"+httpItem.getUrl()+"服务得到的返回结果中不包含{}关键字");
+				boolean needSendMsg=bodyItem.increaseAlarmCount();
+				if(needSendMsg){
+					String msg ="调用"+httpItem.getUrl()+"服务得到的返回结果中不包含{}关键字";
+					sendNotice(item.getAdminList(),TITLE,msg);
+				}
 				//一次有一个关键字满足就达到单次报警条件，不继续执行了
 				break;
 			}
 		}
 		if (!flag) {
-			logger.info("“不包含关键字”检查中没有匹配到配置的任何关键字,重置报警次数");
-			restAlarmCount(checkItem.getId());
+			checkItem.resetAlarmCount();
 		}
 		logger.info("---------------------------check end---------------------------");
 	}

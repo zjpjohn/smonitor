@@ -5,7 +5,7 @@
     <parent>
         <artifactId>smonitor</artifactId>
         <groupId>com.harlan.smonitor</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <!--本模块提供了一些常用的工具类,供其他模块使用-->
     <modelVersion>4.0.0</modelVersion>

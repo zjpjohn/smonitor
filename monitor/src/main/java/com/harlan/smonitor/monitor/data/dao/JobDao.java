@@ -9,9 +9,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -24,30 +22,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 public class JobDao {
     private final static Logger logger = LoggerFactory.getLogger(JobDao.class);
-    /**
-     * 重置alamcount
-     * @param checkItemId
-     */
-    public synchronized static void jobAlarmReset(Integer checkItemId){
-        CachedData.JOB_ALARM_COUNT.put(checkItemId,0);
-    }
 
-    /**
-     * alamCount加一
-     * @param checkItemId
-     * @return
-     */
-    public synchronized static int  jobAlamIncrease(Integer checkItemId){
-        logger.debug("checkId={}的检查项阀值加1");
-        Integer count=CachedData.JOB_ALARM_COUNT.get(checkItemId);
-        if(count==null){
-            count=1;
-        }else{
-            count++;
-        }
-        CachedData.JOB_ALARM_COUNT.put(checkItemId,count);
-        return count;
-    }
     public static Result addMonior(MonitorItem monitor){
         Result res=new Result();
         for (CheckItem checkItem:monitor.getCheckList()) {
@@ -76,7 +51,7 @@ public class JobDao {
         try {
             JobDetail job = newJob(checkItem.getJobServiceImpl())
                     .build();
-            job.getJobDataMap().put("item",monitor);
+            job.getJobDataMap().put("monitor",monitor);
             job.getJobDataMap().put("check",checkItem);
             Set<Trigger> triggerSet=new HashSet<Trigger>(checkItem.getCronList().size());
 //            List<TriggerKey> triggerKeyList=new ArrayList<TriggerKey>(checkItem.getCronList().size());

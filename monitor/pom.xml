@@ -5,7 +5,7 @@
     <parent>
         <artifactId>smonitor</artifactId>
         <groupId>com.harlan.smonitor</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <!--
     本模块打包后是一个 war包，也是部署的主程序，其他模块都是通过jar包的形态，放在这个war包中
@@ -91,11 +91,11 @@
             <version>${project.parent.version}</version>
         </dependency>
         <!--密码加密模块-->
-        <dependency>
+        <!--<dependency>
             <groupId>com.harlan.smonitor</groupId>
             <artifactId>passwd-scmobile</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
+        </dependency>-->
         <!--其他模块
         <dependency>
             <groupId>xxx.xxx.xxx</groupId>
