@@ -38,8 +38,8 @@
                             </select>
                         </div>
                         <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>名称：</label><input name="name" type="text" class="form-control"/></div>
-                        <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>通知阀值：</label><input name="alarmTime"  type="text" class="form-control middle-input"/></div>
                         <div id="check_append_div"></div>
+                        <div class="col-xs-6 col-md-4 margin-bottom-sm"><label>通知阀值：</label><input placeholder="几次后告警" name="alarmTime"  type="text" class="form-control middle-input"/></div>
                     </div>
                     <div id="check_runtime_div">
                     </div>
@@ -71,20 +71,28 @@
         $("#check_append_div").html("");
         addRuntimeRow(false);
         $("#check_add_form")[0].reset();
+        $("#check_type").html("<option value=''>-请选择-</option>");
     }
     /**
      * 显示添加check的modal
      */
     function showCheckModal() {
-        if(MONITOR_TYPE==""){
-            $(".check-modal-add-msg").removeClass("sr-only");
-        }else{
-            $(".check-modal-add-msg").addClass("sr-only");
-        }
+        console.log(MONITOR_TYPE);
+        resetAddCheck();
         for(var typeVal in CHECK_TYPE_NAME_MAP){//遍历CHECK_TYPE_NAME_MAP对象中的属性
             $("#check_type").append("<option value='"+typeVal+"'>"+CHECK_TYPE_NAME_MAP[typeVal]+"</option>");
         }
-        resetAddCheck();
+        if(MONITOR_TYPE==""){//如果还没有选监控类型，则全部不可选
+            $(".check-modal-add-msg").removeClass("sr-only");
+            $("#check_modal input").prop("disabled",true);
+            $("#check_add_runtime_btn").prop("disabled",true);
+            $("#check_type").prop("disabled",true);
+        }else{
+            $(".check-modal-add-msg").addClass("sr-only");
+            $("#check_modal input").prop("disabled",false);
+            $("#check_add_runtime_btn").prop("disabled",false);
+            $("#check_type").prop("disabled",false);
+        }
         $("#check_modal").modal("show");
     }
     /**
@@ -99,7 +107,6 @@
         MONITOR_TYPE=monitor_type;
         CHECK_TYPE_NAME_MAP=check_type_name_map;
         CHECK_FIELDS_MAP=check_fields_map;
-        $("#check_type").html("<option value=''>-请选择-</option>");
         resetAddCheck();
         if(typeof(CHECK_FIELDS_MAP)=="undefined"){
             CHECK_FIELDS_MAP={};
@@ -216,8 +223,8 @@
         }
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>类型：</label><input type='text' class='form-control' value='"+CHECK_TYPE_NAME_MAP[obj.type]+"' readonly/></div>";
         html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>名称：</label><input type='text' name='name' class='form-control' value='"+obj.name+"'/></div>";
-        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>通知阀值：</label><input type='text' name='alarmTime' class='form-control' value='"+obj.alarmTime+"'/></div>";
         html+=getFieldsHtml(CHECK_FIELDS_MAP[obj.type],obj);
+        html+="<div class='col-xs-6 col-md-4 margin-bottom-sm'><label>通知阀值：</label><input type='text' name='alarmTime' class='form-control' value='"+obj.alarmTime+"'/></div>";
         html+='</div>';
         $.each(obj.cronList,function(i,item){
             html+='<div class="row form-inline runtime-row-div">';

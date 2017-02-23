@@ -21,8 +21,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class CheckItem  implements Cloneable{
     private final static Logger logger = LoggerFactory.getLogger(MonitorItem.class);
+//    private static Map<Integer,Integer> ALARM_COUNT;
     public CheckItem() {
         state= Constants.CHECK_PAUSE;//默认暂停状态
+//        ALARM_COUNT=new HashMap<Integer, Integer>();
     }
 
     @SuppressWarnings("unchecked")
@@ -58,6 +60,14 @@ public abstract class CheckItem  implements Cloneable{
         check_map= setAttrs(check_map);
         return check_map;
     }
+
+//    public boolean increaseAlarmCount(){
+//        return true;
+//    }
+//    public void resetAlarmCount(){
+//
+//    }
+
     protected Integer id;
 //    protected List<TriggerKey> triggerKeys;
     protected JobKey jobKey;

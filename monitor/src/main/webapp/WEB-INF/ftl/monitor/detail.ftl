@@ -117,7 +117,7 @@
                 showMsg(monitorObj);
                 return ;
             }
-            console.log(JSON.stringify(monitorObj));
+            //console.log(JSON.stringify(monitorObj));
             $.ajax({
                 "url":"savemonitor",
                 "type":"post",

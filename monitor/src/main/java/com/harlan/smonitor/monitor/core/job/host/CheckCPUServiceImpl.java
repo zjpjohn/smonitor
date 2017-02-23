@@ -26,8 +26,7 @@ public class CheckCPUServiceImpl extends AbstractService {
 		String ip = hostItem.getIp();
 		Double exceed = Double.valueOf(cpuItem.getExceed());
 
-		logger.debug("开始检查,检查的主机是:{},类型为：{}", ip + hostItem.getName(),
-				cpuItem.getType());
+		logger.debug("开始检查,检查的主机是:{},类型为：{}", ip + hostItem.getName(),cpuItem.getType());
 		logger.debug("检查{}{}是否超过了{}", hostItem.getName(), cpuItem.getName(),exceed);
 		SshConnecter ssh = SshPool.getSsh(hostItem.getIp(),hostItem.getPort(), hostItem.getUser(), hostItem.getPasswd());
 		List<String> list = ssh.command("top -b -n 1 | grep Cpu| awk '{print $2}'|cut -f 1 -d \"u\"");

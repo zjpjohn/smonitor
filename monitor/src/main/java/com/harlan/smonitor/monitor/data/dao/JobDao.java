@@ -28,7 +28,7 @@ public class JobDao {
      * 重置alamcount
      * @param checkItemId
      */
-    public static void jobAlarmReset(Integer checkItemId){
+    public synchronized static void jobAlarmReset(Integer checkItemId){
         CachedData.JOB_ALARM_COUNT.put(checkItemId,0);
     }
 
@@ -37,8 +37,8 @@ public class JobDao {
      * @param checkItemId
      * @return
      */
-    public static int jobAlamIncrease(Integer checkItemId){
-        //TODO 完成后需要测试多个 trigger导致的并发问题
+    public synchronized static int  jobAlamIncrease(Integer checkItemId){
+        logger.debug("checkId={}的检查项阀值加1");
         Integer count=CachedData.JOB_ALARM_COUNT.get(checkItemId);
         if(count==null){
             count=1;

@@ -28,6 +28,7 @@ public class CheckFileServiceImpl extends AbstractService {
     /**
      * map为每一个job实例储存上次查询文件行数
      */
+    //TODO 线程并发问题
     private static Map<String, Long> rowsMap;
     
     @Override
