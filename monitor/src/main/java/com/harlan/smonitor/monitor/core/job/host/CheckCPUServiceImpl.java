@@ -36,7 +36,7 @@ public class CheckCPUServiceImpl extends AbstractService {
 		cpuVal=Double.valueOf(cpuStr);
 		logger.info("当前CPU使用率:{}%", cpuVal);
 		// 记录检测结果信息到单独的日志文件中
-		DataRecorder.record(hostItem.getName() + checkItem.getName(),cpuVal+"");
+		DataRecorder.record(hostItem.getType(),checkItem.getType(),hostItem.getUser(), cpuVal+"");
 		if (cpuVal > exceed) {
 			boolean needSendMsg=checkItem.increaseAlarmCount();
 			if(needSendMsg){

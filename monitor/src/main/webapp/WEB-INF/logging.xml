@@ -22,7 +22,7 @@
         <param name="File" value="${SMONITOR_DATA_DIR}/record/record.csv" />
         <param name="Append" value="true" />
          <param name="Encoding" value="UTF-8"/>
-        <param name="DatePattern" value="'.'yyyy-MM-dd-HH-mm"/>
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{yyyy-MM-dd-HH:mm},%m%n" />
         </layout>

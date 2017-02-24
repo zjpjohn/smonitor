@@ -38,7 +38,7 @@ public class CheckMemServiceImpl extends AbstractService {
 		memVal = Double.valueOf(result.get(0));
 		//记录检测结果信息到单独的日志文件中
 		logger.info("当前内存使用率：{}%",memVal);
-		DataRecorder.record(hostItem.getName()+checkItem.getName(), memVal+"");
+		DataRecorder.record(hostItem.getType(),memItem.getType(),hostItem.getUser(), memVal+"");
 		if (memVal > exceed) {
 			boolean needSendMsg=memItem.increaseAlarmCount();
 			if(needSendMsg){

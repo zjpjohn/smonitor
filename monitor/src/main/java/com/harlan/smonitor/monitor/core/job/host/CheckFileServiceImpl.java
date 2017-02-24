@@ -76,7 +76,7 @@ public class CheckFileServiceImpl extends AbstractService {
 		//1：计算受监控的文件离上一次修改过去了多少分钟
 		Long minute = calculateFileChangeTimeDiff(hostItem,checkFile);
 		//记录检测结果信息到单独的日志文件中
-		DataRecorder.record(hostItem.getName()+checkFile.getName(), minute+"");
+//		DataRecorder.record(hostItem.getName()+checkFile.getName(), minute+"");
 		//2：计算是否满足报警条件
 		//如果修改的时间在配置的频繁时间之内则满足单次的报警条件
 		if(minute <= checkFile.getModifyIn()){
@@ -101,7 +101,7 @@ public class CheckFileServiceImpl extends AbstractService {
 		//1：计算受监控的文件离上一次修改过去了多少分钟
 		Long minute = calculateFileChangeTimeDiff(hostItem,checkFile);
 		//记录检测结果信息到单独的日志文件中
-		DataRecorder.record(hostItem.getName()+checkFile.getName(), minute+"");
+//		DataRecorder.record(hostItem.getName()+checkFile.getName(), minute+"");
 		//满足单次报警条件
 		if(minute >= checkFile.getNotModifyIn()){
 			boolean needSendMsg=checkFile.increaseAlarmCount();
@@ -131,7 +131,7 @@ public class CheckFileServiceImpl extends AbstractService {
 		Long diff = rowCount - lastRowCoun;
 		
 		//记录检测结果信息到单独的日志文件中
-		DataRecorder.record(hostItem.getName()+checkFile.getName(), diff+"");
+//		DataRecorder.record(hostItem.getName()+checkFile.getName(), diff+"");
 		
 		logger.info("上一次得出的文件总行数：{},当前的总行数：{},较上一次增长了:{}行",lastRowCoun,rowCount,diff);
 		logger.info("报警阀值为:{}",rowsIncrease);

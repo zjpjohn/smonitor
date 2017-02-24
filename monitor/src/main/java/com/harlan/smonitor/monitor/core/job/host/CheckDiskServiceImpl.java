@@ -35,7 +35,7 @@ public class CheckDiskServiceImpl extends AbstractService {
 		diskVal = Double.valueOf(val);
 		// 记录检测结果信息到单独的日志文件中
 		logger.debug("当前磁盘使用率{}", diskVal);
-		DataRecorder.record(hostItem.getName() + checkItem.getName(), diskVal + "");
+		DataRecorder.record(hostItem.getType(),diskItem.getType(),diskItem.getPath(),diskVal+ "");
 		if (diskVal > exceed) {
 			boolean needSendMsg=checkItem.increaseAlarmCount();
 			if(needSendMsg){
