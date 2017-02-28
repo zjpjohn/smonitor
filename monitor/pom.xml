@@ -90,6 +90,13 @@
             <artifactId>notice-email</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <!--
+        发送短信模块，四川移动使用
+        <dependency>
+            <groupId>com.sitech.miso.NoticeSendSms</groupId>
+            <artifactId>ScSms</artifactId>
+            <version>1.0</version>
+        </dependency>-->
         <!--密码加密模块-->
         <!--<dependency>
             <groupId>com.harlan.smonitor</groupId>

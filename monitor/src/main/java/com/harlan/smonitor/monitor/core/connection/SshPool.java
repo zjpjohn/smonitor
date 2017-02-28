@@ -14,16 +14,11 @@ import java.util.Map;
  */
 public class SshPool {
     private final static Logger logger = LoggerFactory.getLogger(SshPool.class);
-    private static Map<String,List<SshConnecter>> HOST_SSH_MAP = new HashMap<String,List<SshConnecter>>();
-    static{
-        HOST_SSH_MAP=new HashMap<String, List<SshConnecter>>();
-    }
     /**
      * 取出连接
      * @return
      */
     public static SshConnecter getSsh(String host, int port, String username, String password) throws Exception {
-        SshConnecter ssh = new SshConnecter(host,port, username,password);
-        return ssh;
+        return new SshConnecter(host,port, username,password);
     }
 }
