@@ -28,11 +28,18 @@ public class CheckDiskServiceImpl extends AbstractService {
 		logger.info("开始检查,检查的主机是:{},类型为：{}", ip ,diskItem.getType());
 		logger.debug("检查{}{}是否超过了{}", hostItem.getName(), diskItem.getName(),exceed);
 		SshConnecter ssh = SshPool.getSsh(hostItem.getIp(),hostItem.getPort(), hostItem.getUser(), hostItem.getPasswd());
-		List<String> list = ssh.command("df -lP|grep -e "+diskItem.getPath()+"$ |awk '{print $5}'");
-		double diskVal;
-		String percent = list.get(0);
-		String val = percent.substring(0, percent.length() - 1);
-		diskVal = Double.valueOf(val);
+		double diskVal=0;
+		try {
+			List<String> list = ssh.command("df -lP|grep -e "+diskItem.getPath()+"$ |awk '{print $5}'");
+			String percent = list.get(0);
+			String val = percent.substring(0, percent.length() - 1);
+			diskVal = Double.valueOf(val);
+		} catch (Exception e) {
+			logger.info("连接主机异常",e);
+			throw e;
+		} finally {
+			ssh.disconnect();
+		}
 		// 记录检测结果信息到单独的日志文件中
 		logger.debug("当前磁盘使用率{}", diskVal);
 		DataRecorder.record(hostItem.getType(),diskItem.getType(),diskItem.getPath(),diskVal+ "");

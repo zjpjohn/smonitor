@@ -21,23 +21,27 @@ public class CheckMemServiceImpl extends AbstractService {
 
 		HostMonitorItem hostItem = (HostMonitorItem) item;
 		CheckMem memItem = (CheckMem) checkItem;
-		// ip地址
 		String ip = hostItem.getIp();
 		Double exceed = Double.valueOf(memItem.getExceed());
 
-		logger.info("开始检查,检查的主机是:{},类型为：{}", ip + hostItem.getName(),
-				memItem.getType());
-		logger.info("检查{}{}是否超过了{}", hostItem.getName(), memItem.getName(),
-				exceed);
+		logger.info("开始检查,检查的主机是:{},类型为：{}", ip + hostItem.getName(),	memItem.getType());
+		logger.info("检查{}{}是否超过了{}", hostItem.getName(), memItem.getName(),exceed);
 		SshConnecter ssh = SshPool.getSsh(hostItem.getIp(),hostItem.getPort(), hostItem.getUser(), hostItem.getPasswd());
-		List<String> result = ssh.command("free -m | sed -n '2p' | awk '{print $3/$2*100}'");
-		double memVal ;
-		if(result==null || result.size()==0){
-			throw new RuntimeException("free命令返回空");
+		double memVal =0;
+		try {
+			List<String> result = ssh.command("free -m | sed -n '2p' | awk '{print $3/$2*100}'");
+			if(result==null || result.size()==0){
+                throw new RuntimeException("free命令返回空");
+            }
+			memVal = Double.valueOf(result.get(0));
+		} catch (Exception e) {
+			logger.error("ssh命令执行异常",e);
+			throw e;
+		} finally {
+			ssh.disconnect();
 		}
-		memVal = Double.valueOf(result.get(0));
-		//记录检测结果信息到单独的日志文件中
 		logger.info("当前内存使用率：{}%",memVal);
+		//记录检测结果信息到单独的日志文件中
 		DataRecorder.record(hostItem.getType(),memItem.getType(),hostItem.getUser(), memVal+"");
 		if (memVal > exceed) {
 			boolean needSendMsg=memItem.increaseAlarmCount();

@@ -1,10 +1,7 @@
 package com.harlan.smonitor.monitor.core.job.host;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
@@ -13,7 +10,6 @@ import com.harlan.smonitor.monitor.bean.host.check.CheckFile;
 import com.harlan.smonitor.monitor.common.SshConnecter;
 import com.harlan.smonitor.monitor.common.Util;
 import com.harlan.smonitor.monitor.core.connection.SshPool;
-import com.harlan.smonitor.monitor.data.DataRecorder;
 import com.harlan.smonitor.monitor.core.job.AbstractService;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
@@ -155,18 +151,27 @@ public class CheckFileServiceImpl extends AbstractService {
      */
     private Long calculateFileChangeTimeDiff(HostMonitorItem hostItem,CheckFile checkFile) throws Exception{
 		SshConnecter ssh = SshPool.getSsh(hostItem.getIp(),hostItem.getPort(), hostItem.getUser(), hostItem.getPasswd());
-    	//获取服务器的当前时间
-    	String nowDateStr = ssh.command("date +%Y%m%d%H%M%S").get(0);
-		Date nowDate= Util.string2Date(nowDateStr);
-		logger.debug("服务器当前时间：{}",nowDate);
-		Long nowDateLong =nowDate.getTime();
+		Long nowDateLong = null;
+		List<String> result = null;
+		try {
+			//获取服务器的当前时间
+			String nowDateStr = ssh.command("date +%Y%m%d%H%M%S").get(0);
+			Date nowDate= Util.string2Date(nowDateStr);
+			logger.debug("服务器当前时间：{}",nowDate);
+			nowDateLong = nowDate.getTime();
 
-    	//获取受监测的文件上一次的修改时间
-    	List<String> result = ssh.command("stat "+checkFile.getPath()+" |sed -n '6p'| awk '{print $2\" \"$3}'");
-		if(result==null || result.size()==0){
-			throw new RuntimeException("未获取到文件修改时间，请检查文件是否存在...");
+			//获取受监测的文件上一次的修改时间
+			result = ssh.command("stat "+checkFile.getPath()+" |sed -n '6p'| awk '{print $2\" \"$3}'");
+			if(result==null || result.size()==0){
+                throw new RuntimeException("未获取到文件修改时间，请检查文件是否存在...");
+            }
+		} catch (Exception e) {
+			logger.error("ssh命令执行异常",e);
+			throw e;
+		} finally {
+			ssh.disconnect();
 		}
-    	//相差的分钟数
+		//相差的分钟数
 		logger.info("{}文件最近的修改时间：{}",checkFile.getPath(),result.get(0));
 		Date modifyDate = DATE_FRMAT.parse(result.get(0));
 		logger.debug("修改时间：{}",modifyDate);
@@ -184,10 +189,19 @@ public class CheckFileServiceImpl extends AbstractService {
      */
     private Long checkFileRowCount(HostMonitorItem hostItem,CheckFile checkFile) throws Exception {
 		SshConnecter ssh = SshPool.getSsh(hostItem.getIp(),hostItem.getPort(), hostItem.getUser(), hostItem.getPasswd());
-		List<String> list = ssh.command("cat "+checkFile.getPath()+" | wc -l");
-		Long rowCount = Long.valueOf(list.get(0));
-		String[] arr = checkFile.getPath().split("/");
-		String fileName = arr[arr.length -1];
+		Long rowCount = null;
+		String fileName = null;
+		try {
+			List<String> list = ssh.command("cat "+checkFile.getPath()+" | wc -l");
+			rowCount = Long.valueOf(list.get(0));
+			String[] arr = checkFile.getPath().split("/");
+			fileName = arr[arr.length -1];
+		} catch (Exception e) {
+			logger.error("ssh命令执行异常",e);
+			throw e;
+		} finally {
+			ssh.disconnect();
+		}
 		logger.info("{}文件当前的总行数为：{}",fileName,rowCount);
 		return rowCount;
     }
