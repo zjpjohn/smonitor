@@ -1,7 +1,6 @@
 package com.harlan.smonitor.monitor.core.job.http;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.harlan.smonitor.monitor.bean.CheckItem;
 import com.harlan.smonitor.monitor.bean.MonitorItem;

@@ -78,7 +78,7 @@ public abstract class CheckItem  implements Cloneable{
             return false;
         }
     }
-    public void resetAlarmCount(){
+    public final void resetAlarmCount(){
         logger.debug("重置报警次数:check_id={},name={}",id,name);
         ALARM_COUNT.put(id,0);
     }
@@ -111,42 +111,6 @@ public abstract class CheckItem  implements Cloneable{
     protected Integer alarmTime;
     
     public abstract Class<? extends Job> getJobServiceImpl();
-
-    public Integer getState() {
-        return state;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public List<String> getCronList() {
-        return cronList;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-	public String getName() {
-		return name;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-    public void setJobKey(JobKey jobKey) {
-        this.jobKey = jobKey;
-    }
-
-    public JobKey getJobKey() {
-        return jobKey;
-    }
-
-    public void setState(Integer state) {
-        this.state = state;
-    }
 
     /**
      * bean转化成xml元素时
@@ -185,5 +149,41 @@ public abstract class CheckItem  implements Cloneable{
             logger.error("colne exception:",e);
         }
         return copyCheck;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public List<String> getCronList() {
+        return cronList;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setJobKey(JobKey jobKey) {
+        this.jobKey = jobKey;
+    }
+
+    public JobKey getJobKey() {
+        return jobKey;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
     }
 }

@@ -46,7 +46,7 @@
     <!-- 根logger的设置-->
     <root>
         <priority value ="info"/>
-        <!--<appender-ref ref="CONSOLE"/>-->
+        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE_APPENDER"/>
     </root>
 </log4j:configuration>

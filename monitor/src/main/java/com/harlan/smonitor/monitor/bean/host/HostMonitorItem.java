@@ -3,14 +3,11 @@ package com.harlan.smonitor.monitor.bean.host;
 
 import com.harlan.smonitor.api.impl.FieldDeclare;
 import com.harlan.smonitor.api.impl.TypeDeclare;
-import com.harlan.smonitor.api.password.IPasswdService;
 import com.harlan.smonitor.monitor.bean.MonitorItem;
 import com.harlan.smonitor.monitor.bean.host.check.CheckCPU;
 import com.harlan.smonitor.monitor.bean.host.check.CheckDisk;
 import com.harlan.smonitor.monitor.bean.host.check.CheckFile;
 import com.harlan.smonitor.monitor.bean.host.check.CheckMem;
-import com.harlan.smonitor.monitor.common.AESUtil;
-import com.harlan.smonitor.monitor.core.init.ModuleRegister;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,19 +15,19 @@ import java.util.List;
 import java.util.Map;
 
 import static com.harlan.smonitor.monitor.common.Util.isNull;
-import static com.harlan.smonitor.monitor.common.Util.notNull;
 
 /**
  * HostMonitorItem
  * Created by harlan on 2016/8/3.
  */
 public class HostMonitorItem extends MonitorItem {
-    private static String KEY = "04c3cddbb8a4e96b";
     private String ip;
     private String user;
     private String passwd;
 //    private String encryptPwd;
 //    private String passwdType;
+    //端口默认是22
+    private final static int DEFAULT_SSH_PORT = 22 ;
     private Integer port;
 
     @Override
@@ -51,8 +48,8 @@ public class HostMonitorItem extends MonitorItem {
         this.user = itemMap.get("user").toString();
 //        this.encryptPwd = isNull(itemMap.get("encryptPwd"))?null:itemMap.get("encryptPwd").toString();
         this.passwd = itemMap.get("passwd").toString();
-        //端口默认是22
-        this.port =isNull(itemMap.get("port"))?22:Integer.valueOf(itemMap.get("port").toString());
+
+        this.port =isNull(itemMap.get("port"))?DEFAULT_SSH_PORT:Integer.valueOf(itemMap.get("port").toString());
 //        if(isNull(encryptPwd) && notNull(passwd) && !"******".equals(passwd)){
 //            //新增时，页面传过来的map，初始化host对象
 //            this.encryptPwd= AESUtil.encrypt(passwd,KEY);

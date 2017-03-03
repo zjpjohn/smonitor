@@ -20,6 +20,7 @@ import java.util.*;
 public abstract class MonitorItem implements Cloneable{
     private final static Logger logger = LoggerFactory.getLogger(MonitorItem.class);
     private static Map<String,TypeDeclare> TYPE_MAP;
+    //初始化TYPE_MAP，规定了有多少种类型的监控项
     static {
         TYPE_MAP=new HashMap<String, TypeDeclare>();
         TypeDeclare host=new TypeDeclare();
@@ -70,11 +71,11 @@ public abstract class MonitorItem implements Cloneable{
     protected List<String> adminList;
 
     /**
-     * map → java bean
+     * map → java实例
      * @param itemMap
      */
     @SuppressWarnings("unchecked")
-    public void init(Map<String, Object> itemMap) throws Exception{
+    public final void init(Map<String, Object> itemMap) throws Exception{
         if(itemMap.get("id")!=null){
             id=Integer.valueOf(itemMap.get("id").toString());
         }
@@ -95,11 +96,11 @@ public abstract class MonitorItem implements Cloneable{
         getProps(itemMap);
     }
     /**
-     * java bean → map
+     * 实例 → map
      * 直接使用一个map方便之后字段拼装map
      * @return
      */
-    public Map<String,Object> createMap()throws Exception{
+    public final Map<String,Object> createMap()throws Exception{
         Map<String,Object> item_map=new HashMap<String,Object>();
         item_map.put("id",id);
         item_map.put("name",name);
@@ -127,7 +128,7 @@ public abstract class MonitorItem implements Cloneable{
     }
 
     /**
-     * 返回所有该类型monitor自定义的字段
+     * 返回该类型监控项，自定义的字段
      * @return
      */
     public abstract List<FieldDeclare> getFields();
@@ -140,6 +141,13 @@ public abstract class MonitorItem implements Cloneable{
         MonitorItem item = (MonitorItem)implClass.newInstance();
         return item;
     }
+
+    /**
+     * 根据检查项类型，生成检查项实例
+     * @param checkType
+     * @return
+     * @throws Exception
+     */
     public CheckItem checkInstance(String checkType)throws Exception{
         Class<?> implClass= getCheckTypeMap().get(checkType).getBeanClass();
         if(implClass==null){
@@ -170,6 +178,28 @@ public abstract class MonitorItem implements Cloneable{
      * @param itemMap
      */
     protected abstract void getProps(Map<String,Object> itemMap) throws Exception;
+
+    @Override
+    public MonitorItem clone(){
+        MonitorItem monitor=null;
+            try {
+                monitor=(MonitorItem)super.clone();
+                //复制admingList
+                List<String> copyAdminList=new ArrayList<String>(monitor.getAdminList().size());
+                copyAdminList.addAll(monitor.getAdminList());
+                monitor.setAdminList(copyAdminList);
+                //复制checkList
+                List<CheckItem> copyCheckList=new ArrayList<CheckItem>(monitor.getCheckList().size());
+                for (CheckItem check:monitor.getCheckList()) {
+                    copyCheckList.add(check.clone());
+                }
+                monitor.setCheckList(copyCheckList);
+            } catch (CloneNotSupportedException e) {
+                logger.error("复制异常",e);
+            }
+        return monitor;
+    }
+
     public String getName() {
         return name;
     }
@@ -206,24 +236,4 @@ public abstract class MonitorItem implements Cloneable{
         this.adminList = adminList;
     }
 
-    @Override
-    public MonitorItem clone(){
-        MonitorItem monitor=null;
-            try {
-                monitor=(MonitorItem)super.clone();
-                //复制admingList
-                List<String> copyAdminList=new ArrayList<String>(monitor.getAdminList().size());
-                copyAdminList.addAll(monitor.getAdminList());
-                monitor.setAdminList(copyAdminList);
-                //复制checkList
-                List<CheckItem> copyCheckList=new ArrayList<CheckItem>(monitor.getCheckList().size());
-                for (CheckItem check:monitor.getCheckList()) {
-                    copyCheckList.add(check.clone());
-                }
-                monitor.setCheckList(copyCheckList);
-            } catch (CloneNotSupportedException e) {
-                logger.error("复制异常",e);
-            }
-        return monitor;
-    }
 }

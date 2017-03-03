@@ -18,7 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 实现类注册中心，模块化的实现逻辑需要在此注册
+ * 模块注册中心
+ * 自定义的模块需要在 moudules.xml中注册并在 pom.xml中引用
  * Created by harlan on 2016/11/12.
  */
 public class ModuleRegister {
