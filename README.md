@@ -13,4 +13,4 @@ Smonitor 是一个轻量级的监控系统，使用ssh连接受监控主机，�
 + 被监控主机无需安装客户端
 
 
-wiki:  https://github.com/harlan-zhao/smonitor/wiki/smonitor-wiki
+wiki:  https://github.com/harlan-zhao/smonitor/wiki
