@@ -1,6 +1,8 @@
 # Smonitor
 Smonitor 是一个轻量级的监控系统，使用ssh连接受监控主机，借助shell命令监控主机状态的监控告警系统<br>
 
+   ![image](https://raw.githubusercontent.com/harlanzhao/smonitor/master/readme.png)
+
 ####设计目标：：
 + 针对中小型系统监控需求定制
 + 极快速搭建主机监控告警系统
