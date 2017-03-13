@@ -5,7 +5,7 @@
     <parent>
         <artifactId>smonitor</artifactId>
         <groupId>com.harlan.smonitor</groupId>
-        <version>1.0</version>
+        <version>${current-version}</version>
     </parent>
     <!--
     本模块打包后是一个 war包，也是部署的主程序，其他模块都是通过jar包的形态，放在这个war包中
@@ -18,12 +18,12 @@
         <dependency>
             <groupId>com.harlan.smonitor</groupId>
             <artifactId>api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${current-version}</version>
         </dependency>
         <dependency>
             <groupId>com.harlan.smonitor</groupId>
             <artifactId>common</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${current-version}</version>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
@@ -88,7 +88,7 @@
         <dependency>
             <groupId>com.harlan.smonitor</groupId>
             <artifactId>notice-email</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${current-version}</version>
         </dependency>
         <!--
         发送短信模块，四川移动使用

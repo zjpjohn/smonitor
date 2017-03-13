@@ -5,7 +5,7 @@
     <parent>
         <artifactId>notice</artifactId>
         <groupId>com.harlan.smonitor</groupId>
-        <version>1.0</version>
+        <version>${current-version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
