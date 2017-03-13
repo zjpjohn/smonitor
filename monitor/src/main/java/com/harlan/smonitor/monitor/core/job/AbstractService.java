@@ -34,9 +34,13 @@ public abstract class AbstractService implements Job {
         } catch (Exception e) {
             logger.error("任务执行时出现异常",e);
 			//出现异常时需要通知所有管理员
-			String title=checkItem.getName()+",在执行时抛出异常";
-			String content=title+",异常是："+e.toString();
-			sendNotice(monitor.getAdminList(),title,content);
+			StringBuilder title=new StringBuilder("检查项在执行时抛出异常，检查项id：");
+			title.append(checkItem.getId());
+
+			StringBuilder content=new StringBuilder(title);
+			content.append("，异常为：").append(e.toString()).append("，请查看程序日志排查问题");
+
+			sendNotice(monitor.getAdminList(),title.toString(),content.toString());
         }
     }
 
