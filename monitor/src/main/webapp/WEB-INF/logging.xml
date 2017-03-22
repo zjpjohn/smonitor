@@ -18,6 +18,7 @@
             <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}|%m%n" />
         </layout>
     </appender>
+	<!-- 监控数据记录-输出器-->
     <appender name="RECORD_APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="File" value="${SMONITOR_DATA_DIR}/record/record.csv" />
         <param name="Append" value="true" />
